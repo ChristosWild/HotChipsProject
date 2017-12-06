@@ -1,21 +1,21 @@
 package project.editor.control;
 
-import java.util.Arrays;
-
 import javafx.collections.FXCollections;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
-import project.editor.utils.EditorConstants;
 import project.editor.utils.EditorUtils;
+import project.editor.utils.Layer;
 
 /**
  * Singleton class that controls the layer selection popup menu
@@ -29,6 +29,8 @@ public final class SelectorControl
 
 	private static final String LBL_SELECT_LAYER = "Select a layer:";
 	private static final int POPUP_WIDTH = 150;
+	private static final int POPUP_OFFSET_X = -23;
+	private static final int POPUP_OFFSET_Y = 71;
 
 	private Popup popup;
 	private Stage stage;
@@ -54,11 +56,25 @@ public final class SelectorControl
 		isUICreated = true;
 
 		popup = new Popup();
-
 		final VBox content = new VBox();
-		content.setPrefSize(POPUP_WIDTH, -1);
-		final GridPane topBar = new GridPane();
 
+		final GridPane topBar = new GridPane();
+		initialiseTopBar(topBar);
+
+		final ListView<String> layerList = new ListView<>();
+		initialiseLayerList(layerList);
+
+		content.getChildren().addAll(topBar, layerList);
+		content.setPrefSize(POPUP_WIDTH, -1);
+		content.setStyle("-fx-background-color: lightgray;");
+
+		popup.getContent().add(content);
+
+		EditorUtils.makeWindowDraggableByNode(popup, topBar);
+	}
+
+	private void initialiseTopBar(final GridPane topBar)
+	{
 		final Label lblTitle = new Label(LBL_SELECT_LAYER);
 		final Button btnClose = new Button("x");// null, new ImageView(new Image("file:data/Untitled.png")));
 
@@ -66,20 +82,6 @@ public final class SelectorControl
 			hide();
 			isMeantToBeVisible = false;
 		});
-
-		final ListView<Object> layerList = new ListView<>(); // TODO Add images to layer list
-		layerList.setItems(FXCollections.observableArrayList(
-				Arrays.asList(EditorConstants.STRING_LAYER_POLYSILICON,
-						EditorConstants.STRING_LAYER_DIFFUSION_P,
-						EditorConstants.STRING_LAYER_DIFFUSION_N,
-						EditorConstants.STRING_LAYER_METAL_ONE,
-						EditorConstants.STRING_LAYER_METAL_TWO,
-						EditorConstants.STRING_LAYER_METAL_THREE,
-						EditorConstants.STRING_LAYER_METAL_FOUR,
-						EditorConstants.STRING_LAYER_METAL_FIVE,
-						EditorConstants.STRING_LAYER_VIA,
-						EditorConstants.STRING_LAYER_PIN)));
-		layerList.setPrefHeight(23 * layerList.getItems().size() + 2); // TODO better way of getting size
 
 		topBar.getChildren().addAll(lblTitle, btnClose);
 		GridPane.setMargin(lblTitle, new Insets(5, 0, 5, 10));
@@ -90,24 +92,54 @@ public final class SelectorControl
 		GridPane.setValignment(btnClose, VPos.CENTER);
 		GridPane.setHgrow(lblTitle, Priority.ALWAYS);
 
-		content.getChildren().addAll(topBar, layerList);
-		content.setStyle("-fx-background-color: lightgray;");
-
-		popup.getContent().add(content);
-
-		EditorUtils.makeWindowDraggableByNode(popup, topBar);
 		EditorUtils.makeWindowDraggableByNode(popup, lblTitle);
+	}
+
+	private void initialiseLayerList(final ListView<String> layerList)
+	{
+		layerList.setItems(FXCollections.observableArrayList(
+				Layer.METAL_ONE.getDisplayName(),
+				Layer.METAL_TWO.getDisplayName(),
+				Layer.METAL_THREE.getDisplayName(),
+				Layer.METAL_FOUR.getDisplayName(),
+				Layer.METAL_FIVE.getDisplayName(),
+				Layer.DIFFUSION_N.getDisplayName(),
+				Layer.DIFFUSION_P.getDisplayName(),
+				Layer.POLYSILICON.getDisplayName(),
+				Layer.VIA.getDisplayName(),
+				Layer.PIN.getDisplayName()));
+
+		layerList.setCellFactory(list -> new ListCell<String>()
+		{
+			@Override
+			public void updateItem(final String label, final boolean empty)
+			{
+				super.updateItem(label, empty);
+				if (empty)
+				{
+					setText(null);
+					setGraphic(null);
+				} else
+				{
+					setText(label);
+					setGraphic(new ImageView(Layer.getLayerImageFromName(label)));
+				}
+			}
+		});
+
+		layerList.setPrefHeight(23 * layerList.getItems().size() + 2); // TODO better way of getting size
+		layerList.getSelectionModel().select(0);
 	}
 
 	public void show()
 	{
-		if (stage != null)
+		if (stage != null && !Double.isNaN(stage.getX()))
 		{
 			if (!isUICreated)
 			{
 				instance.initialiseUI();
-				popup.setX(stage.getX() + stage.getWidth() - POPUP_WIDTH);
-				popup.setY(stage.getY() + 64);
+				popup.setX(stage.getX() + stage.getWidth() - POPUP_WIDTH + POPUP_OFFSET_X);
+				popup.setY(stage.getY() + POPUP_OFFSET_Y);
 			}
 
 			if (!popup.isShowing() && isMeantToBeVisible)
@@ -143,5 +175,10 @@ public final class SelectorControl
 	public void setMeantToBeVisible(final boolean meantToBeVisible)
 	{
 		this.isMeantToBeVisible = meantToBeVisible;
+	}
+
+	public Layer getSelectedLayer()
+	{
+		return null; // TODO
 	}
 }

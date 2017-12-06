@@ -27,9 +27,11 @@ public class ToolbarController
 			final EditorController newEditor = new EditorController(new Stage());
 			newEditor.createAndOpen();
 		});
+
 		toolbarControl.getMenuItemOpen().setOnAction(event -> {
 
 		});
+
 		toolbarControl.getMenuItemClose().setOnAction(event -> {
 			toolbarControl.getRoot().getScene().getWindow().hide();
 		});
