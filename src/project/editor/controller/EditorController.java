@@ -6,7 +6,6 @@ import java.util.List;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import project.editor.control.CanvasControl;
 import project.editor.control.SelectorControl;
 
 public class EditorController
@@ -15,13 +14,14 @@ public class EditorController
 	private static List<EditorController> editorInstances = new ArrayList<EditorController>();
 
 	private static final String EDITOR_TITLE = "VLSI Editor";
-	private static final int EDITOR_WIDTH = 700;
-	private static final int EDITOR_HEIGHT = 400;
+	private static final int EDITOR_WIDTH = 900;
+	private static final int EDITOR_HEIGHT = 600;
 
 	private Stage stage;
 	private BorderPane root;
 
 	private ToolbarController toolbarController;
+	private CanvasController canvasController;
 
 	public EditorController(final Stage stage)
 	{
@@ -30,7 +30,7 @@ public class EditorController
 		editorInstances.add(this);
 
 		toolbarController = new ToolbarController();
-		// canvasController = new CanvasController();
+		canvasController = new CanvasController();
 
 		stage.focusedProperty().addListener((ov, oldVal, newVal) -> {
 			if (oldVal)
@@ -60,10 +60,7 @@ public class EditorController
 		root = new BorderPane();
 
 		toolbarController.createPartControl(root);
-		// canvasController.createPartControl(root);
-
-		CanvasControl cc = new CanvasControl();
-		cc.createPartControl(root);
+		canvasController.createPartControl(root);
 
 		stage.setScene(new Scene(root, EDITOR_WIDTH, EDITOR_HEIGHT));
 		stage.setTitle(editorInstanceCount > 0 ? EDITOR_TITLE + " (" + editorInstanceCount + ")" : EDITOR_TITLE);

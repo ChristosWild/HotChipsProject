@@ -1,0 +1,7 @@
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+	-fx-background-color: blue;
+}
+
+.test {
+	-fx-background-color: green;
+}

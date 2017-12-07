@@ -8,10 +8,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import project.editor.utils.EditorUtils;
@@ -66,7 +67,9 @@ public final class SelectorControl
 
 		content.getChildren().addAll(topBar, layerList);
 		content.setPrefSize(POPUP_WIDTH, -1);
-		content.setStyle("-fx-background-color: lightgray;");
+
+		content.getStylesheets().add("file:src/project/application/Main.css"); // TODO const
+		content.getStyleClass().add("test");
 
 		popup.getContent().add(content);
 
@@ -122,7 +125,8 @@ public final class SelectorControl
 				} else
 				{
 					setText(label);
-					setGraphic(new ImageView(Layer.getLayerImageFromName(label)));
+					// setGraphic(new ImageView(Layer.getLayerImageFromName(label)));
+					setGraphic(new Rectangle(16, 16, Color.BLUE));
 				}
 			}
 		});

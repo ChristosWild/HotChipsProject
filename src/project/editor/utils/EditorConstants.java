@@ -2,8 +2,8 @@ package project.editor.utils;
 
 public interface EditorConstants
 {
-	public static final int CANVAS_WIDTH = 8192;
-	public static final int CANVAS_HEIGHT = 8192;
+	public static final int CANVAS_WIDTH = 1000; // Max = 8192
+	public static final int CANVAS_HEIGHT = 1000; // Max = 8192
 	public static final int CANVAS_GRID_SIZE = 10;
 
 	public static final String STRING_LAYER_METAL_ONE = "Metal 1";
