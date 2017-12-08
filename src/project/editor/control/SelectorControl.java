@@ -11,7 +11,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
@@ -35,6 +34,7 @@ public final class SelectorControl
 
 	private Popup popup;
 	private Stage stage;
+	private ListView<String> layerList;
 	private boolean isUICreated = false;
 	private boolean isMeantToBeVisible = true;
 
@@ -62,14 +62,14 @@ public final class SelectorControl
 		final GridPane topBar = new GridPane();
 		initialiseTopBar(topBar);
 
-		final ListView<String> layerList = new ListView<>();
+		layerList = new ListView<>();
 		initialiseLayerList(layerList);
 
 		content.getChildren().addAll(topBar, layerList);
 		content.setPrefSize(POPUP_WIDTH, -1);
 
 		content.getStylesheets().add("file:src/project/application/Main.css"); // TODO const
-		content.getStyleClass().add("test");
+		content.getStyleClass().add("selector-popup");
 
 		popup.getContent().add(content);
 
@@ -125,8 +125,7 @@ public final class SelectorControl
 				} else
 				{
 					setText(label);
-					// setGraphic(new ImageView(Layer.getLayerImageFromName(label)));
-					setGraphic(new Rectangle(16, 16, Color.BLUE));
+					setGraphic(new Rectangle(16, 16, Layer.getLayerFromName(label).getColor()));
 				}
 			}
 		});
@@ -183,6 +182,6 @@ public final class SelectorControl
 
 	public Layer getSelectedLayer()
 	{
-		return null; // TODO
+		return Layer.getLayerFromName(layerList.getSelectionModel().getSelectedItem());
 	}
 }

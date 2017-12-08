@@ -6,7 +6,7 @@ import javafx.stage.Window;
 
 public class EditorUtils
 {
-	private static class Delta
+	public static class Delta
 	{
 		public double x, y;
 	}
@@ -48,5 +48,10 @@ public class EditorUtils
 				node.setCursor(Cursor.DEFAULT);
 			}
 		});
+	}
+
+	public static void snapToGrid(final Node node)
+	{
+		// TODO
 	}
 }

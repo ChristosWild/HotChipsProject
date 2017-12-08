@@ -1,26 +1,38 @@
 package project.editor.utils;
 
+import static project.editor.utils.EditorConstants.*;
+
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 public enum Layer
 {
-	METAL_ONE (EditorConstants.STRING_LAYER_METAL_ONE),
-	METAL_TWO (EditorConstants.STRING_LAYER_METAL_TWO),
-	METAL_THREE (EditorConstants.STRING_LAYER_METAL_THREE),
-	METAL_FOUR (EditorConstants.STRING_LAYER_METAL_FOUR),
-	METAL_FIVE (EditorConstants.STRING_LAYER_METAL_FIVE),
-	DIFFUSION_N (EditorConstants.STRING_LAYER_DIFFUSION_N),
-	DIFFUSION_P (EditorConstants.STRING_LAYER_DIFFUSION_P),
-	POLYSILICON (EditorConstants.STRING_LAYER_POLYSILICON),
-	VIA (EditorConstants.STRING_LAYER_VIA),
-	PIN (EditorConstants.STRING_LAYER_PIN),
-	INVALID_LAYER (EditorConstants.STRING_LAYER_INVALID);
+	METAL_ONE(0, STRING_METAL_ONE, COLOR_METAL_ONE),
+	METAL_TWO(1, STRING_METAL_TWO, COLOR_METAL_TWO),
+	METAL_THREE(2, STRING_METAL_THREE, COLOR_METAL_THREE),
+	METAL_FOUR(3, STRING_METAL_FOUR, COLOR_METAL_FOUR),
+	METAL_FIVE(4, STRING_METAL_FIVE, COLOR_METAL_FIVE),
+	DIFFUSION_N(5, STRING_DIFFUSION_N, COLOR_DIFFUSION_N),
+	DIFFUSION_P(6, STRING_DIFFUSION_P, COLOR_DIFFUSION_P),
+	POLYSILICON(7, STRING_POLYSILICON, COLOR_POLYSILICON),
+	VIA(8, STRING_VIA, COLOR_VIA),
+	PIN(9, STRING_PIN, COLOR_PIN),
+	INVALID_LAYER(10, STRING_INVALID, COLOR_INVALID);
 
+	private final int layerIndex;
 	private final String displayName;
+	private final Color color;
 
-	Layer(final String displayName)
+	Layer(final int layerIndex, final String displayName, final Color color)
 	{
+		this.layerIndex=layerIndex;
 		this.displayName = displayName;
+		this.color = color;
+	}
+	
+	public int getLayerIndex()
+	{
+		return layerIndex;
 	}
 
 	public String getDisplayName()
@@ -28,38 +40,43 @@ public enum Layer
 		return displayName;
 	}
 
+	public Color getColor()
+	{
+		return color;
+	}
+
 	public static Layer getLayerFromName(final String layerName)
 	{
 		switch (layerName)
 		{
-			case EditorConstants.STRING_LAYER_METAL_ONE:
+			case EditorConstants.STRING_METAL_ONE:
 				return METAL_ONE;
 
-			case EditorConstants.STRING_LAYER_METAL_TWO:
+			case EditorConstants.STRING_METAL_TWO:
 				return METAL_TWO;
 
-			case EditorConstants.STRING_LAYER_METAL_THREE:
+			case EditorConstants.STRING_METAL_THREE:
 				return METAL_THREE;
 
-			case EditorConstants.STRING_LAYER_METAL_FOUR:
+			case EditorConstants.STRING_METAL_FOUR:
 				return METAL_FOUR;
 
-			case EditorConstants.STRING_LAYER_METAL_FIVE:
+			case EditorConstants.STRING_METAL_FIVE:
 				return METAL_FIVE;
 
-			case EditorConstants.STRING_LAYER_DIFFUSION_N:
+			case EditorConstants.STRING_DIFFUSION_N:
 				return DIFFUSION_N;
 
-			case EditorConstants.STRING_LAYER_DIFFUSION_P:
+			case EditorConstants.STRING_DIFFUSION_P:
 				return DIFFUSION_P;
 
-			case EditorConstants.STRING_LAYER_POLYSILICON:
+			case EditorConstants.STRING_POLYSILICON:
 				return POLYSILICON;
 
-			case EditorConstants.STRING_LAYER_VIA:
+			case EditorConstants.STRING_VIA:
 				return VIA;
 
-			case EditorConstants.STRING_LAYER_PIN:
+			case EditorConstants.STRING_PIN:
 				return PIN;
 
 			default:

@@ -12,8 +12,8 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import project.editor.utils.EditorConstants;
+import project.editor.utils.Layer;
 
 public class CanvasControl
 {
@@ -77,27 +77,24 @@ public class CanvasControl
 		gcArray = new GraphicsContext[] { gcMetalOne, gcMetalTwo, gcMetalThree, gcMetalFour, gcMetalFive, gcDiffusionN,
 				gcDiffusionP, gcPolysilicon, gcVia, gcPin };
 
-		gcMetalOne.setFill(Color.RED); // TODO colours + caching colours
-		gcMetalTwo.setFill(Color.ORANGE);
-		gcMetalThree.setFill(Color.YELLOW);
-		gcMetalFour.setFill(Color.CHARTREUSE);
-		gcMetalFive.setFill(Color.GREEN);
-		gcDiffusionN.setFill(Color.AQUA);
-		gcDiffusionP.setFill(Color.BLUE);
-		gcPolysilicon.setFill(Color.INDIGO);
-		gcVia.setFill(Color.VIOLET);
-		gcPin.setFill(Color.BLACK);
-
-		gcMetalOne.setStroke(Color.RED);
-		gcMetalOne.setLineWidth(5);
+		for (final Layer layer : Layer.values())
+		{
+			if (layer == Layer.INVALID_LAYER)
+			{
+				continue;
+			}
+			gcArray[layer.getLayerIndex()].setLineWidth(5);
+			gcArray[layer.getLayerIndex()].setFill(layer.getColor());
+			gcArray[layer.getLayerIndex()].setStroke(layer.getColor());
+		}
 
 		canvasGroup.getChildren().add(grid);
 		canvasGroup.getChildren().addAll(canvasArray);
 		root.setCenter(scrollPane);
 	}
 
-	public GraphicsContext getGcMetalOne()
+	public GraphicsContext getSelectedGc()
 	{
-		return gcMetalOne;
+		return gcArray[SelectorControl.getInstance().getSelectedLayer().getLayerIndex()];
 	}
 }
