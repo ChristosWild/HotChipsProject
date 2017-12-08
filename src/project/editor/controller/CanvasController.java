@@ -44,7 +44,7 @@ public class CanvasController
 				dragDelta.y = event.getY();
 
 				rectangle = new Rectangle(dragDelta.x, dragDelta.y, 0, 0);
-				// test comment still here?
+				// test comment here
 			} else if (canvasMode == CanvasMode.SELECT)
 			{
 			}
