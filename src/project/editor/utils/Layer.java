@@ -1,8 +1,28 @@
 package project.editor.utils;
 
-import static project.editor.utils.EditorConstants.*;
+import static project.editor.utils.EditorConstants.COLOR_DIFFUSION_N;
+import static project.editor.utils.EditorConstants.COLOR_DIFFUSION_P;
+import static project.editor.utils.EditorConstants.COLOR_INVALID;
+import static project.editor.utils.EditorConstants.COLOR_METAL_FIVE;
+import static project.editor.utils.EditorConstants.COLOR_METAL_FOUR;
+import static project.editor.utils.EditorConstants.COLOR_METAL_ONE;
+import static project.editor.utils.EditorConstants.COLOR_METAL_THREE;
+import static project.editor.utils.EditorConstants.COLOR_METAL_TWO;
+import static project.editor.utils.EditorConstants.COLOR_PIN;
+import static project.editor.utils.EditorConstants.COLOR_POLYSILICON;
+import static project.editor.utils.EditorConstants.COLOR_VIA;
+import static project.editor.utils.EditorConstants.STRING_DIFFUSION_N;
+import static project.editor.utils.EditorConstants.STRING_DIFFUSION_P;
+import static project.editor.utils.EditorConstants.STRING_INVALID;
+import static project.editor.utils.EditorConstants.STRING_METAL_FIVE;
+import static project.editor.utils.EditorConstants.STRING_METAL_FOUR;
+import static project.editor.utils.EditorConstants.STRING_METAL_ONE;
+import static project.editor.utils.EditorConstants.STRING_METAL_THREE;
+import static project.editor.utils.EditorConstants.STRING_METAL_TWO;
+import static project.editor.utils.EditorConstants.STRING_PIN;
+import static project.editor.utils.EditorConstants.STRING_POLYSILICON;
+import static project.editor.utils.EditorConstants.STRING_VIA;
 
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public enum Layer
@@ -29,7 +49,7 @@ public enum Layer
 		this.displayName = displayName;
 		this.color = color;
 	}
-	
+
 	public int getLayerIndex()
 	{
 		return layerIndex;
@@ -84,60 +104,60 @@ public enum Layer
 		}
 	}
 
-	public static Image getLayerImageFromName(final String name)
-	{
-		return getImageFromLayer(getLayerFromName(name));
-	}
-
-	public static Image getImageFromLayer(final Layer layer)
-	{
-		String imgPath = EditorConstants.FILE_PATH_DATA;
-
-		switch (layer)
-		{
-			case METAL_ONE:
-				imgPath += EditorConstants.IMG_PATH_METAL_ONE;
-				break;
-
-			case METAL_TWO:
-				imgPath += EditorConstants.IMG_PATH_METAL_TWO;
-				break;
-
-			case METAL_THREE:
-				imgPath += EditorConstants.IMG_PATH_METAL_THREE;
-				break;
-
-			case METAL_FOUR:
-				imgPath += EditorConstants.IMG_PATH_METAL_FOUR;
-				break;
-
-			case METAL_FIVE:
-				imgPath += EditorConstants.IMG_PATH_METAL_FIVE;
-				break;
-
-			case DIFFUSION_N:
-				imgPath += EditorConstants.IMG_PATH_DIFFUSION_N;
-				break;
-
-			case DIFFUSION_P:
-				imgPath += EditorConstants.IMG_PATH_DIFFUSION_P;
-				break;
-
-			case POLYSILICON:
-				imgPath += EditorConstants.IMG_PATH_POLYSILICON;
-				break;
-
-			case VIA:
-				imgPath += EditorConstants.IMG_PATH_VIA;
-				break;
-
-			case PIN:
-				imgPath += EditorConstants.IMG_PATH_PIN;
-				break;
-
-			default:
-				imgPath = null;
-		}
-		return new Image(imgPath);
-	}
+	// public static Image getLayerImageFromName(final String name)
+	// {
+	// return getImageFromLayer(getLayerFromName(name));
+	// }
+	//
+	// public static Image getImageFromLayer(final Layer layer)
+	// {
+	// String imgPath = EditorConstants.FILE_PATH_DATA;
+	//
+	// switch (layer)
+	// {
+	// case METAL_ONE:
+	// imgPath += EditorConstants.IMG_PATH_METAL_ONE;
+	// break;
+	//
+	// case METAL_TWO:
+	// imgPath += EditorConstants.IMG_PATH_METAL_TWO;
+	// break;
+	//
+	// case METAL_THREE:
+	// imgPath += EditorConstants.IMG_PATH_METAL_THREE;
+	// break;
+	//
+	// case METAL_FOUR:
+	// imgPath += EditorConstants.IMG_PATH_METAL_FOUR;
+	// break;
+	//
+	// case METAL_FIVE:
+	// imgPath += EditorConstants.IMG_PATH_METAL_FIVE;
+	// break;
+	//
+	// case DIFFUSION_N:
+	// imgPath += EditorConstants.IMG_PATH_DIFFUSION_N;
+	// break;
+	//
+	// case DIFFUSION_P:
+	// imgPath += EditorConstants.IMG_PATH_DIFFUSION_P;
+	// break;
+	//
+	// case POLYSILICON:
+	// imgPath += EditorConstants.IMG_PATH_POLYSILICON;
+	// break;
+	//
+	// case VIA:
+	// imgPath += EditorConstants.IMG_PATH_VIA;
+	// break;
+	//
+	// case PIN:
+	// imgPath += EditorConstants.IMG_PATH_PIN;
+	// break;
+	//
+	// default:
+	// imgPath = null;
+	// }
+	// return new Image(imgPath);
+	// }
 }

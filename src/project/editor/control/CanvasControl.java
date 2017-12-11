@@ -1,8 +1,6 @@
 package project.editor.control;
 
 import javafx.scene.Group;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
@@ -12,89 +10,74 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import project.editor.utils.EditorConstants;
-import project.editor.utils.Layer;
 
 public class CanvasControl
 {
-	private Canvas canvasMetalOne;
-	private Canvas canvasMetalTwo;
-	private Canvas canvasMetalThree;
-	private Canvas canvasMetalFour;
-	private Canvas canvasMetalFive;
-	private Canvas canvasDiffusionN;
-	private Canvas canvasDiffusionP;
-	private Canvas canvasPolysilicon;
-	private Canvas canvasVia;
-	private Canvas canvasPin;
-	private Canvas[] canvasArray;
-
-	private GraphicsContext gcMetalOne;
-	private GraphicsContext gcMetalTwo;
-	private GraphicsContext gcMetalThree;
-	private GraphicsContext gcMetalFour;
-	private GraphicsContext gcMetalFive;
-	private GraphicsContext gcDiffusionN;
-	private GraphicsContext gcDiffusionP;
-	private GraphicsContext gcPolysilicon;
-	private GraphicsContext gcVia;
-	private GraphicsContext gcPin;
-	private GraphicsContext[] gcArray;
+	private Pane canvasMetalOne;
+	private Pane canvasMetalTwo;
+	private Pane canvasMetalThree;
+	private Pane canvasMetalFour;
+	private Pane canvasMetalFive;
+	private Pane canvasDiffusionN;
+	private Pane canvasDiffusionP;
+	private Pane canvasPolysilicon;
+	private Pane canvasVia;
+	private Pane canvasPin;
+	private Pane[] canvasArray;
+	private Pane selectionLayer;
 
 	public void createPartControl(final BorderPane root)
 	{
 		final Group canvasGroup = new Group();
 		final ScrollPane scrollPane = new ScrollPane(canvasGroup);
 
-		final Pane grid = new Pane();
-		grid.setBackground(new Background(new BackgroundImage(new Image("file:data/grid.png"), BackgroundRepeat.REPEAT,
+		final Pane gridLayer = new Pane();
+		gridLayer.setBackground(new Background(new BackgroundImage(
+				new Image(EditorConstants.FILE_PATH_DATA + EditorConstants.IMG_PATH_GRID), BackgroundRepeat.REPEAT,
 				BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)));
-		grid.setPrefSize(EditorConstants.CANVAS_WIDTH, EditorConstants.CANVAS_HEIGHT);
+		gridLayer.setPrefSize(EditorConstants.CANVAS_WIDTH, EditorConstants.CANVAS_HEIGHT);
 
-		canvasMetalOne = new Canvas(EditorConstants.CANVAS_WIDTH, EditorConstants.CANVAS_HEIGHT);
-		canvasMetalTwo = new Canvas(EditorConstants.CANVAS_WIDTH, EditorConstants.CANVAS_HEIGHT);
-		canvasMetalThree = new Canvas(EditorConstants.CANVAS_WIDTH, EditorConstants.CANVAS_HEIGHT);
-		canvasMetalFour = new Canvas(EditorConstants.CANVAS_WIDTH, EditorConstants.CANVAS_HEIGHT);
-		canvasMetalFive = new Canvas(EditorConstants.CANVAS_WIDTH, EditorConstants.CANVAS_HEIGHT);
-		canvasDiffusionN = new Canvas(EditorConstants.CANVAS_WIDTH, EditorConstants.CANVAS_HEIGHT);
-		canvasDiffusionP = new Canvas(EditorConstants.CANVAS_WIDTH, EditorConstants.CANVAS_HEIGHT);
-		canvasPolysilicon = new Canvas(EditorConstants.CANVAS_WIDTH, EditorConstants.CANVAS_HEIGHT);
-		canvasVia = new Canvas(EditorConstants.CANVAS_WIDTH, EditorConstants.CANVAS_HEIGHT);
-		canvasPin = new Canvas(EditorConstants.CANVAS_WIDTH, EditorConstants.CANVAS_HEIGHT);
-		canvasArray = new Canvas[] { canvasMetalOne, canvasMetalTwo, canvasMetalThree, canvasMetalFour,
+		canvasMetalOne = new Pane();
+		canvasMetalTwo = new Pane();
+		canvasMetalThree = new Pane();
+		canvasMetalFour = new Pane();
+		canvasMetalFive = new Pane();
+		canvasDiffusionN = new Pane();
+		canvasDiffusionP = new Pane();
+		canvasPolysilicon = new Pane();
+		canvasVia = new Pane();
+		canvasPin = new Pane();
+		canvasArray = new Pane[] { canvasMetalOne, canvasMetalTwo, canvasMetalThree, canvasMetalFour,
 				canvasMetalFive, canvasDiffusionN, canvasDiffusionP, canvasPolysilicon, canvasVia, canvasPin };
 
-		gcMetalOne = canvasMetalOne.getGraphicsContext2D();
-		gcMetalTwo = canvasMetalTwo.getGraphicsContext2D();
-		gcMetalThree = canvasMetalThree.getGraphicsContext2D();
-		gcMetalFour = canvasMetalFour.getGraphicsContext2D();
-		gcMetalFive = canvasMetalFive.getGraphicsContext2D();
-		gcDiffusionN = canvasDiffusionN.getGraphicsContext2D();
-		gcDiffusionP = canvasDiffusionP.getGraphicsContext2D();
-		gcPolysilicon = canvasPolysilicon.getGraphicsContext2D();
-		gcVia = canvasVia.getGraphicsContext2D();
-		gcPin = canvasPin.getGraphicsContext2D();
-		gcArray = new GraphicsContext[] { gcMetalOne, gcMetalTwo, gcMetalThree, gcMetalFour, gcMetalFive, gcDiffusionN,
-				gcDiffusionP, gcPolysilicon, gcVia, gcPin };
-
-		for (final Layer layer : Layer.values())
+		for (final Pane pane : canvasArray)
 		{
-			if (layer == Layer.INVALID_LAYER)
-			{
-				continue;
-			}
-			gcArray[layer.getLayerIndex()].setLineWidth(5);
-			gcArray[layer.getLayerIndex()].setFill(layer.getColor());
-			gcArray[layer.getLayerIndex()].setStroke(layer.getColor());
+			pane.setPrefSize(EditorConstants.CANVAS_WIDTH, EditorConstants.CANVAS_HEIGHT);
 		}
 
-		canvasGroup.getChildren().add(grid);
+		selectionLayer = new Pane();
+		selectionLayer.setPrefSize(EditorConstants.CANVAS_WIDTH, EditorConstants.CANVAS_HEIGHT);
+
+		canvasGroup.getChildren().add(gridLayer);
 		canvasGroup.getChildren().addAll(canvasArray);
+		canvasGroup.getChildren().add(selectionLayer);
 		root.setCenter(scrollPane);
 	}
 
-	public GraphicsContext getSelectedGc()
+	public Pane getCurrentPane()
 	{
-		return gcArray[SelectorControl.getInstance().getSelectedLayer().getLayerIndex()];
+		return canvasArray[SelectorControl.getInstance().getSelectedLayer().getLayerIndex()];
+	}
+
+	public Color getCurrentPaneColor()
+	{
+		return SelectorControl.getInstance().getSelectedLayer().getColor();
+	}
+
+	public Pane getSelectionPane()
+	{
+		return selectionLayer;
 	}
 }

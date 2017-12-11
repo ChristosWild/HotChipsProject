@@ -9,6 +9,16 @@ public class EditorUtils
 	public static class Delta
 	{
 		public double x, y;
+
+		public Delta()
+		{
+		}
+
+		public Delta(final double x, final double y)
+		{
+			this.x = x;
+			this.y = y;
+		}
 	}
 
 	public static void makeWindowDraggableByNode(final Window window, final Node node) // TODO needed as a util method?
@@ -50,8 +60,29 @@ public class EditorUtils
 		});
 	}
 
-	public static void snapToGrid(final Node node)
+	public static Delta snapToGrid(final Delta delta)
 	{
-		// TODO
+		final int gridSize = EditorConstants.CANVAS_GRID_SIZE;
+		final int halfGridSize = EditorConstants.CANVAS_GRID_SIZE / 2;
+
+		if(delta.x >= 0)
+		{
+			delta.x = (long) ((delta.x + halfGridSize) / gridSize) * gridSize;
+		}
+		else
+		{
+			delta.x = (long) ((delta.x - halfGridSize) / gridSize) * gridSize;
+		}
+
+		if(delta.y >= 0)
+		{
+			delta.y = (long) ((delta.y + halfGridSize) / gridSize) * gridSize;
+		}
+		else
+		{
+			delta.y = (long) ((delta.y - halfGridSize) / gridSize) * gridSize;
+		}
+
+		return delta;
 	}
 }

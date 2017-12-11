@@ -3,7 +3,14 @@ package project.editor.control;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Separator;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.ToolBar;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 
 public class ToolbarControl
 {
@@ -55,10 +62,18 @@ public class ToolbarControl
 	private MenuItem menuItemHelp;
 	private MenuItem menuItemAbout;
 
+	// BUTTONS      new open save    select draw   delete clear
+	private ToggleGroup toggleGroup;
+	private ToggleButton btnSelect;
+	private ToggleButton btnDraw;
+
 	public void createPartControl(final BorderPane root)
 	{
 		this.root = root;
+		final VBox menus = new VBox();
 		final MenuBar menuBar = new MenuBar();
+		final ToolBar toolbar = new ToolBar();
+		menus.getChildren().addAll(menuBar, toolbar);
 
 		// FILE
 		final Menu menuFile = new Menu(LBL_MENU_FILE);
@@ -93,7 +108,18 @@ public class ToolbarControl
 		menuHelp.getItems().addAll(menuItemAbout, menuItemHelp);
 		menuBar.getMenus().addAll(menuFile, menuView, menuEdit, menuHelp);
 
-		root.setTop(menuBar);
+		// BUTTONS
+
+		toggleGroup = new ToggleGroup();
+		btnSelect = new ToggleButton(null, new ImageView(new Image("file:data/mouse.png")));
+		btnDraw = new ToggleButton(null, new ImageView(new Image("file:data/pencil.png")));
+		btnSelect.setToggleGroup(toggleGroup);
+		btnDraw.setToggleGroup(toggleGroup);
+		btnSelect.setSelected(true);
+
+		toolbar.getItems().addAll(new Separator(), btnSelect, btnDraw, new Separator());
+
+		root.setTop(menus);
 	}
 
 	public BorderPane getRoot()
@@ -174,5 +200,20 @@ public class ToolbarControl
 	public MenuItem getMenuItemAbout()
 	{
 		return menuItemAbout;
+	}
+
+	public ToggleButton getBtnSelect()
+	{
+		return btnSelect;
+	}
+
+	public ToggleButton getBtnDraw()
+	{
+		return btnDraw;
+	}
+
+	public ToggleGroup getToggleGroup()
+	{
+		return toggleGroup;
 	}
 }

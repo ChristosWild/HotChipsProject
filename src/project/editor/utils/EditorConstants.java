@@ -39,19 +39,23 @@ public interface EditorConstants
 	public static final Color COLOR_DIFFUSION_N = Color.AQUA;
 	public static final Color COLOR_DIFFUSION_P = Color.BLUE;
 	public static final Color COLOR_POLYSILICON = Color.INDIGO;
-	public static final Color COLOR_VIA = Color.VIOLET;
-	public static final Color COLOR_PIN = Color.BLACK;
+	public static final Color COLOR_VIA = Color.TRANSPARENT; // Uses image instead
+	public static final Color COLOR_PIN = Color.TRANSPARENT; // Uses image instead
 	public static final Color COLOR_INVALID = Color.TRANSPARENT;
 
 	public static final String FILE_PATH_DATA = "file:data/";
-	public static final String IMG_PATH_METAL_ONE = "metal_one.png";
-	public static final String IMG_PATH_METAL_TWO = "metal_two.png";
-	public static final String IMG_PATH_METAL_THREE = "metal_three.png";
-	public static final String IMG_PATH_METAL_FOUR = "metal_four.png";
-	public static final String IMG_PATH_METAL_FIVE = "metal_five.png";
-	public static final String IMG_PATH_DIFFUSION_N = "diffusion_n.png";
-	public static final String IMG_PATH_DIFFUSION_P = "diffusion_p.png";
-	public static final String IMG_PATH_POLYSILICON = "polysilicon.png";
+	public static final String FILE_PATH_SRC = "file:src/";
+	// public static final String IMG_PATH_METAL_ONE = "metal_one.png";
+	// public static final String IMG_PATH_METAL_TWO = "metal_two.png";
+	// public static final String IMG_PATH_METAL_THREE = "metal_three.png";
+	// public static final String IMG_PATH_METAL_FOUR = "metal_four.png";
+	// public static final String IMG_PATH_METAL_FIVE = "metal_five.png";
+	// public static final String IMG_PATH_DIFFUSION_N = "diffusion_n.png";
+	// public static final String IMG_PATH_DIFFUSION_P = "diffusion_p.png";
+	// public static final String IMG_PATH_POLYSILICON = "polysilicon.png";
 	public static final String IMG_PATH_VIA = "via.png";
 	public static final String IMG_PATH_PIN = "pin.png";
+	public static final String IMG_PATH_VIA_16 = "via16.png";
+	public static final String IMG_PATH_PIN_16 = "pin16.png";
+	public static final String IMG_PATH_GRID = "grid.png";
 }

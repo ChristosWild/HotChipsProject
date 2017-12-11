@@ -4,10 +4,13 @@ import javafx.collections.FXCollections;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -29,8 +32,8 @@ public final class SelectorControl
 
 	private static final String LBL_SELECT_LAYER = "Select a layer:";
 	private static final int POPUP_WIDTH = 150;
-	private static final int POPUP_OFFSET_X = -23;
-	private static final int POPUP_OFFSET_Y = 71;
+	private static final int POPUP_OFFSET_X = -30;
+	private static final int POPUP_OFFSET_Y = 62;
 
 	private Popup popup;
 	private Stage stage;
@@ -125,7 +128,24 @@ public final class SelectorControl
 				} else
 				{
 					setText(label);
-					setGraphic(new Rectangle(16, 16, Layer.getLayerFromName(label).getColor()));
+
+					Node graphic;
+					final Layer layer = Layer.getLayerFromName(label);
+
+					if (layer == Layer.VIA)
+					{
+						graphic = new ImageView(new Image("file:data/via.png", 16, 16, true, true)); // TODO consts
+					}
+					else if (layer == Layer.PIN)
+					{
+						graphic = new ImageView(new Image("file:data/pin.png", 16, 16, true, true));
+					}
+					else
+					{
+						graphic = new Rectangle(16, 16, Layer.getLayerFromName(label).getColor());
+					}
+
+					setGraphic(graphic);
 				}
 			}
 		});

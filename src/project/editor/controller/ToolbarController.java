@@ -4,14 +4,17 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import project.editor.control.SelectorControl;
 import project.editor.control.ToolbarControl;
+import project.editor.controller.CanvasController.CanvasMode;
 
 public class ToolbarController
 {
+	private EditorController editorController;
 	private ToolbarControl toolbarControl;
 
-	public ToolbarController()
+	public ToolbarController(final EditorController editorController)
 	{
 		toolbarControl = new ToolbarControl();
+		this.editorController = editorController;
 	}
 
 	public void createPartControl(final BorderPane root)
@@ -45,5 +48,17 @@ public class ToolbarController
 		// HELP
 
 		// ABOUT
+
+		// BUTTONS
+		toolbarControl.getToggleGroup().selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
+			if (newVal == toolbarControl.getBtnSelect())
+			{
+				editorController.getCanvasController().setCanvasMode(CanvasMode.SELECT);
+			}
+			else if (newVal == toolbarControl.getBtnDraw())
+			{
+				editorController.getCanvasController().setCanvasMode(CanvasMode.DRAW);
+			}
+		});
 	}
 }

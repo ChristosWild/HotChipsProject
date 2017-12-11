@@ -29,7 +29,7 @@ public class EditorController
 		editorInstanceCount++;
 		editorInstances.add(this);
 
-		toolbarController = new ToolbarController();
+		toolbarController = new ToolbarController(this);
 		canvasController = new CanvasController();
 
 		stage.focusedProperty().addListener((ov, oldVal, newVal) -> {
@@ -67,5 +67,10 @@ public class EditorController
 		stage.show();
 
 		SelectorControl.getInstance().show();
+	}
+
+	public CanvasController getCanvasController()
+	{
+		return canvasController;
 	}
 }
