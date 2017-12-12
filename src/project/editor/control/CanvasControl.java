@@ -1,6 +1,10 @@
 package project.editor.control;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
@@ -11,7 +15,9 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import project.editor.utils.EditorConstants;
+import project.editor.utils.LayerRectangle;
 
 public class CanvasControl
 {
@@ -79,5 +85,74 @@ public class CanvasControl
 	public Pane getSelectionPane()
 	{
 		return selectionLayer;
+	}
+
+	public void clearAll()
+	{
+		for (final Pane pane : canvasArray)
+		{
+			pane.getChildren().clear();
+		}
+	}
+
+	public void deleteSelected()
+	{
+		final List<LayerRectangle> toDelete = new ArrayList<LayerRectangle>();
+		for (final Pane pane : canvasArray)
+		{
+			for (final Node layerRect : pane.getChildren())
+			{
+				if (layerRect instanceof LayerRectangle && ((LayerRectangle) layerRect).isSelected())
+				{
+					toDelete.add((LayerRectangle) layerRect);
+				}
+			}
+			pane.getChildren().removeAll(toDelete);
+			toDelete.clear();
+		}
+
+	}
+
+	public void deselectAll()
+	{
+		for (final Pane pane : canvasArray)
+		{
+			for (final Node layerRect : pane.getChildren())
+			{
+				if (layerRect instanceof LayerRectangle)
+				{
+					((LayerRectangle) layerRect).setSelected(false);
+				}
+			}
+		}
+	}
+
+	public void selectSingle(final double x, final double y)
+	{
+		for (final Pane pane : canvasArray)
+		{
+			for (final Node layerRect : pane.getChildren())
+			{
+				if (layerRect instanceof LayerRectangle && ((LayerRectangle) layerRect).contains(x, y))
+				{
+					((LayerRectangle) layerRect).setSelected(true);
+				}
+			}
+		}
+	}
+
+	public void selectArea(final Rectangle area)
+	{
+		for (final Pane pane : canvasArray)
+		{
+			for (final Node layerRect : pane.getChildren())
+			{
+				if (layerRect instanceof LayerRectangle
+						&& area.contains(((LayerRectangle) layerRect).getX(), ((LayerRectangle) layerRect).getY()))
+				{
+					((LayerRectangle) layerRect).setSelected(true);
+				}
+			}
+		}
 	}
 }

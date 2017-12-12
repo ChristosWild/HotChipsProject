@@ -31,6 +31,7 @@ public interface EditorConstants
 	public static final String STRING_PIN = "Pin";
 	public static final String STRING_INVALID = "Invalid Layer";
 
+	public static final double COLOR_OPACITY = 0.5;
 	public static final Color COLOR_METAL_ONE = Color.RED;
 	public static final Color COLOR_METAL_TWO = Color.ORANGE;
 	public static final Color COLOR_METAL_THREE = Color.YELLOW;

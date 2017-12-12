@@ -14,6 +14,7 @@ import project.editor.utils.EditorConstants;
 import project.editor.utils.EditorUtils;
 import project.editor.utils.EditorUtils.Delta;
 import project.editor.utils.Layer;
+import project.editor.utils.LayerRectangle;
 
 public class CanvasController
 {
@@ -22,15 +23,17 @@ public class CanvasController
 		SELECT, DRAW;
 	}
 
+	private EditorController editorController;
 	private CanvasControl canvasControl;
 	private CanvasMode canvasMode;
 	private Pane selectedPane;
-	private Rectangle rectangle;
+	private LayerRectangle rectangle;
 	private Delta startPos;
 	private boolean isDragging;
 
-	public CanvasController()
+	public CanvasController(final EditorController editorController)
 	{
+		this.editorController = editorController;
 		canvasControl = new CanvasControl();
 		setCanvasMode(CanvasMode.SELECT);
 	}
@@ -51,7 +54,6 @@ public class CanvasController
 			startPos.x = event.getX();
 			startPos.y = event.getY();
 			EditorUtils.snapToGrid(startPos);
-			rectangle = new Rectangle(startPos.x, startPos.y, 0, 0);
 
 			Paint fill;
 
@@ -69,17 +71,17 @@ public class CanvasController
 				}
 				else
 				{
-					fill = Color.web(canvasControl.getCurrentPaneColor().toString(), 0.4);
+					fill = canvasControl.getCurrentPaneColor();
 				}
 
 			}
 			else// if (canvasMode == CanvasMode.SELECT)
 			{
 				selectedPane = canvasControl.getSelectionPane();
-				fill = Color.web(Color.GREY.toString(), 0.4);
+				fill = Color.web(Color.GREY.toString(), 0.4); // TODO pick colour
 			}
 
-			rectangle.setFill(fill);
+			rectangle = new LayerRectangle(startPos.x, startPos.y, 0, 0, fill);
 			selectedPane.getChildren().add(rectangle);
 		});
 
@@ -87,38 +89,34 @@ public class CanvasController
 
 			if (isDragging)
 			{
-				final Delta dragDelta = new Delta(event.getX() - startPos.x, event.getY() - startPos.y); // DONT MINUS BEFORE SNAPPING TO GRID
+				final Delta dragDelta = new Delta(event.getX(), event.getY());
 				EditorUtils.snapToGrid(dragDelta);
-				double width = dragDelta.x;
-				double height = dragDelta.y;
+				double width = dragDelta.x - startPos.x;
+				double height = dragDelta.y - startPos.y;
 
-				System.out.println(width + ", " + height);
-
-				if (width > 0)
+				if (width >= 0)
 				{
 					if (rectangle.getX() + width <= EditorConstants.CANVAS_WIDTH)
 					{
 						rectangle.setTranslateX(0);
 						rectangle.setWidth(width);
-						System.out.println("WIDTH CHANGED");
 					}
 				}
-				else if (rectangle.getX() + width > 0)
+				else if (rectangle.getX() + width >= 0)
 				{
 					rectangle.setTranslateX(width);
 					rectangle.setWidth(-width);
 				}
 
-				if (height > 0)
+				if (height >= 0)
 				{
 					if (rectangle.getY() + height <= EditorConstants.CANVAS_HEIGHT)
 					{
 						rectangle.setTranslateY(0);
 						rectangle.setHeight(height);
-						System.out.println("HEIGHT CHANGED");
 					}
 				}
-				else if (rectangle.getY() + height > 0)
+				else if (rectangle.getY() + height >= 0)
 				{
 					rectangle.setTranslateY(height);
 					rectangle.setHeight(-height);
@@ -131,27 +129,69 @@ public class CanvasController
 			final Delta endPos = new Delta(event.getX(), event.getY());
 			EditorUtils.snapToGrid(endPos);
 
-			// System.out.println(startPos.x + " : " + endPos.x);
-			// System.out.println(startPos.y + " : " + endPos.y + "\n");
-
-			if (endPos.x == startPos.x && endPos.y == startPos.y)
+			if (canvasMode == CanvasMode.DRAW && (rectangle.getWidth() == 0 || rectangle.getHeight() == 0))
 			{
-				System.out.println("NOT MOVED");
+				selectedPane.getChildren().remove(rectangle);
 			}
-
-			if (canvasMode == CanvasMode.SELECT)
+			else if (canvasMode == CanvasMode.SELECT)
 			{
-				// select here
+				if (startPos.x == endPos.x && startPos.y == endPos.y)
+				{
+					selectPoint(event.getX(), event.getY(), event.isControlDown());
+				}
+				else
+				{
+					selectArea(startPos.x, startPos.y, endPos.x, endPos.y, event.isControlDown());
+				}
+
 				selectedPane.getChildren().remove(rectangle);
 			}
 
 			isDragging = false;
 			rectangle = null;
+
+			editorController.getToolbarController().focusToolbarButton();
 		});
+	}
+
+	private void selectPoint(final double x, final double y, final boolean ctrlPressed)
+	{
+		if (!ctrlPressed)
+		{
+			canvasControl.deselectAll();
+		}
+		canvasControl.selectSingle(x, y);
+	}
+
+	private void selectArea(final double x1, final double y1, final double x2, final double y2,
+			final boolean ctrlPressed)
+	{
+		final double topLeftX = Math.min(x1, x2);
+		final double topLeftY = Math.min(y1, y2);
+		final double width = Math.abs(x1 - x2);
+		final double height = Math.abs(y1 - y2);
+
+		final Rectangle area = new Rectangle(topLeftX, topLeftY, width, height);
+
+		if (!ctrlPressed)
+		{
+			canvasControl.deselectAll();
+		}
+		canvasControl.selectArea(area);
 	}
 
 	public void setCanvasMode(final CanvasMode canvasMode)
 	{
 		this.canvasMode = canvasMode;
+	}
+
+	public void clearAll()
+	{
+		canvasControl.clearAll();
+	}
+
+	public void deleteSelected()
+	{
+		canvasControl.deleteSelected();
 	}
 }

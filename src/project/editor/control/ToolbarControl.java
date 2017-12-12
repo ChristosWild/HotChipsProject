@@ -1,5 +1,6 @@
 package project.editor.control;
 
+import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -66,6 +67,8 @@ public class ToolbarControl
 	private ToggleGroup toggleGroup;
 	private ToggleButton btnSelect;
 	private ToggleButton btnDraw;
+	private Button btnDelete;
+	private Button btnClearAll;
 
 	public void createPartControl(final BorderPane root)
 	{
@@ -117,7 +120,9 @@ public class ToolbarControl
 		btnDraw.setToggleGroup(toggleGroup);
 		btnSelect.setSelected(true);
 
-		toolbar.getItems().addAll(new Separator(), btnSelect, btnDraw, new Separator());
+		btnDelete = new Button("Delete");
+		btnClearAll = new Button("Clear");
+		toolbar.getItems().addAll(new Separator(), btnSelect, btnDraw, new Separator(), btnDelete, btnClearAll);
 
 		root.setTop(menus);
 	}
@@ -215,5 +220,15 @@ public class ToolbarControl
 	public ToggleGroup getToggleGroup()
 	{
 		return toggleGroup;
+	}
+
+	public Button getBtnDelete()
+	{
+		return btnDelete;
+	}
+
+	public Button getBtnClearAll()
+	{
+		return btnClearAll;
 	}
 }

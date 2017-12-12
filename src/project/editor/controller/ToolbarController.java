@@ -1,5 +1,6 @@
 package project.editor.controller;
 
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import project.editor.control.SelectorControl;
@@ -51,7 +52,12 @@ public class ToolbarController
 
 		// BUTTONS
 		toolbarControl.getToggleGroup().selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
-			if (newVal == toolbarControl.getBtnSelect())
+
+			if (newVal == null)
+			{
+				oldVal.setSelected(true);
+			}
+			else if (newVal == toolbarControl.getBtnSelect())
 			{
 				editorController.getCanvasController().setCanvasMode(CanvasMode.SELECT);
 			}
@@ -60,5 +66,18 @@ public class ToolbarController
 				editorController.getCanvasController().setCanvasMode(CanvasMode.DRAW);
 			}
 		});
+
+		toolbarControl.getBtnDelete().setOnAction(evet -> {
+			editorController.getCanvasController().deleteSelected();
+		});
+
+		toolbarControl.getBtnClearAll().setOnAction(evet -> {
+			editorController.getCanvasController().clearAll();
+		});
+	}
+
+	public void focusToolbarButton() // TODO temp fix for weird not drawing bug 1x1 rectangles not appearing until something else focused
+	{
+		((ToggleButton) toolbarControl.getToggleGroup().getSelectedToggle()).requestFocus();
 	}
 }
