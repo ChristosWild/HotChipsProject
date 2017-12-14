@@ -21,7 +21,7 @@ public class EditorUtils
 		}
 	}
 
-	public static void makeWindowDraggableByNode(final Window window, final Node node) // TODO needed as a util method?
+	public static void makeWindowDraggableByNode(final Window window, final Node node)
 	{
 		final Delta delta = new Delta();
 

@@ -34,6 +34,8 @@ public class CanvasControl
 	private Pane[] canvasArray;
 	private Pane selectionLayer;
 
+	private List<LayerRectangle> selectedObjects = new ArrayList<LayerRectangle>();
+
 	public void createPartControl(final BorderPane root)
 	{
 		final Group canvasGroup = new Group();
@@ -41,7 +43,7 @@ public class CanvasControl
 
 		final Pane gridLayer = new Pane();
 		gridLayer.setBackground(new Background(new BackgroundImage(
-				new Image(EditorConstants.FILE_PATH_DATA + EditorConstants.IMG_PATH_GRID), BackgroundRepeat.REPEAT,
+				new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_GRID), BackgroundRepeat.REPEAT,
 				BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)));
 		gridLayer.setPrefSize(EditorConstants.CANVAS_WIDTH, EditorConstants.CANVAS_HEIGHT);
 
@@ -89,6 +91,7 @@ public class CanvasControl
 
 	public void clearAll()
 	{
+		deselectAll();
 		for (final Pane pane : canvasArray)
 		{
 			pane.getChildren().clear();
@@ -108,13 +111,15 @@ public class CanvasControl
 				}
 			}
 			pane.getChildren().removeAll(toDelete);
+			selectedObjects.removeAll(toDelete);
 			toDelete.clear();
 		}
 
 	}
 
-	public void deselectAll()
+	public void deselectAll() // TODO iterate through list rather than every pane, then clear list
 	{
+		selectedObjects.clear();
 		for (final Pane pane : canvasArray)
 		{
 			for (final Node layerRect : pane.getChildren())
@@ -133,9 +138,11 @@ public class CanvasControl
 		{
 			for (final Node layerRect : pane.getChildren())
 			{
-				if (layerRect instanceof LayerRectangle && ((LayerRectangle) layerRect).contains(x, y))
+				if (layerRect instanceof LayerRectangle
+						&& ((LayerRectangle) layerRect).getBoundsInParent().contains(x, y))
 				{
 					((LayerRectangle) layerRect).setSelected(true);
+					selectedObjects.add((LayerRectangle) layerRect);
 				}
 			}
 		}
@@ -148,11 +155,18 @@ public class CanvasControl
 			for (final Node layerRect : pane.getChildren())
 			{
 				if (layerRect instanceof LayerRectangle
-						&& area.contains(((LayerRectangle) layerRect).getX(), ((LayerRectangle) layerRect).getY()))
+						&& area.contains(((LayerRectangle) layerRect).getBoundsInParent().getMinX(),
+								((LayerRectangle) layerRect).getBoundsInParent().getMinY()))
 				{
 					((LayerRectangle) layerRect).setSelected(true);
+					selectedObjects.add((LayerRectangle) layerRect);
 				}
 			}
 		}
+	}
+
+	public List<LayerRectangle> getSelectedObjects()
+	{
+		return selectedObjects;
 	}
 }

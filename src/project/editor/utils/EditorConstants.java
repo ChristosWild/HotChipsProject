@@ -32,6 +32,8 @@ public interface EditorConstants
 	public static final String STRING_INVALID = "Invalid Layer";
 
 	public static final double COLOR_OPACITY = 0.5;
+	public static final double COLOR_OPACITY_SELECTED = 0.8;
+
 	public static final Color COLOR_METAL_ONE = Color.RED;
 	public static final Color COLOR_METAL_TWO = Color.ORANGE;
 	public static final Color COLOR_METAL_THREE = Color.YELLOW;
@@ -44,19 +46,16 @@ public interface EditorConstants
 	public static final Color COLOR_PIN = Color.TRANSPARENT; // Uses image instead
 	public static final Color COLOR_INVALID = Color.TRANSPARENT;
 
-	public static final String FILE_PATH_DATA = "file:data/";
-	public static final String FILE_PATH_SRC = "file:src/";
-	// public static final String IMG_PATH_METAL_ONE = "metal_one.png";
-	// public static final String IMG_PATH_METAL_TWO = "metal_two.png";
-	// public static final String IMG_PATH_METAL_THREE = "metal_three.png";
-	// public static final String IMG_PATH_METAL_FOUR = "metal_four.png";
-	// public static final String IMG_PATH_METAL_FIVE = "metal_five.png";
-	// public static final String IMG_PATH_DIFFUSION_N = "diffusion_n.png";
-	// public static final String IMG_PATH_DIFFUSION_P = "diffusion_p.png";
-	// public static final String IMG_PATH_POLYSILICON = "polysilicon.png";
-	public static final String IMG_PATH_VIA = "via.png";
-	public static final String IMG_PATH_PIN = "pin.png";
-	public static final String IMG_PATH_VIA_16 = "via16.png";
-	public static final String IMG_PATH_PIN_16 = "pin16.png";
-	public static final String IMG_PATH_GRID = "grid.png";
+	public static final String PATH_FILE_DATA = "file:data/";
+	public static final String PATH_FILE_SRC = "file:src/";
+
+	public static final String PATH_IMG_VIA = "via.png";
+	public static final String PATH_IMG_VIA_SELECTED = "via_selected.png";
+	public static final String PATH_IMG_VIA_16 = "via_16.png";
+	public static final String PATH_IMG_PIN = "pin.png";
+	public static final String PATH_IMG_PIN_SELECTED = "pin_selected.png";
+	public static final String PATH_IMG_PIN_16 = "pin_16.png";
+	public static final String PATH_IMG_GRID = "grid.png";
+
+	public static final String PATH_CSS_MAIN = "project/application/Main.css";
 }

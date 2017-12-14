@@ -17,6 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import project.editor.utils.EditorConstants;
 import project.editor.utils.EditorUtils;
 import project.editor.utils.Layer;
 
@@ -71,7 +72,7 @@ public final class SelectorControl
 		content.getChildren().addAll(topBar, layerList);
 		content.setPrefSize(POPUP_WIDTH, -1);
 
-		content.getStylesheets().add("file:src/project/application/Main.css"); // TODO const
+		content.getStylesheets().add(EditorConstants.PATH_FILE_SRC + EditorConstants.PATH_CSS_MAIN);
 		content.getStyleClass().add("selector-popup");
 
 		popup.getContent().add(content);
@@ -134,11 +135,11 @@ public final class SelectorControl
 
 					if (layer == Layer.VIA)
 					{
-						graphic = new ImageView(new Image("file:data/via.png", 16, 16, true, true)); // TODO consts
+						graphic = new ImageView(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_VIA_16)); // TODO new image every time
 					}
 					else if (layer == Layer.PIN)
 					{
-						graphic = new ImageView(new Image("file:data/pin.png", 16, 16, true, true));
+						graphic = new ImageView(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_PIN_16));
 					}
 					else
 					{

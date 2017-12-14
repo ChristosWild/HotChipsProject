@@ -30,6 +30,8 @@ public class CanvasController
 	private LayerRectangle rectangle;
 	private Delta startPos;
 	private boolean isDragging;
+	private boolean isSelected;
+	private boolean isMoving;
 
 	public CanvasController(final EditorController editorController)
 	{
@@ -55,19 +57,24 @@ public class CanvasController
 			startPos.y = event.getY();
 			EditorUtils.snapToGrid(startPos);
 
-			Paint fill;
+			Paint fill = null;
+			Paint fillSelected = null;
 
 			if (canvasMode == CanvasMode.DRAW)
 			{
+				canvasControl.deselectAll();
+
 				selectedPane = canvasControl.getCurrentPane();
 
 				if (SelectorControl.getInstance().getSelectedLayer() == Layer.VIA)
 				{
-					fill = new ImagePattern(new Image("file:data/via.png")); // TODO creates new images every time
+					fill = new ImagePattern(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_VIA)); // TODO creates new images every time
+					fillSelected = new ImagePattern(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_VIA_SELECTED));
 				}
 				else if (SelectorControl.getInstance().getSelectedLayer() == Layer.PIN)
 				{
-					fill = new ImagePattern(new Image("file:data/pin.png"));
+					fill = new ImagePattern(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_PIN));
+					fillSelected = new ImagePattern(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_PIN_SELECTED));
 				}
 				else
 				{
@@ -75,13 +82,23 @@ public class CanvasController
 				}
 
 			}
-			else// if (canvasMode == CanvasMode.SELECT)
+			else // SELECT
 			{
 				selectedPane = canvasControl.getSelectionPane();
-				fill = Color.web(Color.GREY.toString(), 0.4); // TODO pick colour
+				fill = Color.web(Color.GREY.toString(), 0.4); // TODO pick selection box colour
+
+				isSelected = canvasControl.getSelectedObjects().size() > 0;
+				isMoving = isSelected && selectedContainsMouse(event);
 			}
 
-			rectangle = new LayerRectangle(startPos.x, startPos.y, 0, 0, fill);
+			if(fill instanceof Color)
+			{
+				rectangle = new LayerRectangle(startPos.x, startPos.y, 0, 0, (Color) fill);
+			}
+			else
+			{
+				rectangle = new LayerRectangle(startPos.x, startPos.y, 0, 0, fill, fillSelected);
+			}
 			selectedPane.getChildren().add(rectangle);
 		});
 
@@ -89,37 +106,47 @@ public class CanvasController
 
 			if (isDragging)
 			{
-				final Delta dragDelta = new Delta(event.getX(), event.getY());
-				EditorUtils.snapToGrid(dragDelta);
-				double width = dragDelta.x - startPos.x;
-				double height = dragDelta.y - startPos.y;
-
-				if (width >= 0)
+				if (isMoving)
 				{
-					if (rectangle.getX() + width <= EditorConstants.CANVAS_WIDTH)
+					for (final LayerRectangle layerRect : canvasControl.getSelectedObjects())
 					{
-						rectangle.setTranslateX(0);
-						rectangle.setWidth(width);
+						// TODO
 					}
 				}
-				else if (rectangle.getX() + width >= 0)
+				else
 				{
-					rectangle.setTranslateX(width);
-					rectangle.setWidth(-width);
-				}
+					final Delta dragDelta = new Delta(event.getX(), event.getY());
+					EditorUtils.snapToGrid(dragDelta);
+					double width = dragDelta.x - startPos.x;
+					double height = dragDelta.y - startPos.y;
 
-				if (height >= 0)
-				{
-					if (rectangle.getY() + height <= EditorConstants.CANVAS_HEIGHT)
+					if (width >= 0)
 					{
-						rectangle.setTranslateY(0);
-						rectangle.setHeight(height);
+						if (rectangle.getX() + width <= EditorConstants.CANVAS_WIDTH)
+						{
+							rectangle.setTranslateX(0);
+							rectangle.setWidth(width);
+						}
 					}
-				}
-				else if (rectangle.getY() + height >= 0)
-				{
-					rectangle.setTranslateY(height);
-					rectangle.setHeight(-height);
+					else if (rectangle.getX() + width >= 0)
+					{
+						rectangle.setTranslateX(width);
+						rectangle.setWidth(-width);
+					}
+
+					if (height >= 0)
+					{
+						if (rectangle.getY() + height <= EditorConstants.CANVAS_HEIGHT)
+						{
+							rectangle.setTranslateY(0);// TODO change to layout
+							rectangle.setHeight(height);
+						}
+					}
+					else if (rectangle.getY() + height >= 0)
+					{
+						rectangle.setTranslateY(height);
+						rectangle.setHeight(-height);
+					}
 				}
 			}
 		});
@@ -135,17 +162,30 @@ public class CanvasController
 			}
 			else if (canvasMode == CanvasMode.SELECT)
 			{
-				if (startPos.x == endPos.x && startPos.y == endPos.y)
+				if (isMoving)
 				{
-					selectPoint(event.getX(), event.getY(), event.isControlDown());
+					// System.out.println("set latest [moving]");
+					//					rectangle.setLatestPosition();
 				}
 				else
 				{
-					selectArea(startPos.x, startPos.y, endPos.x, endPos.y, event.isControlDown());
-				}
+					if (startPos.x == endPos.x && startPos.y == endPos.y)
+					{
+						selectPoint(event.getX(), event.getY(), event.isControlDown());
+					}
+					else
+					{
+						selectArea(startPos.x, startPos.y, endPos.x, endPos.y, event.isControlDown());
+					}
 
-				selectedPane.getChildren().remove(rectangle);
+					selectedPane.getChildren().remove(rectangle);
+				}
 			}
+			//			else
+			//			{
+			//				// System.out.println("set latest [else]");
+			//				rectangle.setLatestPosition();
+			//			}
 
 			isDragging = false;
 			rectangle = null;
@@ -178,6 +218,18 @@ public class CanvasController
 			canvasControl.deselectAll();
 		}
 		canvasControl.selectArea(area);
+	}
+
+	private boolean selectedContainsMouse(final MouseEvent event)
+	{
+		for (final LayerRectangle layerRect : canvasControl.getSelectedObjects())
+		{
+			if (layerRect.getBoundsInParent().contains(event.getX(), event.getY()))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void setCanvasMode(final CanvasMode canvasMode)
