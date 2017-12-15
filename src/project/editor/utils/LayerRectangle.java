@@ -51,7 +51,7 @@ public class LayerRectangle extends Rectangle
 	public LayerRectangle clone()
 	{
 		final LayerRectangle newLayerRect = new LayerRectangle(this.getX(), this.getY(), this.getWidth(), this.getHeight(), fill,
-				fillSelected); // TODO check if x and y are correct after dragging and moving
+				fillSelected);
 		newLayerRect.parentPane = this.parentPane == null ? (Pane) this.getParent() : parentPane;
 		newLayerRect.setSelected(true);
 		newLayerRect.offset = new Delta(this.offset.x, this.offset.y);
