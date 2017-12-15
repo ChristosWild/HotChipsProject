@@ -46,9 +46,20 @@ public class ToolbarController
 			SelectorControl.getInstance().updateOwner((Stage) toolbarControl.getRoot().getScene().getWindow(), true);
 		});
 
-		// HELP
+		// EDIT
+		toolbarControl.getMenuItemCut().setOnAction(event -> {
+			editorController.getCanvasController().cut();
+		});
 
-		// ABOUT
+		toolbarControl.getMenuItemCopy().setOnAction(event -> {
+			editorController.getCanvasController().copy();
+		});
+
+		toolbarControl.getMenuItemPaste().setOnAction(event -> {
+			editorController.getCanvasController().paste();
+		});
+
+		// HELP
 
 		// BUTTONS
 		toolbarControl.getToggleGroup().selectedToggleProperty().addListener((obs, oldVal, newVal) -> {

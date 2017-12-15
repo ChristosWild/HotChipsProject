@@ -42,7 +42,7 @@ public final class SelectorControl
 	private boolean isUICreated = false;
 	private boolean isMeantToBeVisible = true;
 
-	// Prevents external instantiation
+	// Singleton class - Prevents external instantiation
 	private SelectorControl()
 	{
 	}
@@ -83,7 +83,8 @@ public final class SelectorControl
 	private void initialiseTopBar(final GridPane topBar)
 	{
 		final Label lblTitle = new Label(LBL_SELECT_LAYER);
-		final Button btnClose = new Button("x");// null, new ImageView(new Image("file:data/Untitled.png")));
+		final Button btnClose = new Button("x");// TODO close button image
+		// null, new ImageView(new Image("file:data/Untitled.png")));
 
 		btnClose.setOnAction(event -> {
 			hide();
@@ -135,7 +136,7 @@ public final class SelectorControl
 
 					if (layer == Layer.VIA)
 					{
-						graphic = new ImageView(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_VIA_16)); // TODO new image every time
+						graphic = new ImageView(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_VIA_16));
 					}
 					else if (layer == Layer.PIN)
 					{

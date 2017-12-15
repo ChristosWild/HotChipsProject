@@ -15,7 +15,7 @@ public class EditorController
 
 	private static final String EDITOR_TITLE = "VLSI Editor";
 	private static final int EDITOR_WIDTH = 900;
-	private static final int EDITOR_HEIGHT = 600;
+	private static final int EDITOR_HEIGHT = 600 / 2;
 
 	private Stage stage;
 	private BorderPane root;

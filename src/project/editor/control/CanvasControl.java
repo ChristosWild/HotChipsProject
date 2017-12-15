@@ -165,6 +165,11 @@ public class CanvasControl
 		}
 	}
 
+	public void addSelectedObject(final LayerRectangle selectedObject)
+	{
+		selectedObjects.add(selectedObject);
+	}
+
 	public List<LayerRectangle> getSelectedObjects()
 	{
 		return selectedObjects;

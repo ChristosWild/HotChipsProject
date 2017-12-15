@@ -1,5 +1,7 @@
 package project.editor.controller;
 
+import java.util.List;
+
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -63,6 +65,8 @@ public class CanvasController
 			if (canvasMode == CanvasMode.DRAW)
 			{
 				canvasControl.deselectAll();
+				isSelected = false;
+				isMoving = false;
 
 				selectedPane = canvasControl.getCurrentPane();
 
@@ -106,20 +110,21 @@ public class CanvasController
 
 			if (isDragging)
 			{
+				final Delta dragDelta = new Delta(event.getX(), event.getY());
+				EditorUtils.snapToGrid(dragDelta);
+				double width = dragDelta.x - startPos.x;
+				double height = dragDelta.y - startPos.y;
+
 				if (isMoving)
 				{
 					for (final LayerRectangle layerRect : canvasControl.getSelectedObjects())
 					{
-						// TODO
+						layerRect.setTranslateX(layerRect.getOffset().x + (dragDelta.x - startPos.x));
+						layerRect.setTranslateY(layerRect.getOffset().y + (dragDelta.y - startPos.y));
 					}
 				}
 				else
 				{
-					final Delta dragDelta = new Delta(event.getX(), event.getY());
-					EditorUtils.snapToGrid(dragDelta);
-					double width = dragDelta.x - startPos.x;
-					double height = dragDelta.y - startPos.y;
-
 					if (width >= 0)
 					{
 						if (rectangle.getX() + width <= EditorConstants.CANVAS_WIDTH)
@@ -138,7 +143,7 @@ public class CanvasController
 					{
 						if (rectangle.getY() + height <= EditorConstants.CANVAS_HEIGHT)
 						{
-							rectangle.setTranslateY(0);// TODO change to layout
+							rectangle.setTranslateY(0);
 							rectangle.setHeight(height);
 						}
 					}
@@ -156,18 +161,21 @@ public class CanvasController
 			final Delta endPos = new Delta(event.getX(), event.getY());
 			EditorUtils.snapToGrid(endPos);
 
-			if (canvasMode == CanvasMode.DRAW && (rectangle.getWidth() == 0 || rectangle.getHeight() == 0))
+			if (canvasMode != CanvasMode.DRAW)
+			{
+				for (final LayerRectangle layerRect : canvasControl.getSelectedObjects()) // ONLY IF NOT FIRST TIME
+				{
+					layerRect.setOffset(layerRect.getTranslateX(), layerRect.getTranslateY());
+				}
+			}
+
+			if (canvasMode == CanvasMode.DRAW && ((rectangle.getWidth() == 0 || rectangle.getHeight() == 0)))
 			{
 				selectedPane.getChildren().remove(rectangle);
 			}
 			else if (canvasMode == CanvasMode.SELECT)
 			{
-				if (isMoving)
-				{
-					// System.out.println("set latest [moving]");
-					//					rectangle.setLatestPosition();
-				}
-				else
+				if (!isMoving || event.isControlDown())
 				{
 					if (startPos.x == endPos.x && startPos.y == endPos.y)
 					{
@@ -181,11 +189,6 @@ public class CanvasController
 					selectedPane.getChildren().remove(rectangle);
 				}
 			}
-			//			else
-			//			{
-			//				// System.out.println("set latest [else]");
-			//				rectangle.setLatestPosition();
-			//			}
 
 			isDragging = false;
 			rectangle = null;
@@ -245,5 +248,30 @@ public class CanvasController
 	public void deleteSelected()
 	{
 		canvasControl.deleteSelected();
+	}
+
+	public void cut()
+	{
+		copy();
+		deleteSelected();
+	}
+
+	public void copy()
+	{
+		ClipboardController.getInstance().setCurrentItems(canvasControl.getSelectedObjects());
+	}
+
+	public void paste()
+	{
+		canvasControl.deselectAll();
+
+		final List<LayerRectangle> rectsToPaste = ClipboardController.getInstance().getCurrentItems();
+		for (final LayerRectangle layerRect : rectsToPaste)
+		{
+			final LayerRectangle clonedRect = layerRect.clone();
+			clonedRect.getParentPane().getChildren().add(clonedRect);
+			canvasControl.addSelectedObject(clonedRect);
+		}
+		isSelected = rectsToPaste.size() > 0 ? true : isSelected;
 	}
 }

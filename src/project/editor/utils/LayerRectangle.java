@@ -2,6 +2,7 @@ package project.editor.utils;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -9,10 +10,11 @@ import project.editor.utils.EditorUtils.Delta;
 
 public class LayerRectangle extends Rectangle
 {
+	private Pane parentPane;
 	private BooleanProperty isSelected;
 	private final Paint fill;
 	private final Paint fillSelected;
-	private Delta latestPosition;
+	private Delta offset;
 
 	public LayerRectangle(final double x, final double y, final double width, final double height, final Paint fill,
 			final Paint fillSelected)
@@ -36,13 +38,27 @@ public class LayerRectangle extends Rectangle
 			}
 		});
 
-		latestPosition = new Delta(x, y);
+		offset = new Delta(0, 0);
 	}
 
 	public LayerRectangle(final double x, final double y, final double width, final double height, final Color color)
 	{
 		this(x, y, width, height, Color.web(color.toString(), EditorConstants.COLOR_OPACITY),
 				Color.web(color.toString(), EditorConstants.COLOR_OPACITY_SELECTED));
+	}
+
+	@Override
+	public LayerRectangle clone()
+	{
+		final LayerRectangle newLayerRect = new LayerRectangle(this.getX(), this.getY(), this.getWidth(), this.getHeight(), fill,
+				fillSelected); // TODO check if x and y are correct after dragging and moving
+		newLayerRect.parentPane = this.parentPane == null ? (Pane) this.getParent() : parentPane;
+		newLayerRect.setSelected(true);
+		newLayerRect.offset = new Delta(this.offset.x, this.offset.y);
+		newLayerRect.setTranslateX(newLayerRect.offset.x);
+		newLayerRect.setTranslateY(newLayerRect.offset.y);
+
+		return newLayerRect;
 	}
 
 	public boolean isSelected()
@@ -60,17 +76,19 @@ public class LayerRectangle extends Rectangle
 		return isSelected;
 	}
 
-	public void setLatestPosition()
+	public void setOffset(final double x, final double y)
 	{
-		latestPosition.x = this.getBoundsInParent().getMinX();
-		latestPosition.y = this.getBoundsInParent().getMinY();
-
-		System.out.println(latestPosition.x);
-		System.out.println(latestPosition.y);
+		offset.x = x;
+		offset.y = y;
 	}
 
-	public Delta getLatestPosition()
+	public Delta getOffset()
 	{
-		return latestPosition;
+		return offset;
+	}
+
+	public Pane getParentPane()
+	{
+		return parentPane;
 	}
 }
