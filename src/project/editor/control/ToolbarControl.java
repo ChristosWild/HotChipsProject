@@ -18,6 +18,8 @@ public class ToolbarControl
 	private static final String LBL_MENU_FILE = "File";
 	private static final String LBL_SUBMENU_NEW = "New";
 	private static final String LBL_SUBMENU_OPEN = "Open";
+	private static final String LBL_SUBMENU_SAVE = "Save";
+	private static final String LBL_SUBMENU_SAVE_AS = "Save As";
 	private static final String LBL_SUBMENU_CLOSE = "Close";
 
 	private static final String LBL_MENU_VIEW = "View";
@@ -33,6 +35,7 @@ public class ToolbarControl
 	private static final String LBL_SUBMENU_CUT = "Cut";
 	private static final String LBL_SUBMENU_COPY = "Copy";
 	private static final String LBL_SUBMENU_PASTE = "Paste";
+	private static final String LBL_SUBMENU_TECHNOLOGY_FILE = "Technology File";
 
 	private static final String LBL_MENU_HELP = "Help";
 	private static final String LBL_SUBMENU_ABOUT = "About";
@@ -43,6 +46,8 @@ public class ToolbarControl
 	// FILE
 	private MenuItem menuItemNew;
 	private MenuItem menuItemOpen;
+	private MenuItem menuItemSave;
+	private MenuItem menuItemSaveAs;
 	private MenuItem menuItemClose;
 
 	// VIEW
@@ -58,6 +63,7 @@ public class ToolbarControl
 	private MenuItem menuItemCut;
 	private MenuItem menuItemCopy;
 	private MenuItem menuItemPaste;
+	private MenuItem menuItemTechnologyFile;
 
 	// HELP
 	private MenuItem menuItemHelp;
@@ -82,8 +88,10 @@ public class ToolbarControl
 		final Menu menuFile = new Menu(LBL_MENU_FILE);
 		menuItemNew = new MenuItem(LBL_SUBMENU_NEW);
 		menuItemOpen = new MenuItem(LBL_SUBMENU_OPEN);
+		menuItemSave = new MenuItem(LBL_SUBMENU_SAVE);
+		menuItemSaveAs = new MenuItem(LBL_SUBMENU_SAVE_AS);
 		menuItemClose = new MenuItem(LBL_SUBMENU_CLOSE);
-		menuFile.getItems().addAll(menuItemNew, menuItemOpen, menuItemClose);
+		menuFile.getItems().addAll(menuItemNew, menuItemOpen, menuItemSave, menuItemSaveAs, menuItemClose);
 
 		// VIEW
 		final Menu menuView = new Menu(LBL_MENU_VIEW);
@@ -102,7 +110,9 @@ public class ToolbarControl
 		menuItemCut = new MenuItem(LBL_SUBMENU_CUT);
 		menuItemCopy = new MenuItem(LBL_SUBMENU_COPY);
 		menuItemPaste = new MenuItem(LBL_SUBMENU_PASTE);
-		menuEdit.getItems().addAll(menuItemUndo, menuItemRedo, menuItemCut, menuItemCopy, menuItemPaste);
+		menuItemTechnologyFile = new MenuItem(LBL_SUBMENU_TECHNOLOGY_FILE);
+		menuEdit.getItems().addAll(menuItemUndo, menuItemRedo, menuItemCut, menuItemCopy, menuItemPaste,
+				menuItemTechnologyFile);
 
 		// HELP
 		final Menu menuHelp = new Menu(LBL_MENU_HELP);
@@ -140,6 +150,16 @@ public class ToolbarControl
 	public MenuItem getMenuItemOpen()
 	{
 		return menuItemOpen;
+	}
+
+	public MenuItem getMenuItemSave()
+	{
+		return menuItemSave;
+	}
+
+	public MenuItem getMenuItemSaveAs()
+	{
+		return menuItemSaveAs;
 	}
 
 	public MenuItem getMenuItemClose()
@@ -195,6 +215,11 @@ public class ToolbarControl
 	public MenuItem getMenuItemPaste()
 	{
 		return menuItemPaste;
+	}
+
+	public MenuItem getMenuItemTechnologyFile()
+	{
+		return menuItemTechnologyFile;
 	}
 
 	public MenuItem getMenuItemHelp()

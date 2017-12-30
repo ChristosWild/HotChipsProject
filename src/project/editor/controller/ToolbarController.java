@@ -4,8 +4,10 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import project.editor.control.SelectorControl;
+import project.editor.control.TechnologyControl;
 import project.editor.control.ToolbarControl;
 import project.editor.controller.CanvasController.CanvasMode;
+import project.editor.utils.FileUtil;
 
 public class ToolbarController
 {
@@ -33,12 +35,18 @@ public class ToolbarController
 		});
 
 		toolbarControl.getMenuItemOpen().setOnAction(event -> {
-
+			FileUtil.openFile(editorController, toolbarControl.getRoot().getScene().getWindow());
 		});
 
-		toolbarControl.getMenuItemClose().setOnAction(event -> {
-			toolbarControl.getRoot().getScene().getWindow().hide();
+		toolbarControl.getMenuItemSave().setOnAction(event -> {
+			FileUtil.saveFile(editorController, toolbarControl.getRoot().getScene().getWindow());
 		});
+
+		toolbarControl.getMenuItemSaveAs().setOnAction(event -> {
+			FileUtil.saveFileAs(editorController, toolbarControl.getRoot().getScene().getWindow());
+		});
+
+		toolbarControl.getMenuItemClose().setOnAction(event -> toolbarControl.getRoot().getScene().getWindow().hide());
 
 		// VIEW
 		toolbarControl.getMenuItemShowToolbar().setOnAction(event -> {
@@ -46,18 +54,15 @@ public class ToolbarController
 			SelectorControl.getInstance().updateOwner((Stage) toolbarControl.getRoot().getScene().getWindow(), true);
 		});
 
+		toolbarControl.getMenuItemZoomIn().setOnAction(event -> editorController.getCanvasController().zoomIn());
+		toolbarControl.getMenuItemZoomOut().setOnAction(event -> editorController.getCanvasController().zoomOut());
+		toolbarControl.getMenuItemZoomReset().setOnAction(event -> editorController.getCanvasController().zoomReset());
+
 		// EDIT
-		toolbarControl.getMenuItemCut().setOnAction(event -> {
-			editorController.getCanvasController().cut();
-		});
-
-		toolbarControl.getMenuItemCopy().setOnAction(event -> {
-			editorController.getCanvasController().copy();
-		});
-
-		toolbarControl.getMenuItemPaste().setOnAction(event -> {
-			editorController.getCanvasController().paste();
-		});
+		toolbarControl.getMenuItemCut().setOnAction(event -> editorController.getCanvasController().cut());
+		toolbarControl.getMenuItemCopy().setOnAction(event -> editorController.getCanvasController().copy());
+		toolbarControl.getMenuItemPaste().setOnAction(event -> editorController.getCanvasController().paste());
+		toolbarControl.getMenuItemTechnologyFile().setOnAction(event -> TechnologyControl.getInstance().show());
 
 		// HELP
 
@@ -78,16 +83,11 @@ public class ToolbarController
 			}
 		});
 
-		toolbarControl.getBtnDelete().setOnAction(evet -> {
-			editorController.getCanvasController().deleteSelected();
-		});
-
-		toolbarControl.getBtnClearAll().setOnAction(evet -> {
-			editorController.getCanvasController().clearAll();
-		});
+		toolbarControl.getBtnDelete().setOnAction(evet -> editorController.getCanvasController().deleteSelected());
+		toolbarControl.getBtnClearAll().setOnAction(evet -> editorController.getCanvasController().clearAll());
 	}
 
-	public void focusToolbarButton() // TODO temp fix for weird not drawing bug 1x1 rectangles not appearing until something else focused
+	public void focusToolbarButton() // TODO temp fix for bug where 1x1 rectangles not appearing until something else focused
 	{
 		((ToggleButton) toolbarControl.getToggleGroup().getSelectedToggle()).requestFocus();
 	}

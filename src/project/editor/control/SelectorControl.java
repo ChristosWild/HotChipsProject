@@ -27,14 +27,14 @@ import project.editor.utils.Layer;
  * @author Christos
  *
  */
-public final class SelectorControl
+public class SelectorControl
 {
 	private static SelectorControl instance;
 
 	private static final String LBL_SELECT_LAYER = "Select a layer:";
 	private static final int POPUP_WIDTH = 150;
 	private static final int POPUP_OFFSET_X = -30;
-	private static final int POPUP_OFFSET_Y = 62;
+	private static final int POPUP_OFFSET_Y = 62 + 35;
 
 	private Popup popup;
 	private Stage stage;

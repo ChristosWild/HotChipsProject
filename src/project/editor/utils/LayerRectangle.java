@@ -2,7 +2,6 @@ package project.editor.utils;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -10,19 +9,20 @@ import project.editor.utils.EditorUtils.Delta;
 
 public class LayerRectangle extends Rectangle
 {
-	private Pane parentPane;
+	private Layer layer;
 	private BooleanProperty isSelected;
 	private final Paint fill;
 	private final Paint fillSelected;
 	private Delta offset;
 
 	public LayerRectangle(final double x, final double y, final double width, final double height, final Paint fill,
-			final Paint fillSelected)
+			final Paint fillSelected, final Layer layer)
 	{
 		super(x, y, width, height);
 
 		this.fill = fill;
 		this.fillSelected = fillSelected;
+		this.layer = layer;
 
 		setFill(this.fill);
 
@@ -41,18 +41,18 @@ public class LayerRectangle extends Rectangle
 		offset = new Delta(0, 0);
 	}
 
-	public LayerRectangle(final double x, final double y, final double width, final double height, final Color color)
+	public LayerRectangle(final double x, final double y, final double width, final double height, final Color color,
+			final Layer layer)
 	{
 		this(x, y, width, height, Color.web(color.toString(), EditorConstants.COLOR_OPACITY),
-				Color.web(color.toString(), EditorConstants.COLOR_OPACITY_SELECTED));
+				Color.web(color.toString(), EditorConstants.COLOR_OPACITY_SELECTED), layer);
 	}
 
 	@Override
 	public LayerRectangle clone()
 	{
 		final LayerRectangle newLayerRect = new LayerRectangle(this.getX(), this.getY(), this.getWidth(), this.getHeight(), fill,
-				fillSelected);
-		newLayerRect.parentPane = this.parentPane == null ? (Pane) this.getParent() : parentPane;
+				fillSelected, layer);
 		newLayerRect.setSelected(true);
 		newLayerRect.offset = new Delta(this.offset.x, this.offset.y);
 		newLayerRect.setTranslateX(newLayerRect.offset.x);
@@ -87,8 +87,8 @@ public class LayerRectangle extends Rectangle
 		return offset;
 	}
 
-	public Pane getParentPane()
+	public Layer getLayer()
 	{
-		return parentPane;
+		return layer;
 	}
 }

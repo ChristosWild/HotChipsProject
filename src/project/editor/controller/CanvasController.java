@@ -25,15 +25,27 @@ public class CanvasController
 		SELECT, DRAW;
 	}
 
+	private static final double ZOOM_INCREMENT = 1.2;
+
 	private EditorController editorController;
 	private CanvasControl canvasControl;
+
 	private CanvasMode canvasMode;
+	private Layer layer;
 	private Pane selectedPane;
 	private LayerRectangle rectangle;
+
 	private Delta startPos;
 	private boolean isDragging;
 	private boolean isSelected;
 	private boolean isMoving;
+
+	private double minSelectedX;
+	private double minSelectedY;
+	private double maxSelectedX;
+	private double maxSelectedY;
+
+	private double zoomScale = 1;
 
 	public CanvasController(final EditorController editorController)
 	{
@@ -68,6 +80,7 @@ public class CanvasController
 				isSelected = false;
 				isMoving = false;
 
+				layer = canvasControl.getCurrentPaneLayer();
 				selectedPane = canvasControl.getCurrentPane();
 
 				if (SelectorControl.getInstance().getSelectedLayer() == Layer.VIA)
@@ -88,20 +101,23 @@ public class CanvasController
 			}
 			else // SELECT
 			{
+				layer = Layer.INVALID_LAYER;
 				selectedPane = canvasControl.getSelectionPane();
 				fill = Color.web(Color.GREY.toString(), 0.4); // TODO pick selection box colour
 
 				isSelected = canvasControl.getSelectedObjects().size() > 0;
 				isMoving = isSelected && selectedContainsMouse(event);
+
+				updateSelectedBounds();
 			}
 
 			if(fill instanceof Color)
 			{
-				rectangle = new LayerRectangle(startPos.x, startPos.y, 0, 0, (Color) fill);
+				rectangle = new LayerRectangle(startPos.x, startPos.y, 0, 0, (Color) fill, layer);
 			}
 			else
 			{
-				rectangle = new LayerRectangle(startPos.x, startPos.y, 0, 0, fill, fillSelected);
+				rectangle = new LayerRectangle(startPos.x, startPos.y, 0, 0, fill, fillSelected, layer);
 			}
 			selectedPane.getChildren().add(rectangle);
 		});
@@ -110,47 +126,57 @@ public class CanvasController
 
 			if (isDragging)
 			{
-				final Delta dragDelta = new Delta(event.getX(), event.getY());
-				EditorUtils.snapToGrid(dragDelta);
-				double width = dragDelta.x - startPos.x;
-				double height = dragDelta.y - startPos.y;
+				final Delta dragPos = new Delta(event.getX(), event.getY());
+				EditorUtils.snapToGrid(dragPos);
+				double deltaX = dragPos.x - startPos.x;
+				double deltaY = dragPos.y - startPos.y;
 
 				if (isMoving)
 				{
-					for (final LayerRectangle layerRect : canvasControl.getSelectedObjects())
+					if (movementPossibleX(deltaX))
 					{
-						layerRect.setTranslateX(layerRect.getOffset().x + (dragDelta.x - startPos.x));
-						layerRect.setTranslateY(layerRect.getOffset().y + (dragDelta.y - startPos.y));
+						for (final LayerRectangle layerRect : canvasControl.getSelectedObjects())
+						{
+							layerRect.setTranslateX(layerRect.getOffset().x + deltaX);
+						}
+					}
+
+					if (movementPossibleY(deltaY))
+					{
+						for (final LayerRectangle layerRect : canvasControl.getSelectedObjects())
+						{
+							layerRect.setTranslateY(layerRect.getOffset().y + deltaY);
+						}
 					}
 				}
 				else
 				{
-					if (width >= 0)
+					if (deltaX >= 0)
 					{
-						if (rectangle.getX() + width <= EditorConstants.CANVAS_WIDTH)
+						if (rectangle.getX() + deltaX <= EditorConstants.CANVAS_WIDTH)
 						{
 							rectangle.setTranslateX(0);
-							rectangle.setWidth(width);
+							rectangle.setWidth(deltaX);
 						}
 					}
-					else if (rectangle.getX() + width >= 0)
+					else if (rectangle.getX() + deltaX >= 0)
 					{
-						rectangle.setTranslateX(width);
-						rectangle.setWidth(-width);
+						rectangle.setTranslateX(deltaX);
+						rectangle.setWidth(-deltaX);
 					}
 
-					if (height >= 0)
+					if (deltaY >= 0)
 					{
-						if (rectangle.getY() + height <= EditorConstants.CANVAS_HEIGHT)
+						if (rectangle.getY() + deltaY <= EditorConstants.CANVAS_HEIGHT)
 						{
 							rectangle.setTranslateY(0);
-							rectangle.setHeight(height);
+							rectangle.setHeight(deltaY);
 						}
 					}
-					else if (rectangle.getY() + height >= 0)
+					else if (rectangle.getY() + deltaY >= 0)
 					{
-						rectangle.setTranslateY(height);
-						rectangle.setHeight(-height);
+						rectangle.setTranslateY(deltaY);
+						rectangle.setHeight(-deltaY);
 					}
 				}
 			}
@@ -235,6 +261,46 @@ public class CanvasController
 		return false;
 	}
 
+	private void updateSelectedBounds()
+	{
+		minSelectedX = EditorConstants.CANVAS_WIDTH;
+		minSelectedY = EditorConstants.CANVAS_HEIGHT;
+		maxSelectedX = 0;
+		maxSelectedY = 0;
+
+		for (final LayerRectangle layerRect : canvasControl.getSelectedObjects())
+		{
+			minSelectedX = Math.min(minSelectedX, layerRect.getBoundsInParent().getMinX());
+			minSelectedY = Math.min(minSelectedY, layerRect.getBoundsInParent().getMinY());
+			maxSelectedX = Math.max(maxSelectedX, layerRect.getBoundsInParent().getMaxX());
+			maxSelectedY = Math.max(maxSelectedY, layerRect.getBoundsInParent().getMaxY());
+		}
+	}
+
+	private boolean movementPossibleX(final double deltaX)
+	{
+		boolean movementPossible = true;
+
+		if (minSelectedX + deltaX < 0 || maxSelectedX + deltaX > EditorConstants.CANVAS_WIDTH)
+		{
+			movementPossible = false;
+		}
+
+		return movementPossible;
+	}
+
+	private boolean movementPossibleY(final double deltaY)
+	{
+		boolean movementPossible = true;
+
+		if (minSelectedY + deltaY < 0 || maxSelectedY + deltaY > EditorConstants.CANVAS_HEIGHT)
+		{
+			movementPossible = false;
+		}
+
+		return movementPossible;
+	}
+
 	public void setCanvasMode(final CanvasMode canvasMode)
 	{
 		this.canvasMode = canvasMode;
@@ -269,9 +335,27 @@ public class CanvasController
 		for (final LayerRectangle layerRect : rectsToPaste)
 		{
 			final LayerRectangle clonedRect = layerRect.clone();
-			clonedRect.getParentPane().getChildren().add(clonedRect);
+			canvasControl.addLayerRectangle(clonedRect);
 			canvasControl.addSelectedObject(clonedRect);
 		}
 		isSelected = rectsToPaste.size() > 0 ? true : isSelected;
+	}
+
+	public void zoomIn()
+	{
+		zoomScale *= ZOOM_INCREMENT;
+		canvasControl.zoom(zoomScale);
+	}
+
+	public void zoomOut()
+	{
+		zoomScale *= 1.0 / ZOOM_INCREMENT;
+		canvasControl.zoom(zoomScale);
+	}
+
+	public void zoomReset()
+	{
+		zoomScale = 1;
+		canvasControl.zoom(zoomScale);
 	}
 }

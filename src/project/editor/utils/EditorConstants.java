@@ -16,7 +16,7 @@ public interface EditorConstants
 	// _Pin
 
 	public static final int CANVAS_WIDTH = 1000; // Max = 8192
-	public static final int CANVAS_HEIGHT = 1000; // Max = 8192
+	public static final int CANVAS_HEIGHT = 600; // Max = 8192
 	public static final int CANVAS_GRID_SIZE = 10;
 
 	public static final String STRING_METAL_ONE = "Metal 1";

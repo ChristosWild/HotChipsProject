@@ -17,6 +17,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import project.editor.utils.EditorConstants;
+import project.editor.utils.Layer;
 import project.editor.utils.LayerRectangle;
 
 public class CanvasControl
@@ -32,6 +33,7 @@ public class CanvasControl
 	private Pane canvasVia;
 	private Pane canvasPin;
 	private Pane[] canvasArray;
+	private Pane gridLayer;
 	private Pane selectionLayer;
 
 	private List<LayerRectangle> selectedObjects = new ArrayList<LayerRectangle>();
@@ -41,7 +43,7 @@ public class CanvasControl
 		final Group canvasGroup = new Group();
 		final ScrollPane scrollPane = new ScrollPane(canvasGroup);
 
-		final Pane gridLayer = new Pane();
+		gridLayer = new Pane();
 		gridLayer.setBackground(new Background(new BackgroundImage(
 				new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_GRID), BackgroundRepeat.REPEAT,
 				BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)));
@@ -79,6 +81,11 @@ public class CanvasControl
 		return canvasArray[SelectorControl.getInstance().getSelectedLayer().getLayerIndex()];
 	}
 
+	public Layer getCurrentPaneLayer()
+	{
+		return SelectorControl.getInstance().getSelectedLayer();
+	}
+
 	public Color getCurrentPaneColor()
 	{
 		return SelectorControl.getInstance().getSelectedLayer().getColor();
@@ -98,7 +105,7 @@ public class CanvasControl
 		}
 	}
 
-	public void deleteSelected()
+	public void deleteSelected() // TODO iterate through selected list?
 	{
 		final List<LayerRectangle> toDelete = new ArrayList<LayerRectangle>();
 		for (final Pane pane : canvasArray)
@@ -117,19 +124,13 @@ public class CanvasControl
 
 	}
 
-	public void deselectAll() // TODO iterate through list rather than every pane, then clear list
+	public void deselectAll()
 	{
-		selectedObjects.clear();
-		for (final Pane pane : canvasArray)
+		for (final LayerRectangle layerRect : selectedObjects)
 		{
-			for (final Node layerRect : pane.getChildren())
-			{
-				if (layerRect instanceof LayerRectangle)
-				{
-					((LayerRectangle) layerRect).setSelected(false);
-				}
-			}
+			layerRect.setSelected(false);
 		}
+		selectedObjects.clear();
 	}
 
 	public void selectSingle(final double x, final double y)
@@ -173,5 +174,25 @@ public class CanvasControl
 	public List<LayerRectangle> getSelectedObjects()
 	{
 		return selectedObjects;
+	}
+
+	public void zoom(final double zoomScale)
+	{
+		gridLayer.setScaleX(zoomScale);
+		gridLayer.setScaleY(zoomScale);
+
+		selectionLayer.setScaleX(zoomScale);
+		selectionLayer.setScaleY(zoomScale);
+
+		for (final Pane pane : canvasArray)
+		{
+			pane.setScaleX(zoomScale);
+			pane.setScaleY(zoomScale);
+		}
+	}
+
+	public void addLayerRectangle(final LayerRectangle layerRect)
+	{
+		canvasArray[layerRect.getLayer().getLayerIndex()].getChildren().add(layerRect);
 	}
 }

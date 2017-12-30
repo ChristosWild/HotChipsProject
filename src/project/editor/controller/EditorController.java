@@ -15,13 +15,15 @@ public class EditorController
 
 	private static final String EDITOR_TITLE = "VLSI Editor";
 	private static final int EDITOR_WIDTH = 900;
-	private static final int EDITOR_HEIGHT = 600 / 2;
+	private static final int EDITOR_HEIGHT = 600;
 
 	private Stage stage;
 	private BorderPane root;
 
 	private ToolbarController toolbarController;
 	private CanvasController canvasController;
+
+	private String filePath;
 
 	public EditorController(final Stage stage)
 	{
@@ -77,5 +79,15 @@ public class EditorController
 	public ToolbarController getToolbarController()
 	{
 		return toolbarController;
+	}
+
+	public String getFilePath()
+	{
+		return filePath;
+	}
+
+	public void setFilePath(final String filePath)
+	{
+		this.filePath = filePath;
 	}
 }
