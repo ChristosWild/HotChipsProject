@@ -16,7 +16,7 @@ public interface EditorConstants
 	// _Pin
 
 	public static final int CANVAS_WIDTH = 1000; // Max = 8192
-	public static final int CANVAS_HEIGHT = 600; // Max = 8192
+	public static final int CANVAS_HEIGHT = 6000; // Max = 8192
 	public static final int CANVAS_GRID_SIZE = 10;
 
 	public static final String STRING_METAL_ONE = "Metal 1";
@@ -56,6 +56,8 @@ public interface EditorConstants
 	public static final String PATH_IMG_PIN_SELECTED = "pin_selected.png";
 	public static final String PATH_IMG_PIN_16 = "pin_16.png";
 	public static final String PATH_IMG_GRID = "grid.png";
+
+	public static final String PATH_IMG_CLOSE = "close.png";
 
 	public static final String PATH_CSS_MAIN = "project/application/Main.css";
 }

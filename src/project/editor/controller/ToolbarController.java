@@ -87,6 +87,18 @@ public class ToolbarController
 		toolbarControl.getBtnClearAll().setOnAction(evet -> editorController.getCanvasController().clearAll());
 	}
 
+	public void selectModeSelect()
+	{
+		toolbarControl.getBtnSelect().fire();
+		focusToolbarButton();
+	}
+
+	public void selectModeDraw()
+	{
+		toolbarControl.getBtnDraw().fire();
+		focusToolbarButton();
+	}
+
 	public void focusToolbarButton() // TODO temp fix for bug where 1x1 rectangles not appearing until something else focused
 	{
 		((ToggleButton) toolbarControl.getToggleGroup().getSelectedToggle()).requestFocus();

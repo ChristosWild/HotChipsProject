@@ -8,6 +8,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -15,31 +16,42 @@ import javafx.scene.layout.VBox;
 
 public class ToolbarControl
 {
+	private static final String TAB = "\t";
+	private static final String TAB_2 = "\t\t";
+	private static final String TAB_3 = "\t\t\t";
+	private static final String CTRL = "Ctrl  ";
+	private static final String CTRL_PLUS = "Ctrl+";
+	private static final String ALT = "Alt+";
+
 	private static final String LBL_MENU_FILE = "File";
-	private static final String LBL_SUBMENU_NEW = "New";
-	private static final String LBL_SUBMENU_OPEN = "Open";
-	private static final String LBL_SUBMENU_SAVE = "Save";
+	private static final String LBL_SUBMENU_NEW = "New" + TAB_2 + CTRL_PLUS + "N";
+	private static final String LBL_SUBMENU_OPEN = "Open" + TAB + CTRL_PLUS + "O";
+	private static final String LBL_SUBMENU_SAVE = "Save" + TAB_2 + CTRL_PLUS + "S";
 	private static final String LBL_SUBMENU_SAVE_AS = "Save As";
-	private static final String LBL_SUBMENU_CLOSE = "Close";
+	private static final String LBL_SUBMENU_CLOSE = "Close" + TAB + ALT + "F4";
 
 	private static final String LBL_MENU_VIEW = "View";
-	private static final String LBL_SUBMENU_SHOW_TOOLBAR = "Show Toolbar";
-	private static final String LBL_SUBMENU_ZOOM_IN = "Zoom In";
-	private static final String LBL_SUBMENU_ZOOM_OUT = "Zoom Out";
+	private static final String LBL_SUBMENU_SHOW_TOOLBAR = "Show Toolbar" + TAB + CTRL_PLUS + "T";
+	private static final String LBL_SUBMENU_ZOOM_IN = "Zoom In" + TAB_2 + CTRL + "+";
+	private static final String LBL_SUBMENU_ZOOM_OUT = "Zoom Out" + TAB + CTRL + "-";
 	private static final String LBL_SUBMENU_ZOOM_FIT = "Zoom To Fit";
-	private static final String LBL_SUBMENU_ZOOM_RESET = "Zoom Reset";
+	private static final String LBL_SUBMENU_ZOOM_RESET = "Zoom Reset" + TAB + CTRL_PLUS + "R";
 
 	private static final String LBL_MENU_EDIT = "Edit";
 	private static final String LBL_SUBMENU_UNDO = "Undo";
 	private static final String LBL_SUBMENU_REDO = "Redo";
-	private static final String LBL_SUBMENU_CUT = "Cut";
-	private static final String LBL_SUBMENU_COPY = "Copy";
-	private static final String LBL_SUBMENU_PASTE = "Paste";
+	private static final String LBL_SUBMENU_CUT = "Cut" + TAB_3 + CTRL_PLUS + "X";
+	private static final String LBL_SUBMENU_COPY = "Copy" + TAB_2 + CTRL_PLUS + "C";
+	private static final String LBL_SUBMENU_PASTE = "Paste" + TAB_2 + CTRL_PLUS + "V";
 	private static final String LBL_SUBMENU_TECHNOLOGY_FILE = "Technology File";
 
 	private static final String LBL_MENU_HELP = "Help";
 	private static final String LBL_SUBMENU_ABOUT = "About";
 	private static final String LBL_SUBMENU_HELP = "Help";
+
+	private static final String TOOLTIP_BUTTON_SELECT = "(S)";
+	private static final String TOOLTIP_BUTTON_DRAW = "(D)";
+	private static final String TOOLTIP_BUTTON_DELETE = "(Del)";
 
 	private BorderPane root;
 
@@ -69,7 +81,7 @@ public class ToolbarControl
 	private MenuItem menuItemHelp;
 	private MenuItem menuItemAbout;
 
-	// BUTTONS      new open save    select draw   delete clear
+	// BUTTONS TODO new open save select draw delete clear
 	private ToggleGroup toggleGroup;
 	private ToggleButton btnSelect;
 	private ToggleButton btnDraw;
@@ -124,14 +136,19 @@ public class ToolbarControl
 		// BUTTONS
 
 		toggleGroup = new ToggleGroup();
-		btnSelect = new ToggleButton(null, new ImageView(new Image("file:data/mouse.png")));
+		btnSelect = new ToggleButton(null, new ImageView(new Image("file:data/mouse.png"))); // TODO constants
 		btnDraw = new ToggleButton(null, new ImageView(new Image("file:data/pencil.png")));
+		btnDelete = new Button("Delete");
+		btnClearAll = new Button("Clear");
+
 		btnSelect.setToggleGroup(toggleGroup);
 		btnDraw.setToggleGroup(toggleGroup);
 		btnSelect.setSelected(true);
 
-		btnDelete = new Button("Delete");
-		btnClearAll = new Button("Clear");
+		btnSelect.setTooltip(new Tooltip(TOOLTIP_BUTTON_SELECT));
+		btnDraw.setTooltip(new Tooltip(TOOLTIP_BUTTON_DRAW));
+		btnDelete.setTooltip(new Tooltip(TOOLTIP_BUTTON_DELETE));
+
 		toolbar.getItems().addAll(new Separator(), btnSelect, btnDraw, new Separator(), btnDelete, btnClearAll);
 
 		root.setTop(menus);

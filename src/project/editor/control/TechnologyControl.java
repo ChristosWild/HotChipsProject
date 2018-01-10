@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -38,7 +39,7 @@ public class TechnologyControl
 		return instance;
 	}
 
-	private void initialiseUI()
+	private void initialiseUI() // TODO technology file
 	{
 		dialog = new Dialog<ButtonType>();
 		dialog.setTitle(TITLE_DIALOG);
@@ -49,10 +50,12 @@ public class TechnologyControl
 		grid.setVgap(10);
 		grid.setPadding(new Insets(20, 20, 20, 20));
 
-		TextField lambda = new TextField();
+		final TextField lambda = new TextField();
 		lambda.setPromptText("Lambda");
-		TextField next = new TextField();
+		final TextField next = new TextField();
 		next.setPromptText("NEXT");
+
+		final ColorPicker cp = new ColorPicker();
 
 		grid.add(new Label("Lambda:"), 0, 0);
 		grid.add(lambda, 1, 0);
@@ -60,6 +63,8 @@ public class TechnologyControl
 		grid.add(new Label("next:"), 0, 1);
 		grid.add(next, 1, 1);
 		grid.add(new Label("units"), 2, 1);
+		grid.add(new Label("col"), 0, 2);
+		grid.add(cp, 1, 2);
 
 		dialog.getDialogPane().setContent(grid);
 	}

@@ -1,6 +1,6 @@
-/*.list-cell:filled:selected:focused, .list-cell:filled:selected {
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
 	-fx-background-color: rgba(15,157,225,100);
-}*/
+}
 
 .list-view:focused{
 	-fx-background-color: transparent;
@@ -10,6 +10,6 @@
 
 .selector-popup {
 	-fx-background-color: rgb(220,220,220);
-    -fx-background-insets: -1.4, -0.3, 1;
-    -fx-background-radius: 2, 0, 0;
+    -fx-background-insets: -1, -1, -1, -1;
+    -fx-border-color: black;
 }

@@ -2,6 +2,9 @@ package project.editor.controller;
 
 import java.util.List;
 
+import javafx.geometry.Point2D;
+import javafx.scene.Scene;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -34,9 +37,11 @@ public class CanvasController
 	private Layer layer;
 	private Pane selectedPane;
 	private LayerRectangle rectangle;
+	private Tooltip tooltip;
 
 	private Delta startPos;
 	private boolean isDragging;
+	private boolean isCtrlPressed;
 	private boolean isSelected;
 	private boolean isMoving;
 
@@ -65,6 +70,7 @@ public class CanvasController
 		canvasControl.getSelectionPane().addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
 
 			isDragging = true;
+			isCtrlPressed = event.isControlDown();
 
 			startPos = new Delta();
 			startPos.x = event.getX();
@@ -119,7 +125,11 @@ public class CanvasController
 			{
 				rectangle = new LayerRectangle(startPos.x, startPos.y, 0, 0, fill, fillSelected, layer);
 			}
+
 			selectedPane.getChildren().add(rectangle);
+
+			tooltip = new Tooltip();
+			Tooltip.install(rectangle, tooltip);
 		});
 
 		canvasControl.getSelectionPane().addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
@@ -131,7 +141,7 @@ public class CanvasController
 				double deltaX = dragPos.x - startPos.x;
 				double deltaY = dragPos.y - startPos.y;
 
-				if (isMoving)
+				if (isMoving && !isCtrlPressed)
 				{
 					if (movementPossibleX(deltaX))
 					{
@@ -151,7 +161,7 @@ public class CanvasController
 				}
 				else
 				{
-					if (deltaX >= 0)
+					if (deltaX >= 0) // TODO check if move possible to fix out of bounds tooltip issue
 					{
 						if (rectangle.getX() + deltaX <= EditorConstants.CANVAS_WIDTH)
 						{
@@ -178,6 +188,15 @@ public class CanvasController
 						rectangle.setTranslateY(deltaY);
 						rectangle.setHeight(-deltaY);
 					}
+
+					final Scene scene = rectangle.getScene();
+					final Point2D point = rectangle.localToScene(0, 0);
+
+					tooltip.setText((int) Math.abs(deltaX) + " x " + (int) Math.abs(deltaY) + " lambda"); // TODO tooltip
+					tooltip.setX(
+							scene.getWindow().getX() + scene.getX() + point.getX() + dragPos.x);
+					tooltip.setY(scene.getWindow().getY() + scene.getY() + point.getY() + dragPos.y);
+					tooltip.show(rectangle.getScene().getWindow());
 				}
 			}
 		});
@@ -187,33 +206,42 @@ public class CanvasController
 			final Delta endPos = new Delta(event.getX(), event.getY());
 			EditorUtils.snapToGrid(endPos);
 
-			if (canvasMode != CanvasMode.DRAW)
+			tooltip.hide();
+			Tooltip.uninstall(rectangle, tooltip);
+
+			if (canvasMode == CanvasMode.DRAW)
 			{
-				for (final LayerRectangle layerRect : canvasControl.getSelectedObjects()) // ONLY IF NOT FIRST TIME
+				if (rectangle.getWidth() == 0 || rectangle.getHeight() == 0)
 				{
-					layerRect.setOffset(layerRect.getTranslateX(), layerRect.getTranslateY());
+					selectedPane.getChildren().remove(rectangle);
+				}
+				else
+				{
+					rectangle.setOffset(rectangle.getTranslateX(), rectangle.getTranslateY());
 				}
 			}
+			else
+			{
+				if (isMoving)
+				{
+					for (final LayerRectangle layerRect : canvasControl.getSelectedObjects())
+					{
+						layerRect.setOffset(layerRect.getTranslateX(), layerRect.getTranslateY());
+					}
+				}
 
-			if (canvasMode == CanvasMode.DRAW && ((rectangle.getWidth() == 0 || rectangle.getHeight() == 0)))
-			{
-				selectedPane.getChildren().remove(rectangle);
-			}
-			else if (canvasMode == CanvasMode.SELECT)
-			{
-				if (!isMoving || event.isControlDown())
+				if (!isMoving || isCtrlPressed)
 				{
 					if (startPos.x == endPos.x && startPos.y == endPos.y)
 					{
-						selectPoint(event.getX(), event.getY(), event.isControlDown());
+						selectPoint(event.getX(), event.getY(), isCtrlPressed);
 					}
 					else
 					{
-						selectArea(startPos.x, startPos.y, endPos.x, endPos.y, event.isControlDown());
+						selectArea(startPos.x, startPos.y, endPos.x, endPos.y, isCtrlPressed);
 					}
-
-					selectedPane.getChildren().remove(rectangle);
 				}
+				selectedPane.getChildren().remove(rectangle);
 			}
 
 			isDragging = false;
@@ -327,18 +355,26 @@ public class CanvasController
 		ClipboardController.getInstance().setCurrentItems(canvasControl.getSelectedObjects());
 	}
 
-	public void paste()
+	public void paste() // TODO Display nothing to copy / paste message?
 	{
-		canvasControl.deselectAll();
-
 		final List<LayerRectangle> rectsToPaste = ClipboardController.getInstance().getCurrentItems();
-		for (final LayerRectangle layerRect : rectsToPaste)
+		final boolean pasteValid = rectsToPaste.size() > 0;
+
+		if (pasteValid)
 		{
-			final LayerRectangle clonedRect = layerRect.clone();
-			canvasControl.addLayerRectangle(clonedRect);
-			canvasControl.addSelectedObject(clonedRect);
+			canvasControl.deselectAll();
+
+			for (final LayerRectangle layerRect : rectsToPaste)
+			{
+				final LayerRectangle clonedRect = layerRect.clone();
+				canvasControl.addLayerRectangle(clonedRect);
+				canvasControl.addSelectedObject(clonedRect);
+			}
+
+			editorController.getToolbarController().selectModeSelect();
 		}
-		isSelected = rectsToPaste.size() > 0 ? true : isSelected;
+
+		isSelected = pasteValid ? true : isSelected;
 	}
 
 	public void zoomIn()
