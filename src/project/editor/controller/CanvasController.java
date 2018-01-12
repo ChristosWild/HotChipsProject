@@ -192,9 +192,8 @@ public class CanvasController
 					final Scene scene = rectangle.getScene();
 					final Point2D point = rectangle.localToScene(0, 0);
 
-					tooltip.setText((int) Math.abs(deltaX) + " x " + (int) Math.abs(deltaY) + " lambda"); // TODO tooltip
-					tooltip.setX(
-							scene.getWindow().getX() + scene.getX() + point.getX() + dragPos.x);
+					tooltip.setText((int) Math.abs(deltaX) + " x " + (int) Math.abs(deltaY) + " lambda"); // TODO tooltip for backwards rects
+					tooltip.setX(scene.getWindow().getX() + scene.getX() + point.getX() + dragPos.x);
 					tooltip.setY(scene.getWindow().getY() + scene.getY() + point.getY() + dragPos.y);
 					tooltip.show(rectangle.getScene().getWindow());
 				}
