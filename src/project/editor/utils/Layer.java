@@ -104,6 +104,18 @@ public enum Layer
 		}
 	}
 
+	public static Layer getLayerFromIndex(final int index)
+	{
+		for (final Layer layer : Layer.values())
+		{
+			if (index == layer.getLayerIndex())
+			{
+				return layer;
+			}
+		}
+		return Layer.INVALID_LAYER;
+	}
+
 	// public static Image getLayerImageFromName(final String name)
 	// {
 	// return getImageFromLayer(getLayerFromName(name));

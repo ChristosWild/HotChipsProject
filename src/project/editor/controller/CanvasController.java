@@ -1,5 +1,6 @@
 package project.editor.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javafx.geometry.Point2D;
@@ -41,7 +42,7 @@ public class CanvasController
 
 	private Delta startPos;
 	private boolean isDragging;
-	private boolean isCtrlPressed;
+	private boolean isCtrlPressed; // TODO is modifier pressed
 	private boolean isSelected;
 	private boolean isMoving;
 
@@ -70,7 +71,7 @@ public class CanvasController
 		canvasControl.getSelectionPane().addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
 
 			isDragging = true;
-			isCtrlPressed = event.isControlDown();
+			isCtrlPressed = event.isShortcutDown();
 
 			startPos = new Delta();
 			startPos.x = event.getX();
@@ -200,7 +201,7 @@ public class CanvasController
 			}
 		});
 
-		canvasControl.getSelectionPane().addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
+		canvasControl.getSelectionPane().addEventHandler(MouseEvent.MOUSE_RELEASED, event -> { // TODO investigate swapping to select mode by pressing S key while dragging in draw mode
 
 			final Delta endPos = new Delta(event.getX(), event.getY());
 			EditorUtils.snapToGrid(endPos);
@@ -392,5 +393,10 @@ public class CanvasController
 	{
 		zoomScale = 1;
 		canvasControl.zoom(zoomScale);
+	}
+
+	public List<ArrayList<LayerRectangle>> getAllLayerRectangles()
+	{
+		return canvasControl.getAllLayerRectangles();
 	}
 }

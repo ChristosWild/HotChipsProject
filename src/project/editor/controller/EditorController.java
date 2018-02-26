@@ -19,7 +19,7 @@ public class EditorController
 	private static int editorInstanceCount = -1;
 	private static List<EditorController> editorInstances = new ArrayList<EditorController>();
 
-	private static final String EDITOR_TITLE = "VLSI Editor";
+	private static final String EDITOR_TITLE = "VLSI Editor"; // TODO rename stage when file saved or opened
 	private static final int EDITOR_WIDTH = 900 / 2;
 	private static final int EDITOR_HEIGHT = 600;
 
@@ -38,7 +38,7 @@ public class EditorController
 		{
 			final KeyCode key = event.getCode();
 
-			if (event.isControlDown())
+			if (event.isShortcutDown())
 			{
 				switch (key)
 				{
@@ -49,7 +49,7 @@ public class EditorController
 						break;
 
 					case O:
-						FileUtil.openFile(EditorController.this, stage);
+						FileUtil.openFile(stage);
 						break;
 
 					case S:
@@ -116,22 +116,18 @@ public class EditorController
 
 					case UP:
 						scrollPane.setVvalue(scrollPane.getVvalue() - pageHeightPercentage);
-						event.consume();
 						break;
 
 					case DOWN:
 						scrollPane.setVvalue(scrollPane.getVvalue() + pageHeightPercentage);
-						event.consume();
 						break;
 
 					case LEFT:
 						scrollPane.setHvalue(scrollPane.getHvalue() - pageWidthPercentage);
-						event.consume();
 						break;
 
 					case RIGHT:
 						scrollPane.setHvalue(scrollPane.getHvalue() + pageWidthPercentage);
-						event.consume();
 						break;
 
 					case DIGIT1:
@@ -178,6 +174,7 @@ public class EditorController
 						break;
 				}
 			}
+			event.consume();
 		}
 	};
 
@@ -260,6 +257,11 @@ public class EditorController
 	public void setFilePath(final String filePath)
 	{
 		this.filePath = filePath;
+	}
+
+	public void setEditorTitle(final String title)
+	{
+		stage.setTitle(title);
 	}
 
 	public EventHandler<KeyEvent> getKeyPressedHandler()

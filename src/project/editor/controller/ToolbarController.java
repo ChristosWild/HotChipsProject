@@ -35,7 +35,7 @@ public class ToolbarController
 		});
 
 		toolbarControl.getMenuItemOpen().setOnAction(event -> {
-			FileUtil.openFile(editorController, toolbarControl.getRoot().getScene().getWindow());
+			FileUtil.openFile(toolbarControl.getRoot().getScene().getWindow());
 		});
 
 		toolbarControl.getMenuItemSave().setOnAction(event -> {

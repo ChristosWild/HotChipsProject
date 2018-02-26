@@ -195,4 +195,23 @@ public class CanvasControl
 	{
 		canvasArray[layerRect.getLayer().getLayerIndex()].getChildren().add(layerRect);
 	}
+
+	public List<ArrayList<LayerRectangle>> getAllLayerRectangles()
+	{
+
+		final List<ArrayList<LayerRectangle>> layerRects = new ArrayList<ArrayList<LayerRectangle>>();
+
+		for (final Pane canvas : canvasArray)
+		{
+			final ArrayList<LayerRectangle> layerChildren = new ArrayList<LayerRectangle>();
+			for (final Node node : canvas.getChildren())
+			{
+				layerChildren.add((LayerRectangle) node);
+			}
+
+			layerRects.add(layerChildren);
+		}
+
+		return layerRects;
+	}
 }
