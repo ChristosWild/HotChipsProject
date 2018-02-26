@@ -399,4 +399,9 @@ public class CanvasController
 	{
 		return canvasControl.getAllLayerRectangles();
 	}
+
+	public void addNewRectangle(final LayerRectangle layerRectangle)
+	{
+		canvasControl.addLayerRectangle(layerRectangle);
+	}
 }

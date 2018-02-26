@@ -15,6 +15,13 @@ public class LayerRectangle extends Rectangle
 	private final Paint fillSelected;
 	private Delta offset;
 
+	public LayerRectangle(final double x, final double y, final double width, final double height, final Color color,
+			final Layer layer)
+	{
+		this(x, y, width, height, Color.web(color.toString(), EditorConstants.COLOR_OPACITY),
+				Color.web(color.toString(), EditorConstants.COLOR_OPACITY_SELECTED), layer);
+	}
+
 	public LayerRectangle(final double x, final double y, final double width, final double height, final Paint fill,
 			final Paint fillSelected, final Layer layer)
 	{
@@ -39,13 +46,6 @@ public class LayerRectangle extends Rectangle
 		});
 
 		offset = new Delta(0, 0);
-	}
-
-	public LayerRectangle(final double x, final double y, final double width, final double height, final Color color,
-			final Layer layer)
-	{
-		this(x, y, width, height, Color.web(color.toString(), EditorConstants.COLOR_OPACITY),
-				Color.web(color.toString(), EditorConstants.COLOR_OPACITY_SELECTED), layer);
 	}
 
 	@Override
