@@ -3,7 +3,7 @@ package project.editor.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import project.editor.utils.LayerRectangle;
+import project.editor.util.LayerRectangle;
 
 /**
  * Singleton class that controls the clipboard for cut / copy / paste

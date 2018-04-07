@@ -4,24 +4,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import project.editor.control.SelectorControl;
-import project.editor.utils.EditorConstants;
-import project.editor.utils.FileUtil;
+import project.editor.util.EditorConstants;
+import project.editor.util.FileUtil;
 
 public class EditorController
 {
 	private static int editorInstanceCount = -1;
 	private static List<EditorController> editorInstances = new ArrayList<EditorController>();
 
-	private static final String EDITOR_TITLE = "VLSI Editor"; // TODO rename stage when file saved or opened
-	private static final int EDITOR_WIDTH = 900 / 2;
-	private static final int EDITOR_HEIGHT = 600;
+	private static final String EDITOR_TITLE = "VLSI Editor";
+
+	private static final double EDITOR_WIDTH_PERCENT = 0.65;
+	private static final double EDITOR_HEIGHT_PERCENT = 0.80;
 
 	private Stage stage;
 	private BorderPane root;
@@ -185,9 +188,10 @@ public class EditorController
 		editorInstances.add(this);
 
 		toolbarController = new ToolbarController(this);
-		canvasController = new CanvasController(this);
+		canvasController = new CanvasController(this); // TODO technology file for each editorcontroller
 
 		stage.focusedProperty().addListener((ov, oldVal, newVal) -> {
+			// Forces selector control to hide when window loses focus
 			if (oldVal)
 			{
 				SelectorControl.getInstance().hide();
@@ -219,7 +223,11 @@ public class EditorController
 
 		stage.addEventFilter(KeyEvent.KEY_PRESSED, keyPressedHandler);
 
-		stage.setScene(new Scene(root, EDITOR_WIDTH, EDITOR_HEIGHT));
+		final Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+		final double editorWidth = primaryScreenBounds.getWidth() * EDITOR_WIDTH_PERCENT;
+		final double editorHeight = primaryScreenBounds.getHeight() * EDITOR_HEIGHT_PERCENT;
+
+		stage.setScene(new Scene(root, editorWidth, editorHeight));
 		stage.setTitle(editorInstanceCount > 0 ? EDITOR_TITLE + " (" + editorInstanceCount + ")" : EDITOR_TITLE);
 		stage.show();
 

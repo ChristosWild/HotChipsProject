@@ -1,11 +1,13 @@
-package project.editor.utils;
+package project.editor.util;
 
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.stage.Window;
 
-public class EditorUtils
+public final class EditorUtil
 {
+	private EditorUtil() {};
+	
 	public static class Delta
 	{
 		public double x, y;

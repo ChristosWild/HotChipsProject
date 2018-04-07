@@ -1,11 +1,11 @@
-package project.editor.utils;
+package project.editor.util;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-import project.editor.utils.EditorUtils.Delta;
+import project.editor.util.EditorUtil.Delta;
 
 public class LayerRectangle extends Rectangle
 {
@@ -59,6 +59,95 @@ public class LayerRectangle extends Rectangle
 		newLayerRect.setTranslateY(newLayerRect.offset.y);
 
 		return newLayerRect;
+	}
+
+	@Override
+	public boolean equals(final Object obj)
+	{
+		if (!(obj instanceof LayerRectangle))
+		{
+			return false;
+		}
+		else
+		{
+			final LayerRectangle layerRect = (LayerRectangle) obj;
+
+			// Equal if same top left coordinates, width, and height
+			if (this.getX() + this.getOffset().x == layerRect.getX() + layerRect.getOffset().x
+					&& this.getY() + this.getOffset().y == layerRect.getY() + layerRect.getOffset().y
+					&& this.getWidth() == layerRect.getWidth()
+					&& this.getHeight() == layerRect.getHeight())
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public Rectangle getIntersection(final LayerRectangle rectTwo)
+	{
+		// Algorithm from java.awt.Rectangle intersection used
+
+		// Top left = (x1,y1), bottom right = (x2, y2)
+		double rectOneX1 = this.getX() + this.getOffset().x;
+		double rectOneY1 = this.getY() + this.getOffset().y;
+		double rectTwoX1 = rectTwo.getX() + rectTwo.getOffset().x;
+		double rectTwoY1 = rectTwo.getY() + rectTwo.getOffset().y;
+
+		double rectOneX2 = rectOneX1;
+		rectOneX2 += this.getWidth();
+
+		double rectOneY2 = rectOneY1;
+		rectOneY2 += this.getHeight();
+
+		double rectTwoX2 = rectTwoX1;
+		rectTwoX2 += rectTwo.getWidth();
+
+		double rectTwoY2 = rectTwoY1;
+		rectTwoY2 += rectTwo.getHeight();
+
+		if (rectOneX1 < rectTwoX1)
+		{
+			rectOneX1 = rectTwoX1;
+		}
+		if (rectOneY1 < rectTwoY1)
+		{
+			rectOneY1 = rectTwoY1;
+		}
+		if (rectOneX2 > rectTwoX2)
+		{
+			rectOneX2 = rectTwoX2;
+		}
+		if (rectOneY2 > rectTwoY2)
+		{
+			rectOneY2 = rectTwoY2;
+		}
+
+		double width = rectOneX2 - rectOneX1; // width
+
+		double height = rectOneY2 - rectOneY1;
+
+		if (width < Integer.MIN_VALUE)
+		{
+			width = Integer.MIN_VALUE;
+		}
+		if (height < Integer.MIN_VALUE)
+		{
+			height = Integer.MIN_VALUE;
+		}
+
+		if (width < 0)
+		{
+			width = 0;
+		}
+
+		if (height < 0)
+		{
+			height = 0;
+		}
+
+		return new Rectangle(rectOneX1, rectOneY1, width, height);
 	}
 
 	public boolean isSelected()

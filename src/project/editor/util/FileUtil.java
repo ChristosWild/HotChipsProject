@@ -1,4 +1,4 @@
-package project.editor.utils;
+package project.editor.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import project.editor.controller.EditorController;
 
-public class FileUtil
+public final class FileUtil
 {
 	private static final String TITLE_OPEN_FILE = "Open File";
 	private static final String TITLE_SAVE_FILE_AS = "Save File As";
@@ -49,6 +49,8 @@ public class FileUtil
 	private static final String XML_ELEMENT_OFFSET_Y = "offsetY";
 
 	private static final String XML_ATTRIBUTE_NAME = "name";
+	
+	private FileUtil() {};
 
 	public static void openFile(final Window window)
 	{

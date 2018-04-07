@@ -7,7 +7,8 @@ import project.editor.control.SelectorControl;
 import project.editor.control.TechnologyControl;
 import project.editor.control.ToolbarControl;
 import project.editor.controller.CanvasController.CanvasMode;
-import project.editor.utils.FileUtil;
+import project.editor.extractor.util.ExtractorUtil;
+import project.editor.util.FileUtil;
 
 public class ToolbarController
 {
@@ -63,6 +64,9 @@ public class ToolbarController
 		toolbarControl.getMenuItemCopy().setOnAction(event -> editorController.getCanvasController().copy());
 		toolbarControl.getMenuItemPaste().setOnAction(event -> editorController.getCanvasController().paste());
 		toolbarControl.getMenuItemTechnologyFile().setOnAction(event -> TechnologyControl.getInstance().show());
+
+		// Extract
+		toolbarControl.getMenuItemExtractSpice().setOnAction(event -> ExtractorUtil.extractSpice(editorController));
 
 		// HELP
 

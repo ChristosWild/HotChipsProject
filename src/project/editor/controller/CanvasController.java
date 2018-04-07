@@ -16,11 +16,11 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import project.editor.control.CanvasControl;
 import project.editor.control.SelectorControl;
-import project.editor.utils.EditorConstants;
-import project.editor.utils.EditorUtils;
-import project.editor.utils.EditorUtils.Delta;
-import project.editor.utils.Layer;
-import project.editor.utils.LayerRectangle;
+import project.editor.util.EditorConstants;
+import project.editor.util.EditorUtil;
+import project.editor.util.EditorUtil.Delta;
+import project.editor.util.Layer;
+import project.editor.util.LayerRectangle;
 
 public class CanvasController
 {
@@ -42,7 +42,7 @@ public class CanvasController
 
 	private Delta startPos;
 	private boolean isDragging;
-	private boolean isCtrlPressed; // TODO is modifier pressed
+	private boolean isCtrlPressed;
 	private boolean isSelected;
 	private boolean isMoving;
 
@@ -76,7 +76,7 @@ public class CanvasController
 			startPos = new Delta();
 			startPos.x = event.getX();
 			startPos.y = event.getY();
-			EditorUtils.snapToGrid(startPos);
+			EditorUtil.snapToGrid(startPos);
 
 			Paint fill = null;
 			Paint fillSelected = null;
@@ -138,7 +138,7 @@ public class CanvasController
 			if (isDragging)
 			{
 				final Delta dragPos = new Delta(event.getX(), event.getY());
-				EditorUtils.snapToGrid(dragPos);
+				EditorUtil.snapToGrid(dragPos);
 				double deltaX = dragPos.x - startPos.x;
 				double deltaY = dragPos.y - startPos.y;
 
@@ -204,7 +204,7 @@ public class CanvasController
 		canvasControl.getSelectionPane().addEventHandler(MouseEvent.MOUSE_RELEASED, event -> { // TODO investigate swapping to select mode by pressing S key while dragging in draw mode
 
 			final Delta endPos = new Delta(event.getX(), event.getY());
-			EditorUtils.snapToGrid(endPos);
+			EditorUtil.snapToGrid(endPos);
 
 			tooltip.hide();
 			Tooltip.uninstall(rectangle, tooltip);
@@ -218,6 +218,13 @@ public class CanvasController
 				else
 				{
 					rectangle.setOffset(rectangle.getTranslateX(), rectangle.getTranslateY());
+
+					// Check if selected pane already has the same rectangle added
+					if (selectedPane.getChildren().indexOf(rectangle) != selectedPane.getChildren()
+							.lastIndexOf(rectangle))
+					{
+						selectedPane.getChildren().remove(rectangle);
+					}
 				}
 			}
 			else
@@ -398,6 +405,11 @@ public class CanvasController
 	public List<ArrayList<LayerRectangle>> getAllLayerRectangles()
 	{
 		return canvasControl.getAllLayerRectangles();
+	}
+
+	public List<LayerRectangle> getLayerRectangles(final Layer layer)
+	{
+		return canvasControl.getLayerRectangles(layer);
 	}
 
 	public void addNewRectangle(final LayerRectangle layerRectangle)

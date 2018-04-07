@@ -16,9 +16,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import project.editor.utils.EditorConstants;
-import project.editor.utils.Layer;
-import project.editor.utils.LayerRectangle;
+import project.editor.util.EditorConstants;
+import project.editor.util.Layer;
+import project.editor.util.LayerRectangle;
 
 public class CanvasControl
 {
@@ -206,10 +206,35 @@ public class CanvasControl
 			final ArrayList<LayerRectangle> layerChildren = new ArrayList<LayerRectangle>();
 			for (final Node node : canvas.getChildren())
 			{
-				layerChildren.add((LayerRectangle) node);
+				if (node instanceof LayerRectangle)
+				{
+					layerChildren.add((LayerRectangle) node);
+				}
 			}
 
 			layerRects.add(layerChildren);
+		}
+
+		return layerRects;
+	}
+
+	public List<LayerRectangle> getLayerRectangles(final Layer layer)
+	{
+		final List<LayerRectangle> layerRects = new ArrayList<LayerRectangle>();
+
+		for (final Pane canvas : canvasArray)
+		{
+			for (final Node node : canvas.getChildren())
+			{
+				if (node instanceof LayerRectangle)
+				{
+					final LayerRectangle layerRect = (LayerRectangle) node;
+					if (layerRect.getLayer() == layer)
+					{
+						layerRects.add(layerRect);
+					}
+				}
+			}
 		}
 
 		return layerRects;

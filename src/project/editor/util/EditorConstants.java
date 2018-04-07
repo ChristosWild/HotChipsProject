@@ -1,4 +1,4 @@
-package project.editor.utils;
+package project.editor.util;
 
 import javafx.scene.paint.Color;
 
@@ -15,8 +15,8 @@ public interface EditorConstants
 	// _Via
 	// _Pin
 
-	public static final int CANVAS_WIDTH = 1000; // Max = 8192
-	public static final int CANVAS_HEIGHT = 6000; // Max = 8192
+	public static final int CANVAS_WIDTH = 5000; // Max = 8192
+	public static final int CANVAS_HEIGHT = 5000; // Max = 8192
 	public static final int CANVAS_GRID_SIZE = 10;
 
 	public static final String STRING_METAL_ONE = "Metal 1";

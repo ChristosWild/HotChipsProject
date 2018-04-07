@@ -21,9 +21,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import project.editor.controller.EditorController;
-import project.editor.utils.EditorConstants;
-import project.editor.utils.EditorUtils;
-import project.editor.utils.Layer;
+import project.editor.util.EditorConstants;
+import project.editor.util.EditorUtil;
+import project.editor.util.Layer;
 
 /**
  * Singleton class that controls the layer selection popup menu
@@ -121,7 +121,7 @@ public class SelectorControl
 
 		popup.getContent().add(content);
 
-		EditorUtils.makeWindowDraggableByNode(popup, topBar);
+		EditorUtil.makeWindowDraggableByNode(popup, topBar);
 
 		popup.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
 			EditorController.getEditorControllerFromStage(stage).getKeyPressedHandler().handle(event);
@@ -148,7 +148,7 @@ public class SelectorControl
 		GridPane.setValignment(btnClose, VPos.CENTER);
 		GridPane.setHgrow(lblTitle, Priority.ALWAYS);
 
-		EditorUtils.makeWindowDraggableByNode(popup, lblTitle);
+		EditorUtil.makeWindowDraggableByNode(popup, lblTitle);
 	}
 
 	private void initialiseLayerList(final ListView<String> layerList)

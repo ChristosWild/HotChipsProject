@@ -45,6 +45,10 @@ public class ToolbarControl
 	private static final String LBL_SUBMENU_PASTE = "Paste" + TAB_2 + CTRL_PLUS + "V";
 	private static final String LBL_SUBMENU_TECHNOLOGY_FILE = "Technology File";
 
+	private static final String LBL_MENU_EXTRACT = "Extract";
+	private static final String LBL_SUBMENU_EXTRACT_SPICE = "To SPICE";
+	private static final String LBL_SUBMENU_EXTRACT_JBB = "To JBB";
+
 	private static final String LBL_MENU_HELP = "Help";
 	private static final String LBL_SUBMENU_ABOUT = "About";
 	private static final String LBL_SUBMENU_HELP = "Help";
@@ -77,11 +81,15 @@ public class ToolbarControl
 	private MenuItem menuItemPaste;
 	private MenuItem menuItemTechnologyFile;
 
+	// EDIT
+	private MenuItem menuItemExtractSpice;
+	private MenuItem menuItemExtractJbb;
+
 	// HELP
 	private MenuItem menuItemHelp;
 	private MenuItem menuItemAbout;
 
-	// BUTTONS TODO new open save select draw delete clear
+	// BUTTONS TODO buttons for: new open save select draw delete clear
 	private ToggleGroup toggleGroup;
 	private ToggleButton btnSelect;
 	private ToggleButton btnDraw;
@@ -126,12 +134,18 @@ public class ToolbarControl
 		menuEdit.getItems().addAll(menuItemUndo, menuItemRedo, menuItemCut, menuItemCopy, menuItemPaste,
 				menuItemTechnologyFile);
 
+		// Extract
+		final Menu menuExtract = new Menu(LBL_MENU_EXTRACT);
+		menuItemExtractSpice = new MenuItem(LBL_SUBMENU_EXTRACT_SPICE);
+		menuItemExtractJbb = new MenuItem(LBL_SUBMENU_EXTRACT_JBB);
+		menuExtract.getItems().addAll(menuItemExtractSpice, menuItemExtractJbb);
+
 		// HELP
 		final Menu menuHelp = new Menu(LBL_MENU_HELP);
 		menuItemAbout = new MenuItem(LBL_SUBMENU_ABOUT);
 		menuItemHelp = new MenuItem(LBL_SUBMENU_HELP);
 		menuHelp.getItems().addAll(menuItemAbout, menuItemHelp);
-		menuBar.getMenus().addAll(menuFile, menuView, menuEdit, menuHelp);
+		menuBar.getMenus().addAll(menuFile, menuView, menuEdit, menuExtract, menuHelp);
 
 		// BUTTONS
 
@@ -237,6 +251,16 @@ public class ToolbarControl
 	public MenuItem getMenuItemTechnologyFile()
 	{
 		return menuItemTechnologyFile;
+	}
+
+	public MenuItem getMenuItemExtractSpice()
+	{
+		return menuItemExtractSpice;
+	}
+
+	public MenuItem getMenuItemExtractJbb()
+	{
+		return menuItemExtractJbb;
 	}
 
 	public MenuItem getMenuItemHelp()

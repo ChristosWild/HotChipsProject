@@ -16,7 +16,7 @@ import javafx.scene.layout.GridPane;
  * @author Christos
  *
  */
-public class TechnologyControl
+public class TechnologyControl // TODO not singleton any more
 {
 	private static final String TITLE_DIALOG = "Edit Technology File";
 
@@ -39,7 +39,7 @@ public class TechnologyControl
 		return instance;
 	}
 
-	private void initialiseUI() // TODO technology file
+	private void initialiseUI() // TODO technology file - default material = aluminium, silicon dioxide
 	{
 		dialog = new Dialog<ButtonType>();
 		dialog.setTitle(TITLE_DIALOG);
