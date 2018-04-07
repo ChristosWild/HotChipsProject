@@ -46,9 +46,9 @@ public class Capacitor implements CircuitComponent
 	public double getCapacitance()
 	{
 		// C = k*E0*A / d
-		final double areaMicrons = (bounds.getWidth() / EditorConstants.CANVAS_GRID_SIZE)
-				* (bounds.getHeight() / EditorConstants.CANVAS_GRID_SIZE) * 2.5;// TODO * techFileLambda val;
-		final double areaMetres = areaMicrons * Math.pow(10, -6);
+		final double widthMetres = (bounds.getWidth() / EditorConstants.CANVAS_GRID_SIZE) * 2.5 * Math.pow(10, -6); // TODO * techFileLambda val not * 2.5;
+		final double heightMetres = (bounds.getHeight() / EditorConstants.CANVAS_GRID_SIZE) * 2.5 * Math.pow(10, -6);
+		final double areaMetres = widthMetres * heightMetres;
 
 		return (areaMetres * E0 * DIELECTRIC_CONSTANT_SILICON_DIOXIDE) / LAYER_SEPARATION_METRES;
 	}
