@@ -30,6 +30,13 @@ public final class ExtractorUtil
 		final List<CircuitComponent> components = extractComponents(editorController);
 		final List<SpiceComponent> spiceComponents = SpiceUtil.componentsToSpice(components);
 
+		// editorController.getCanvasController().getAllLayerRectangles().forEach(layer
+		// -> {
+		// layer.forEach(rect -> {
+		// System.out.println(rect.getId());
+		// });
+		// });
+
 		//////////
 		spiceComponents.forEach(e -> System.out.println(e.getSpiceString()));
 		//////////
@@ -92,12 +99,13 @@ public final class ExtractorUtil
 	{
 		final List<CircuitComponent> components = new ArrayList<CircuitComponent>();
 
-		components.addAll(extractViaAndCapacitor(editorController)); // TODO Check if capacitor when layer 1 and layer 5 overlap etc
+		components.addAll(extractMetalViasAndCapacitors(editorController)); // TODO Check if capacitor when layer 1 and layer 5 overlap etc
+		components.addAll(extractTransistors(editorController));
 
 		return components;
 	}
 
-	private static List<Capacitor> extractViaAndCapacitor(final EditorController editorController)
+	private static List<Capacitor> extractMetalViasAndCapacitors(final EditorController editorController)
 	{
 		final List<Capacitor> capList = new ArrayList<Capacitor>();
 
@@ -133,17 +141,23 @@ public final class ExtractorUtil
 
 						if (isVia)
 						{
-							System.out.println("VIA");
-							// TODO if 2 layers underneath contain the whole rect, set their id's to the
-							// same (maxid + 1)
-
-
+							// Remove capacitors connecting layerOneRect and layerTwoRect and update IDs to
+							// connect the layerRects
+							for (final Capacitor capacitor : capList)
+							{
+								if (capacitor.getNode1().equals(layerOneRect.getId())
+										&& capacitor.getNode2().equals(layerTwoRect.getId()))
+								{
+									capList.remove(capacitor);
+								}
+							}
+							updateIds(editorController, layerTwoRect.getId(), layerOneRect.getId());
 						}
 						else
 						{
 							final Capacitor capacitor = new Capacitor(layerOneRect.getId(), layerTwoRect.getId(),
 									intersection);
-							if (!capList.contains(capacitor))
+							if (!capList.contains(capacitor) && !layerOneRect.getId().equals(layerTwoRect.getId()))
 							{
 								capList.add(capacitor);
 							}
@@ -154,6 +168,13 @@ public final class ExtractorUtil
 		}
 
 		return capList;
+	}
+
+	private static List<CircuitComponent> extractTransistors(final EditorController editorController)
+	{
+		final List<CircuitComponent> transistors = new ArrayList<CircuitComponent>();
+
+		return transistors;
 	}
 
 	/**

@@ -21,11 +21,6 @@ public class EditorController
 	private static int editorInstanceCount = -1;
 	private static List<EditorController> editorInstances = new ArrayList<EditorController>();
 
-	private static final String EDITOR_TITLE = "VLSI Editor";
-
-	private static final double EDITOR_WIDTH_PERCENT = 0.65;
-	private static final double EDITOR_HEIGHT_PERCENT = 0.80;
-
 	private Stage stage;
 	private BorderPane root;
 
@@ -100,8 +95,10 @@ public class EditorController
 			else
 			{
 				final ScrollPane scrollPane = ((ScrollPane) root.getCenter());
-				double pageHeightPercentage = scrollPane.getViewportBounds().getHeight() / EditorConstants.CANVAS_HEIGHT;
-				double pageWidthPercentage = scrollPane.getViewportBounds().getWidth() / EditorConstants.CANVAS_WIDTH;
+				double pageHeightPercentage = (scrollPane.getViewportBounds().getHeight()
+						/ EditorConstants.CANVAS_HEIGHT) * EditorConstants.EDITOR_SCROLL_PAGE_PERCENT;
+				double pageWidthPercentage = (scrollPane.getViewportBounds().getWidth() / EditorConstants.CANVAS_WIDTH)
+						* EditorConstants.EDITOR_SCROLL_PAGE_PERCENT;
 
 				switch (key)
 				{
@@ -224,11 +221,12 @@ public class EditorController
 		stage.addEventFilter(KeyEvent.KEY_PRESSED, keyPressedHandler);
 
 		final Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-		final double editorWidth = primaryScreenBounds.getWidth() * EDITOR_WIDTH_PERCENT;
-		final double editorHeight = primaryScreenBounds.getHeight() * EDITOR_HEIGHT_PERCENT;
+		final double editorWidth = primaryScreenBounds.getWidth() * EditorConstants.EDITOR_SCREEN_WIDTH_PERCENT;
+		final double editorHeight = primaryScreenBounds.getHeight() * EditorConstants.EDITOR_SCREEN_HEIGHT_PERCENT;
 
 		stage.setScene(new Scene(root, editorWidth, editorHeight));
-		stage.setTitle(editorInstanceCount > 0 ? EDITOR_TITLE + " (" + editorInstanceCount + ")" : EDITOR_TITLE);
+		stage.setTitle(editorInstanceCount > 0 ? EditorConstants.EDITOR_TITLE + " (" + editorInstanceCount + ")"
+				: EditorConstants.EDITOR_TITLE);
 		stage.show();
 
 		SelectorControl.getInstance().show();

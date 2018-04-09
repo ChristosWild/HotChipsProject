@@ -15,6 +15,12 @@ public interface EditorConstants
 	// _Via
 	// _Pin
 
+	public static final String EDITOR_TITLE = "VLSI Editor";
+
+	public static final double EDITOR_SCREEN_WIDTH_PERCENT = 0.65;
+	public static final double EDITOR_SCREEN_HEIGHT_PERCENT = 0.80;
+	public static final double EDITOR_SCROLL_PAGE_PERCENT = 0.9;
+
 	public static final int CANVAS_WIDTH = 5000; // Max = 8192
 	public static final int CANVAS_HEIGHT = 5000; // Max = 8192
 	public static final int CANVAS_GRID_SIZE = 10;
@@ -31,7 +37,7 @@ public interface EditorConstants
 	public static final String STRING_PIN = "Pin";
 	public static final String STRING_INVALID = "Invalid Layer";
 
-	public static final double COLOR_OPACITY = 0.5;
+	public static final double COLOR_OPACITY = 0.6;
 	public static final double COLOR_OPACITY_SELECTED = 0.8;
 
 	public static final Color COLOR_METAL_ONE = Color.RED;
