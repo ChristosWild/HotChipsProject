@@ -7,6 +7,8 @@ import javafx.scene.shape.Rectangle;
 import project.editor.controller.EditorController;
 import project.editor.extractor.components.Capacitor;
 import project.editor.extractor.components.CircuitComponent;
+import project.editor.extractor.components.Transistor;
+import project.editor.extractor.components.Transistor.TransistorType;
 import project.editor.extractor.components.spice.SpiceComponent;
 import project.editor.util.Layer;
 import project.editor.util.LayerRectangle;
@@ -170,9 +172,60 @@ public final class ExtractorUtil
 		return capList;
 	}
 
-	private static List<CircuitComponent> extractTransistors(final EditorController editorController)
-	{
-		final List<CircuitComponent> transistors = new ArrayList<CircuitComponent>();
+	private static List<Transistor> extractTransistors(final EditorController editorController) // TODO pass in enum
+	{ // TODO get all diffusion with same ID and compare overlap with them too (in case diffusion is split into different rects)
+		// TODO right click via - set as source / node , pin set name
+		final List<Transistor> transistors = new ArrayList<Transistor>();
+
+		for (final LayerRectangle diffusion : editorController.getCanvasController()
+				.getLayerRectangles(Layer.DIFFUSION_N))
+		{
+			String nodeSource = null;
+			String nodeDrain = null;
+			String nodeGate = null;
+
+			VIA: for (final LayerRectangle via : editorController.getCanvasController().getLayerRectangles(Layer.VIA))
+			{
+				if (via.isContainedBy(diffusion))
+				{
+					for (final LayerRectangle metalOne : editorController.getCanvasController()
+							.getLayerRectangles(Layer.METAL_ONE))
+					{
+						if (via.isContainedBy(metalOne))
+						{
+							if(nodeSource == null)
+							{
+								nodeSource = metalOne.getId();
+								continue VIA;
+							}
+							else
+							{
+								nodeDrain = metalOne.getId();
+								break VIA;
+							}
+						}
+					}
+				}
+			}
+
+			for (final LayerRectangle poly : editorController.getCanvasController()
+					.getLayerRectangles(Layer.POLYSILICON))
+			{
+				final Rectangle intersection = diffusion.getIntersection(poly);
+				if (intersection.getWidth() > 0 && intersection.getHeight() > 0)
+				{
+					nodeGate = poly.getId();
+					break;
+				}
+			}
+
+			if (nodeSource != null && nodeDrain != null && nodeGate != null)
+			{
+				System.out.println("TRANSISTOR MOTHERFUCKER");
+				final Transistor transistor = new Transistor(TransistorType.NMOS, nodeSource, nodeDrain, nodeGate);
+				transistors.add(transistor);
+			}
+		}
 
 		return transistors;
 	}
