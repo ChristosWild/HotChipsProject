@@ -23,6 +23,10 @@ import static project.editor.util.EditorConstants.STRING_PIN;
 import static project.editor.util.EditorConstants.STRING_POLYSILICON;
 import static project.editor.util.EditorConstants.STRING_VIA;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javafx.scene.paint.Color;
 
 public enum Layer
@@ -114,6 +118,11 @@ public enum Layer
 			}
 		}
 		return Layer.INVALID_LAYER;
+	}
+
+	public static List<Layer> getMetalLayers()
+	{
+		return new ArrayList<>(Arrays.asList(METAL_ONE, METAL_TWO, METAL_THREE, METAL_FOUR, METAL_FIVE));
 	}
 
 	// public static Image getLayerImageFromName(final String name)

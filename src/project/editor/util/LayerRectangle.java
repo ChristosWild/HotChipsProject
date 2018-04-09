@@ -85,9 +85,16 @@ public class LayerRectangle extends Rectangle
 		return false;
 	}
 
+	/**
+	 * Gets the rectangle of the intersecting area. Width > 0 AND height > 0 =
+	 * overlap, else not overlapping
+	 *
+	 * @param rectTwo
+	 * @return A rectangle of the intersecting area
+	 */
 	public Rectangle getIntersection(final LayerRectangle rectTwo)
 	{
-		// Algorithm from java.awt.Rectangle intersection used
+		// Algorithm from java.awt.Rectangle intersection method used
 
 		// Top left = (x1,y1), bottom right = (x2, y2)
 		double rectOneX1 = this.getX() + this.getOffset().x;
@@ -124,7 +131,7 @@ public class LayerRectangle extends Rectangle
 			rectOneY2 = rectTwoY2;
 		}
 
-		double width = rectOneX2 - rectOneX1; // width
+		double width = rectOneX2 - rectOneX1;
 
 		double height = rectOneY2 - rectOneY1;
 
@@ -137,17 +144,64 @@ public class LayerRectangle extends Rectangle
 			height = Integer.MIN_VALUE;
 		}
 
-		if (width < 0)
-		{
-			width = 0;
-		}
-
-		if (height < 0)
-		{
-			height = 0;
-		}
+		// if (width > 0 && height > 0)
+		// {
+		// intersection = new Rectangle(rectOneX1, rectOneY1, width, height);
+		// }
+		//
+		// return intersection;
 
 		return new Rectangle(rectOneX1, rectOneY1, width, height);
+	}
+
+	/**
+	 * Checks if this rect is contained by another
+	 *
+	 * @param layerRect
+	 * @return true if this LayerRectangle is entirely contained by layerRect
+	 */
+	public boolean isContainedBy(final LayerRectangle layerRect)
+	{
+		final double rectOneX1 = this.getX() + this.getOffset().x;
+		final double rectOneY1 = this.getY() + this.getOffset().y;
+		final double rectOneX2 = rectOneX1 + this.getWidth();
+		final double rectOneY2 = rectOneY1 + this.getHeight();
+
+		final double rectTwoX1 = layerRect.getX() + layerRect.getOffset().x;
+		final double rectTwoY1 = layerRect.getY() + layerRect.getOffset().y;
+		final double rectTwoX2 = rectTwoX1 + layerRect.getWidth();
+		final double rectTwoY2 = rectTwoY1 + layerRect.getHeight();
+
+		if (rectOneX1 >= rectTwoX1
+				&& rectOneY1 >= rectTwoY1
+				&& rectOneX2 <= rectTwoX2
+				&& rectOneY2 <= rectTwoY2)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean isAdjacentTo(final LayerRectangle layerRect)
+	{
+		boolean isAdjacent = false;
+
+		final Rectangle overlap = this.getIntersection(layerRect);
+		if (overlap.getWidth() > 0 && overlap.getHeight() > 0)
+		{
+			isAdjacent = true;
+		}
+		else if (overlap.getWidth() == 0 && overlap.getHeight() > 0)
+		{
+			isAdjacent = true;
+		}
+		else if (overlap.getHeight() == 0 && overlap.getWidth() > 0)
+		{
+			isAdjacent = true;
+		}
+
+		return isAdjacent;
 	}
 
 	public boolean isSelected()
