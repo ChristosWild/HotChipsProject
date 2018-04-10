@@ -5,6 +5,8 @@ import java.util.List;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
@@ -40,10 +42,16 @@ public class CanvasController
 	private Pane selectedPane;
 	private LayerRectangle rectangle;
 	private Tooltip tooltip;
+	private ContextMenu menuVia;
+	private ContextMenu menuPin;
+	private MenuItem setSource;
+	private MenuItem setDrain;
+	private MenuItem namePin;
 
 	private Delta startPos;
 	private boolean isDragging;
 	private boolean isCtrlPressed;
+	private boolean isPrimary;
 	private boolean isSelected;
 	private boolean isMoving;
 
@@ -64,15 +72,26 @@ public class CanvasController
 	public void createPartControl(final BorderPane root)
 	{
 		canvasControl.createPartControl(root);
+
+		final MenuItem setSource = new MenuItem("Set as Source");
+		final MenuItem setDrain = new MenuItem("Set as Drain");
+		final MenuItem namePin = new MenuItem("Set name");
+
+		menuVia = new ContextMenu(setSource, setDrain);
+		menuPin = new ContextMenu(namePin);
+
 		setUpListeners(root);
 	}
 
 	private void setUpListeners(final BorderPane root)
 	{
+		// TODO context menu listeners
+
 		canvasControl.getSelectionPane().addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
 
 			isDragging = true;
 			isCtrlPressed = event.isShortcutDown();
+			isPrimary = event.isPrimaryButtonDown();
 
 			startPos = new Delta();
 			startPos.x = event.getX();
@@ -82,123 +101,129 @@ public class CanvasController
 			Paint fill = null;
 			Paint fillSelected = null;
 
-			if (canvasMode == CanvasMode.DRAW)
+			if (isPrimary)
 			{
-				canvasControl.deselectAll();
-				isSelected = false;
-				isMoving = false;
-
-				layer = canvasControl.getCurrentPaneLayer();
-				selectedPane = canvasControl.getCurrentPane();
-
-				if (SelectorControl.getInstance().getSelectedLayer() == Layer.VIA)
+				if (canvasMode == CanvasMode.DRAW)
 				{
-					fill = new ImagePattern(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_VIA)); // TODO creates new images every time
-					fillSelected = new ImagePattern(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_VIA_SELECTED));
+					canvasControl.deselectAll();
+					isSelected = false;
+					isMoving = false;
+
+					layer = canvasControl.getCurrentPaneLayer();
+					selectedPane = canvasControl.getCurrentPane();
+
+					if (SelectorControl.getInstance().getSelectedLayer() == Layer.VIA)
+					{
+						fill = new ImagePattern(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_VIA)); // TODO creates new images every time
+						fillSelected = new ImagePattern(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_VIA_SELECTED));
+					}
+					else if (SelectorControl.getInstance().getSelectedLayer() == Layer.PIN)
+					{
+						fill = new ImagePattern(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_PIN));
+						fillSelected = new ImagePattern(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_PIN_SELECTED));
+					}
+					else
+					{
+						fill = canvasControl.getCurrentPaneColor();
+					}
+
 				}
-				else if (SelectorControl.getInstance().getSelectedLayer() == Layer.PIN)
+				else // SELECT
 				{
-					fill = new ImagePattern(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_PIN));
-					fillSelected = new ImagePattern(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_PIN_SELECTED));
+					layer = Layer.INVALID_LAYER;
+					selectedPane = canvasControl.getSelectionPane();
+					fill = Color.web(Color.GREY.toString(), 0.4); // TODO pick selection box colour
+
+					isSelected = canvasControl.getSelectedObjects().size() > 0;
+					isMoving = isSelected && selectedContainsMouse(event);
+
+					updateSelectedBounds();
+				}
+
+				if(fill instanceof Color)
+				{
+					rectangle = new LayerRectangle(startPos.x, startPos.y, 0, 0, (Color) fill, layer);
 				}
 				else
 				{
-					fill = canvasControl.getCurrentPaneColor();
+					rectangle = new LayerRectangle(startPos.x, startPos.y, 0, 0, fill, fillSelected, layer);
 				}
 
+				selectedPane.getChildren().add(rectangle);
+
+				tooltip = new Tooltip();
+				Tooltip.install(rectangle, tooltip);
 			}
-			else // SELECT
-			{
-				layer = Layer.INVALID_LAYER;
-				selectedPane = canvasControl.getSelectionPane();
-				fill = Color.web(Color.GREY.toString(), 0.4); // TODO pick selection box colour
-
-				isSelected = canvasControl.getSelectedObjects().size() > 0;
-				isMoving = isSelected && selectedContainsMouse(event);
-
-				updateSelectedBounds();
-			}
-
-			if(fill instanceof Color)
-			{
-				rectangle = new LayerRectangle(startPos.x, startPos.y, 0, 0, (Color) fill, layer);
-			}
-			else
-			{
-				rectangle = new LayerRectangle(startPos.x, startPos.y, 0, 0, fill, fillSelected, layer);
-			}
-
-			selectedPane.getChildren().add(rectangle);
-
-			tooltip = new Tooltip();
-			Tooltip.install(rectangle, tooltip);
 		});
 
 		canvasControl.getSelectionPane().addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
 
 			if (isDragging)
 			{
-				final Delta dragPos = new Delta(event.getX(), event.getY());
-				EditorUtil.snapToGrid(dragPos);
-				double deltaX = dragPos.x - startPos.x;
-				double deltaY = dragPos.y - startPos.y;
-
-				if (isMoving && !isCtrlPressed)
+				if (isPrimary)
 				{
-					if (movementPossibleX(deltaX))
+					final Delta dragPos = new Delta(event.getX(), event.getY());
+					EditorUtil.snapToGrid(dragPos);
+					double deltaX = dragPos.x - startPos.x;
+					double deltaY = dragPos.y - startPos.y;
+
+					if (isMoving && !isCtrlPressed)
 					{
-						for (final LayerRectangle layerRect : canvasControl.getSelectedObjects())
+						if (movementPossibleX(deltaX))
 						{
-							layerRect.setTranslateX(layerRect.getOffset().x + deltaX);
+							for (final LayerRectangle layerRect : canvasControl.getSelectedObjects())
+							{
+								layerRect.setTranslateX(layerRect.getOffset().x + deltaX);
+							}
+						}
+
+						if (movementPossibleY(deltaY))
+						{
+							for (final LayerRectangle layerRect : canvasControl.getSelectedObjects())
+							{
+								layerRect.setTranslateY(layerRect.getOffset().y + deltaY);
+							}
 						}
 					}
-
-					if (movementPossibleY(deltaY))
+					else
 					{
-						for (final LayerRectangle layerRect : canvasControl.getSelectedObjects())
+						if (deltaX >= 0) // TODO check if move possible to fix out of bounds tooltip issue
 						{
-							layerRect.setTranslateY(layerRect.getOffset().y + deltaY);
+							if (rectangle.getX() + deltaX <= EditorConstants.CANVAS_WIDTH)
+							{
+								rectangle.setTranslateX(0);
+								rectangle.setWidth(deltaX);
+							}
 						}
-					}
-				}
-				else
-				{
-					if (deltaX >= 0) // TODO check if move possible to fix out of bounds tooltip issue
-					{
-						if (rectangle.getX() + deltaX <= EditorConstants.CANVAS_WIDTH)
+						else if (rectangle.getX() + deltaX >= 0)
 						{
-							rectangle.setTranslateX(0);
-							rectangle.setWidth(deltaX);
+							rectangle.setTranslateX(deltaX);
+							rectangle.setWidth(-deltaX);
 						}
-					}
-					else if (rectangle.getX() + deltaX >= 0)
-					{
-						rectangle.setTranslateX(deltaX);
-						rectangle.setWidth(-deltaX);
-					}
 
-					if (deltaY >= 0)
-					{
-						if (rectangle.getY() + deltaY <= EditorConstants.CANVAS_HEIGHT)
+						if (deltaY >= 0)
 						{
-							rectangle.setTranslateY(0);
-							rectangle.setHeight(deltaY);
+							if (rectangle.getY() + deltaY <= EditorConstants.CANVAS_HEIGHT)
+							{
+								rectangle.setTranslateY(0);
+								rectangle.setHeight(deltaY);
+							}
 						}
-					}
-					else if (rectangle.getY() + deltaY >= 0)
-					{
-						rectangle.setTranslateY(deltaY);
-						rectangle.setHeight(-deltaY);
-					}
+						else if (rectangle.getY() + deltaY >= 0)
+						{
+							rectangle.setTranslateY(deltaY);
+							rectangle.setHeight(-deltaY);
+						}
 
-					final Scene scene = rectangle.getScene();
-					final Point2D point = rectangle.localToScene(0, 0);
+						final Scene scene = rectangle.getScene();
+						final Point2D point = rectangle.localToScene(0, 0);
 
-					tooltip.setText((int) (Math.abs(deltaX) / EditorConstants.CANVAS_GRID_SIZE) + LAMBDA + " x "
-							+ (int) (Math.abs(deltaY) / EditorConstants.CANVAS_GRID_SIZE) + LAMBDA); // TODO fix tooltip for backwards rects
-					tooltip.setX(scene.getWindow().getX() + scene.getX() + point.getX() + dragPos.x);
-					tooltip.setY(scene.getWindow().getY() + scene.getY() + point.getY() + dragPos.y);
-					tooltip.show(rectangle.getScene().getWindow());
+						tooltip.setText((int) (Math.abs(deltaX) / EditorConstants.CANVAS_GRID_SIZE) + LAMBDA + " x "
+								+ (int) (Math.abs(deltaY) / EditorConstants.CANVAS_GRID_SIZE) + LAMBDA); // TODO fix tooltip for backwards rects
+						tooltip.setX(scene.getWindow().getX() + scene.getX() + point.getX() + dragPos.x);
+						tooltip.setY(scene.getWindow().getY() + scene.getY() + point.getY() + dragPos.y);
+						tooltip.show(rectangle.getScene().getWindow());
+					}
 				}
 			}
 		});
@@ -208,49 +233,65 @@ public class CanvasController
 			final Delta endPos = new Delta(event.getX(), event.getY());
 			EditorUtil.snapToGrid(endPos);
 
-			tooltip.hide();
-			Tooltip.uninstall(rectangle, tooltip);
-
-			if (canvasMode == CanvasMode.DRAW)
+			if (isPrimary)
 			{
-				if (rectangle.getWidth() == 0 || rectangle.getHeight() == 0)
-				{
-					selectedPane.getChildren().remove(rectangle);
-				}
-				else
-				{
-					rectangle.setOffset(rectangle.getTranslateX(), rectangle.getTranslateY());
+				tooltip.hide();
+				Tooltip.uninstall(rectangle, tooltip);
 
-					// Check if selected pane already has the same rectangle added
-					if (selectedPane.getChildren().indexOf(rectangle) != selectedPane.getChildren()
-							.lastIndexOf(rectangle))
+				if (canvasMode == CanvasMode.DRAW)
+				{
+					if (rectangle.getWidth() == 0 || rectangle.getHeight() == 0)
 					{
 						selectedPane.getChildren().remove(rectangle);
 					}
+					else
+					{
+						rectangle.setOffset(rectangle.getTranslateX(), rectangle.getTranslateY());
+
+						// Check if selected pane already has the same rectangle added
+						if (selectedPane.getChildren().indexOf(rectangle) != selectedPane.getChildren()
+								.lastIndexOf(rectangle))
+						{
+							selectedPane.getChildren().remove(rectangle);
+						}
+					}
+				}
+				else
+				{
+					if (isMoving)
+					{
+						for (final LayerRectangle layerRect : canvasControl.getSelectedObjects())
+						{
+							layerRect.setOffset(layerRect.getTranslateX(), layerRect.getTranslateY());
+						}
+					}
+
+					if (!isMoving || isCtrlPressed)
+					{
+						if (startPos.x == endPos.x && startPos.y == endPos.y)
+						{
+							selectPoint(event.getX(), event.getY(), isCtrlPressed);
+						}
+						else
+						{
+							selectArea(startPos.x, startPos.y, endPos.x, endPos.y, isCtrlPressed);
+						}
+					}
+					selectedPane.getChildren().remove(rectangle);
 				}
 			}
 			else
 			{
-				if (isMoving)
+				// TODO name via and contact stuff
+				for (final LayerRectangle via : getLayerRectangles(Layer.VIA))
 				{
-					for (final LayerRectangle layerRect : canvasControl.getSelectedObjects())
+					if (via.getBoundsInParent().contains(event.getX(), event.getY()))
 					{
-						layerRect.setOffset(layerRect.getTranslateX(), layerRect.getTranslateY());
+						System.out.println("contained");
+						ContextMenu a = new ContextMenu(new MenuItem("test"));
+						a.show(via, event.getScreenX(), event.getScreenY());
 					}
 				}
-
-				if (!isMoving || isCtrlPressed)
-				{
-					if (startPos.x == endPos.x && startPos.y == endPos.y)
-					{
-						selectPoint(event.getX(), event.getY(), isCtrlPressed);
-					}
-					else
-					{
-						selectArea(startPos.x, startPos.y, endPos.x, endPos.y, isCtrlPressed);
-					}
-				}
-				selectedPane.getChildren().remove(rectangle);
 			}
 
 			isDragging = false;

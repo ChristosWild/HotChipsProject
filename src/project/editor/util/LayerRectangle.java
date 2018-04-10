@@ -9,6 +9,9 @@ import project.editor.util.EditorUtil.Delta;
 
 public class LayerRectangle extends Rectangle
 {
+	// Only used for vias and contacts during circuit extraction
+	private String name;
+
 	private Layer layer;
 	private BooleanProperty isSelected;
 	private final Paint fill;
@@ -202,6 +205,16 @@ public class LayerRectangle extends Rectangle
 		}
 
 		return isAdjacent;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(final String name)
+	{
+		this.name = name;
 	}
 
 	public boolean isSelected()

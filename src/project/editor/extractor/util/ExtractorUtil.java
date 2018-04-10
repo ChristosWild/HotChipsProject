@@ -102,7 +102,8 @@ public final class ExtractorUtil
 		final List<CircuitComponent> components = new ArrayList<CircuitComponent>();
 
 		components.addAll(extractMetalViasAndCapacitors(editorController)); // TODO Check if capacitor when layer 1 and layer 5 overlap etc
-		components.addAll(extractTransistors(editorController));
+		components.addAll(extractTransistors(editorController, TransistorType.NMOS));
+		components.addAll(extractTransistors(editorController, TransistorType.PMOS));
 
 		return components;
 	}
@@ -172,13 +173,16 @@ public final class ExtractorUtil
 		return capList;
 	}
 
-	private static List<Transistor> extractTransistors(final EditorController editorController) // TODO pass in enum
+	private static List<Transistor> extractTransistors(final EditorController editorController,
+			final TransistorType type)
 	{ // TODO get all diffusion with same ID and compare overlap with them too (in case diffusion is split into different rects)
 		// TODO right click via - set as source / node , pin set name
 		final List<Transistor> transistors = new ArrayList<Transistor>();
 
-		for (final LayerRectangle diffusion : editorController.getCanvasController()
-				.getLayerRectangles(Layer.DIFFUSION_N))
+		final List<LayerRectangle> diffusionRects = editorController.getCanvasController()
+				.getLayerRectangles(type == TransistorType.NMOS ? Layer.DIFFUSION_N : Layer.DIFFUSION_P);
+
+		for (final LayerRectangle diffusion : diffusionRects)
 		{
 			String nodeSource = null;
 			String nodeDrain = null;
@@ -193,15 +197,27 @@ public final class ExtractorUtil
 					{
 						if (via.isContainedBy(metalOne))
 						{
-							if(nodeSource == null)
+							if (via.getName().equals(Transistor.NAME_SOURCE))
 							{
 								nodeSource = metalOne.getId();
-								continue VIA;
+							}
+							else if (via.getName().equals(Transistor.NAME_DRAIN))
+							{
+								nodeDrain = metalOne.getId();
 							}
 							else
 							{
-								nodeDrain = metalOne.getId();
+								// TODO open dialog ("Please label source and drain for transistors")
+								// throw exception?
+							}
+
+							if (nodeSource != null && nodeDrain != null)
+							{
 								break VIA;
+							}
+							else
+							{
+								continue VIA;
 							}
 						}
 					}
