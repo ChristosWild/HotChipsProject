@@ -3,6 +3,8 @@ package project.editor.extractor.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.ConfigurationException;
+
 import javafx.scene.shape.Rectangle;
 import project.editor.controller.EditorController;
 import project.editor.extractor.components.Capacitor;
@@ -16,6 +18,8 @@ import project.editor.util.LayerRectangle;
 public final class ExtractorUtil
 {
 	private static int MAX_ID = 0;
+	private static final String TRANSISTOR_VIA_EXCEPTION_MESSAGE = "Extraction failed. Ensure all vias connecting"
+			+ " transistors are labelled as either a source or drain";
 
 	private ExtractorUtil() {};
 
@@ -26,22 +30,29 @@ public final class ExtractorUtil
 	 */
 	public static void extractSpice(final EditorController editorController)
 	{
-		MAX_ID = setInitialIds(editorController);
-		connectAdjacentRects(editorController);
+		try
+		{
+			MAX_ID = setInitialIds(editorController);
+			connectAdjacentRects(editorController);
 
-		final List<CircuitComponent> components = extractComponents(editorController);
-		final List<SpiceComponent> spiceComponents = SpiceUtil.componentsToSpice(components);
+			final List<CircuitComponent> components = extractComponents(editorController);
+			final List<SpiceComponent> spiceComponents = SpiceUtil.componentsToSpice(components);
 
-		// editorController.getCanvasController().getAllLayerRectangles().forEach(layer
-		// -> {
-		// layer.forEach(rect -> {
-		// System.out.println(rect.getId());
-		// });
-		// });
+			// editorController.getCanvasController().getAllLayerRectangles().forEach(layer
+			// -> {
+			// layer.forEach(rect -> {
+			// System.out.println(rect.getId());
+			// });
+			// });
 
-		//////////
-		spiceComponents.forEach(e -> System.out.println(e.getSpiceString()));
-		//////////
+			//////////
+			spiceComponents.forEach(e -> System.out.println(e.getSpiceString()));
+			//////////
+		} catch (ConfigurationException e)
+		{
+			// TODO handle
+			System.out.println(e);
+		}
 	}
 
 	private static int setInitialIds(final EditorController editorController)
@@ -98,6 +109,7 @@ public final class ExtractorUtil
 	}
 
 	private static List<CircuitComponent> extractComponents(final EditorController editorController)
+			throws ConfigurationException
 	{
 		final List<CircuitComponent> components = new ArrayList<CircuitComponent>();
 
@@ -174,9 +186,10 @@ public final class ExtractorUtil
 	}
 
 	private static List<Transistor> extractTransistors(final EditorController editorController,
-			final TransistorType type)
+			final TransistorType type) throws ConfigurationException
 	{ // TODO get all diffusion with same ID and compare overlap with them too (in case diffusion is split into different rects)
-		// TODO right click via - set as source / node , pin set name
+		// TODO connect M1 with poly
+		// TODO poly must cover diffusion
 		final List<Transistor> transistors = new ArrayList<Transistor>();
 
 		final List<LayerRectangle> diffusionRects = editorController.getCanvasController()
@@ -197,18 +210,23 @@ public final class ExtractorUtil
 					{
 						if (via.isContainedBy(metalOne))
 						{
-							if (via.getName().equals(Transistor.NAME_SOURCE))
+							if (via.getName() == null)
+							{
+								throw new ConfigurationException(TRANSISTOR_VIA_EXCEPTION_MESSAGE); // TODO stop programming by exception
+							}
+							else if (via.getName().equals(Transistor.NAME_SOURCE))
 							{
 								nodeSource = metalOne.getId();
+								System.out.println("source" + metalOne.getId());
 							}
 							else if (via.getName().equals(Transistor.NAME_DRAIN))
 							{
+								System.out.println("drain" + metalOne.getId());
 								nodeDrain = metalOne.getId();
 							}
 							else
 							{
-								// TODO open dialog ("Please label source and drain for transistors")
-								// throw exception?
+								throw new ConfigurationException(TRANSISTOR_VIA_EXCEPTION_MESSAGE);
 							}
 
 							if (nodeSource != null && nodeDrain != null)
@@ -235,7 +253,7 @@ public final class ExtractorUtil
 				}
 			}
 
-			if (nodeSource != null && nodeDrain != null && nodeGate != null)
+			if (nodeSource != null && nodeDrain != null && nodeGate != null) // TODO 2 source or 2 drain = exception
 			{
 				System.out.println("TRANSISTOR MOTHERFUCKER");
 				final Transistor transistor = new Transistor(TransistorType.NMOS, nodeSource, nodeDrain, nodeGate);

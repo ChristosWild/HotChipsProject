@@ -7,6 +7,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
@@ -18,6 +19,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import project.editor.control.CanvasControl;
 import project.editor.control.SelectorControl;
+import project.editor.extractor.components.Transistor;
 import project.editor.util.EditorConstants;
 import project.editor.util.EditorUtil;
 import project.editor.util.EditorUtil.Delta;
@@ -42,11 +44,13 @@ public class CanvasController
 	private Pane selectedPane;
 	private LayerRectangle rectangle;
 	private Tooltip tooltip;
+
 	private ContextMenu menuVia;
 	private ContextMenu menuPin;
 	private MenuItem setSource;
 	private MenuItem setDrain;
-	private MenuItem namePin;
+	private MenuItem setPinName;
+	private TextInputDialog pinNameDialog;
 
 	private Delta startPos;
 	private boolean isDragging;
@@ -73,19 +77,39 @@ public class CanvasController
 	{
 		canvasControl.createPartControl(root);
 
-		final MenuItem setSource = new MenuItem("Set as Source");
-		final MenuItem setDrain = new MenuItem("Set as Drain");
-		final MenuItem namePin = new MenuItem("Set name");
+		setSource = new MenuItem("Set as transistor source");
+		setDrain = new MenuItem("Set as transistor drain");
+		setPinName = new MenuItem("Set pin name");
 
 		menuVia = new ContextMenu(setSource, setDrain);
-		menuPin = new ContextMenu(namePin);
+		menuPin = new ContextMenu(setPinName);
+
+		pinNameDialog = new TextInputDialog();
+		pinNameDialog.setTitle("Pin");
+		pinNameDialog.setContentText("Name:");
+		pinNameDialog.getEditor().setPromptText("Name...");
+		pinNameDialog.setHeaderText(null);
+		pinNameDialog.setGraphic(null);
 
 		setUpListeners(root);
 	}
 
 	private void setUpListeners(final BorderPane root)
 	{
-		// TODO context menu listeners
+		setSource.setOnAction(e -> {
+			final LayerRectangle via = (LayerRectangle) ((MenuItem) e.getSource()).getParentPopup().getOwnerNode();
+			via.setName(Transistor.NAME_SOURCE);
+		});
+		setDrain.setOnAction(e -> {
+			final LayerRectangle via = (LayerRectangle) ((MenuItem) e.getSource()).getParentPopup().getOwnerNode();
+			via.setName(Transistor.NAME_DRAIN);
+		});
+		setPinName.setOnAction(e -> {
+			final LayerRectangle pin = (LayerRectangle) ((MenuItem) e.getSource()).getParentPopup().getOwnerNode();
+			pinNameDialog.getEditor().setText(pin.getName());
+			pinNameDialog.getEditor().selectAll();
+			pinNameDialog.showAndWait().ifPresent(name -> pin.setName(name));
+		});
 
 		canvasControl.getSelectionPane().addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
 
@@ -282,14 +306,20 @@ public class CanvasController
 			}
 			else
 			{
-				// TODO name via and contact stuff
+				// Brings up right click menu for top via or pin
 				for (final LayerRectangle via : getLayerRectangles(Layer.VIA))
 				{
 					if (via.getBoundsInParent().contains(event.getX(), event.getY()))
 					{
-						System.out.println("contained");
-						ContextMenu a = new ContextMenu(new MenuItem("test"));
-						a.show(via, event.getScreenX(), event.getScreenY());
+						menuVia.show(via, event.getScreenX(), event.getScreenY());
+					}
+				}
+
+				for (final LayerRectangle pin : getLayerRectangles(Layer.PIN))
+				{
+					if (pin.getBoundsInParent().contains(event.getX(), event.getY()))
+					{
+						menuPin.show(pin, event.getScreenX(), event.getScreenY());
 					}
 				}
 			}
