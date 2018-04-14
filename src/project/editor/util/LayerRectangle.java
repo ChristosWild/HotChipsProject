@@ -10,7 +10,7 @@ import project.editor.util.EditorUtil.Delta;
 public class LayerRectangle extends Rectangle
 {
 	// Only used for vias and contacts during circuit extraction
-	private String name;
+	private String name = "";
 
 	private Layer layer;
 	private BooleanProperty isSelected;

@@ -1,14 +1,19 @@
 package project.editor.extractor.util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.ConfigurationException;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.shape.Rectangle;
+import project.editor.controller.CanvasController;
 import project.editor.controller.EditorController;
 import project.editor.extractor.components.Capacitor;
 import project.editor.extractor.components.CircuitComponent;
+import project.editor.extractor.components.PowerSupply;
 import project.editor.extractor.components.Transistor;
 import project.editor.extractor.components.Transistor.TransistorType;
 import project.editor.extractor.components.spice.SpiceComponent;
@@ -17,9 +22,13 @@ import project.editor.util.LayerRectangle;
 
 public final class ExtractorUtil
 {
-	private static int MAX_ID = 0;
-	private static final String TRANSISTOR_VIA_EXCEPTION_MESSAGE = "Extraction failed. Ensure all vias connecting"
-			+ " transistors are labelled as either a source or drain";
+	private static int MAX_ID = 1;
+	private static String GND_ID = "0";
+	private static final String TRANSISTOR_MISSING_VIA_EXCEPTION_MESSAGE = "Extraction failed.\nEnsure all vias"
+			+ " connecting transistors are labelled as either a source or drain.";
+	private static final String TRANSISTOR_SAME_SOURCE_DRAIN_EXCEPTION_MESSAGE = "Extraction failed.\nTransistor has 2"
+			+ " sources, or 2 drains.";
+	private static final String EXTRACTION_SUCCESSFUL_MESSAGE = "Circuit extraction successful.";
 
 	private ExtractorUtil() {};
 
@@ -30,36 +39,53 @@ public final class ExtractorUtil
 	 */
 	public static void extractSpice(final EditorController editorController)
 	{
+		// TODO Must save file first ; alert.confirmation
+
+		final Alert exceptionAlert = new Alert(AlertType.INFORMATION);
+		exceptionAlert.setHeaderText(null);
+		exceptionAlert.setGraphic(null);
+
 		try
 		{
-			MAX_ID = setInitialIds(editorController);
-			connectAdjacentRects(editorController);
+			final CanvasController canvasController = editorController.getCanvasController();
 
-			final List<CircuitComponent> components = extractComponents(editorController);
+			MAX_ID = setInitialIds(canvasController);
+			connectAdjacentRects(canvasController);
+
+			final List<CircuitComponent> components = extractComponents(canvasController);
 			final List<SpiceComponent> spiceComponents = SpiceUtil.componentsToSpice(components);
 
-			// editorController.getCanvasController().getAllLayerRectangles().forEach(layer
-			// -> {
+			// canvasController.getAllLayerRectangles().forEach(layer -> {
 			// layer.forEach(rect -> {
-			// System.out.println(rect.getId());
+			// System.out.println(rect.getLayer() + " : " + rect.getId());
 			// });
 			// });
 
 			//////////
-			spiceComponents.forEach(e -> System.out.println(e.getSpiceString()));
+			// System.out.println("\nSPICE:\n");
+			// spiceComponents.forEach(e -> System.out.println(e.getSpiceString()));
 			//////////
-		} catch (ConfigurationException e)
+
+			SpiceUtil.writeToFile(editorController, spiceComponents);
+			exceptionAlert.setContentText(EXTRACTION_SUCCESSFUL_MESSAGE);
+			exceptionAlert.showAndWait();
+
+		} catch (ConfigurationException | IOException e)
 		{
-			// TODO handle
-			System.out.println(e);
+			// TODO log properly
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+
+			exceptionAlert.setContentText(e.getMessage());
+			exceptionAlert.showAndWait();
 		}
 	}
 
-	private static int setInitialIds(final EditorController editorController)
+	private static int setInitialIds(final CanvasController canvasController)
 	{
 		// Give each LayerRectangle a unique id, returns highest id val used later
 		int id = 1;
-		for (final ArrayList<LayerRectangle> layer : editorController.getCanvasController().getAllLayerRectangles())
+		for (final ArrayList<LayerRectangle> layer : canvasController.getAllLayerRectangles())
 		{
 			for (final LayerRectangle layerRect : layer)
 			{
@@ -73,12 +99,11 @@ public final class ExtractorUtil
 	/**
 	 * Connects LayerRectangles that are on the same Layer if they touch or overlap
 	 *
-	 * @param editorController
+	 * @param canvasController
 	 */
-	private static void connectAdjacentRects(final EditorController editorController)
+	private static void connectAdjacentRects(final CanvasController canvasController)
 	{
-		final List<ArrayList<LayerRectangle>> allLayerRects = editorController.getCanvasController()
-				.getAllLayerRectangles();
+		final List<ArrayList<LayerRectangle>> allLayerRects = canvasController.getAllLayerRectangles();
 
 		LAYER: for (int layerIndex = 0 ; layerIndex < allLayerRects.size() ; layerIndex++) // List<LayerRectangle> layerRects : allLayerRects)
 		{
@@ -100,27 +125,107 @@ public final class ExtractorUtil
 					{
 						// Update ids to be the same as now considered same object
 						MAX_ID++;
-						updateIds(editorController, rectOne.getId(), MAX_ID + "");
-						updateIds(editorController, rectTwo.getId(), MAX_ID + "");
+						updateIds(canvasController, rectOne.getId(), MAX_ID + "");
+						updateIds(canvasController, rectTwo.getId(), MAX_ID + "");
 					}
 				}
 			}
 		}
 	}
 
-	private static List<CircuitComponent> extractComponents(final EditorController editorController)
+	private static List<CircuitComponent> extractComponents(final CanvasController canvasController)
 			throws ConfigurationException
 	{
 		final List<CircuitComponent> components = new ArrayList<CircuitComponent>();
 
-		components.addAll(extractMetalViasAndCapacitors(editorController)); // TODO Check if capacitor when layer 1 and layer 5 overlap etc
-		components.addAll(extractTransistors(editorController, TransistorType.NMOS));
-		components.addAll(extractTransistors(editorController, TransistorType.PMOS));
+		extractGnd(canvasController);
+		extractPolysiliconVias(canvasController);
+		components.addAll(extractMetalViasAndCapacitors(canvasController)); // TODO Check if capacitor when layer 1 and layer 5 overlap etc
+		components.addAll(extractTransistors(canvasController, TransistorType.NMOS));
+		components.addAll(extractTransistors(canvasController, TransistorType.PMOS));
+		components.add(extractVdd(canvasController));
 
 		return components;
 	}
 
-	private static List<Capacitor> extractMetalViasAndCapacitors(final EditorController editorController)
+	private static void extractGnd(final CanvasController canvasController)
+	{
+		for (final LayerRectangle pin : canvasController.getLayerRectangles(Layer.PIN))
+		{
+			LAYER: for (final List<LayerRectangle> layer : canvasController.getAllLayerRectangles())
+			{
+				for (final LayerRectangle layerRect : layer)
+				{
+					if (layerRect.getLayer() == Layer.VIA || layerRect.getLayer() == Layer.PIN)
+					{
+						break LAYER;
+					}
+					else if (pin.isContainedBy(layerRect) && pin.getName().equals(SpiceUtil.PIN_NAME_GND))
+					{
+						updateIds(canvasController, layerRect.getId(), GND_ID);
+					}
+				}
+			}
+		}
+	}
+
+	private static PowerSupply extractVdd(final CanvasController canvasController)
+	{
+		PowerSupply vdd = null;
+
+		for (final LayerRectangle pin : canvasController.getLayerRectangles(Layer.PIN))
+		{
+			LAYER: for (final List<LayerRectangle> layer : canvasController.getAllLayerRectangles())
+			{
+				for (final LayerRectangle layerRect : layer)
+				{
+					if (layerRect.getLayer() == Layer.VIA || layerRect.getLayer() == Layer.PIN)
+					{
+						break LAYER;
+					}
+					else if (pin.isContainedBy(layerRect) && pin.getName().equals(SpiceUtil.PIN_NAME_VDD))
+					{
+						vdd = new PowerSupply(layerRect.getId(), GND_ID);
+					}
+				}
+			}
+		}
+		return vdd;
+	}
+
+	/**
+	 * Connects polysilicon and metal one layers
+	 *
+	 * @param canvasController
+	 */
+	private static void extractPolysiliconVias(final CanvasController canvasController)
+	{
+		for (final LayerRectangle poly : canvasController.getLayerRectangles(Layer.POLYSILICON))
+		{
+			for (final LayerRectangle via : canvasController.getLayerRectangles(Layer.VIA))
+			{
+				if (via.isContainedBy(poly))
+				{
+					for (LayerRectangle metalOne : canvasController.getLayerRectangles(Layer.METAL_ONE))
+					{
+						if (via.isContainedBy(metalOne))
+						{
+							updateIds(canvasController, poly.getId(), metalOne.getId());
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Connects metal layers to adjacent metal layers. Also detects and returns
+	 * capacitors
+	 *
+	 * @param canvasController
+	 * @return List of capacitors detected between adjacent metal layers
+	 */
+	private static List<Capacitor> extractMetalViasAndCapacitors(final CanvasController canvasController)
 	{
 		final List<Capacitor> capList = new ArrayList<Capacitor>();
 
@@ -129,11 +234,9 @@ public final class ExtractorUtil
 			final Layer layerOne = Layer.getMetalLayers().get(layerIndex);
 			final Layer layerTwo = Layer.getMetalLayers().get(layerIndex + 1);
 
-			final List<LayerRectangle> layerOneRects = editorController.getCanvasController()
-					.getLayerRectangles(layerOne);
-			final List<LayerRectangle> layerTwoRects = editorController.getCanvasController()
-					.getLayerRectangles(layerTwo);
-			final List<LayerRectangle> viaRects = editorController.getCanvasController().getLayerRectangles(Layer.VIA);
+			final List<LayerRectangle> layerOneRects = canvasController.getLayerRectangles(layerOne);
+			final List<LayerRectangle> layerTwoRects = canvasController.getLayerRectangles(layerTwo);
+			final List<LayerRectangle> viaRects = canvasController.getLayerRectangles(Layer.VIA);
 
 			for (final LayerRectangle layerOneRect : layerOneRects)
 			{
@@ -166,7 +269,7 @@ public final class ExtractorUtil
 									capList.remove(capacitor);
 								}
 							}
-							updateIds(editorController, layerTwoRect.getId(), layerOneRect.getId());
+							updateIds(canvasController, layerTwoRect.getId(), layerOneRect.getId());
 						}
 						else
 						{
@@ -185,14 +288,14 @@ public final class ExtractorUtil
 		return capList;
 	}
 
-	private static List<Transistor> extractTransistors(final EditorController editorController,
+	private static List<Transistor> extractTransistors(final CanvasController canvasController,
 			final TransistorType type) throws ConfigurationException
-	{ // TODO get all diffusion with same ID and compare overlap with them too (in case diffusion is split into different rects)
-		// TODO connect M1 with poly
+	{
+		// TODO get all diffusion with same ID and compare overlap with them too (in case diffusion is split into different rects)
 		// TODO poly must cover diffusion
 		final List<Transistor> transistors = new ArrayList<Transistor>();
 
-		final List<LayerRectangle> diffusionRects = editorController.getCanvasController()
+		final List<LayerRectangle> diffusionRects = canvasController
 				.getLayerRectangles(type == TransistorType.NMOS ? Layer.DIFFUSION_N : Layer.DIFFUSION_P);
 
 		for (final LayerRectangle diffusion : diffusionRects)
@@ -201,32 +304,29 @@ public final class ExtractorUtil
 			String nodeDrain = null;
 			String nodeGate = null;
 
-			VIA: for (final LayerRectangle via : editorController.getCanvasController().getLayerRectangles(Layer.VIA))
+			VIA: for (final LayerRectangle via : canvasController.getLayerRectangles(Layer.VIA))
 			{
 				if (via.isContainedBy(diffusion))
 				{
-					for (final LayerRectangle metalOne : editorController.getCanvasController()
-							.getLayerRectangles(Layer.METAL_ONE))
+					for (final LayerRectangle metalOne : canvasController.getLayerRectangles(Layer.METAL_ONE))
 					{
 						if (via.isContainedBy(metalOne))
 						{
 							if (via.getName() == null)
 							{
-								throw new ConfigurationException(TRANSISTOR_VIA_EXCEPTION_MESSAGE); // TODO stop programming by exception
+								throw new ConfigurationException(TRANSISTOR_MISSING_VIA_EXCEPTION_MESSAGE); // TODO stop programming by exception
 							}
-							else if (via.getName().equals(Transistor.NAME_SOURCE))
+							else if (via.getName().equals(SpiceUtil.TRANSISTOR_NAME_SOURCE))
 							{
 								nodeSource = metalOne.getId();
-								System.out.println("source" + metalOne.getId());
 							}
-							else if (via.getName().equals(Transistor.NAME_DRAIN))
+							else if (via.getName().equals(SpiceUtil.TRANSISTOR_NAME_DRAIN))
 							{
-								System.out.println("drain" + metalOne.getId());
 								nodeDrain = metalOne.getId();
 							}
 							else
 							{
-								throw new ConfigurationException(TRANSISTOR_VIA_EXCEPTION_MESSAGE);
+								throw new ConfigurationException(TRANSISTOR_MISSING_VIA_EXCEPTION_MESSAGE);
 							}
 
 							if (nodeSource != null && nodeDrain != null)
@@ -242,8 +342,7 @@ public final class ExtractorUtil
 				}
 			}
 
-			for (final LayerRectangle poly : editorController.getCanvasController()
-					.getLayerRectangles(Layer.POLYSILICON))
+			for (final LayerRectangle poly : canvasController.getLayerRectangles(Layer.POLYSILICON))
 			{
 				final Rectangle intersection = diffusion.getIntersection(poly);
 				if (intersection.getWidth() > 0 && intersection.getHeight() > 0)
@@ -253,11 +352,18 @@ public final class ExtractorUtil
 				}
 			}
 
-			if (nodeSource != null && nodeDrain != null && nodeGate != null) // TODO 2 source or 2 drain = exception
+			if (nodeSource != null && nodeDrain != null && nodeGate != null)
 			{
-				System.out.println("TRANSISTOR MOTHERFUCKER");
-				final Transistor transistor = new Transistor(TransistorType.NMOS, nodeSource, nodeDrain, nodeGate);
-				transistors.add(transistor);
+				if (nodeSource.equals(nodeDrain))
+				{
+					throw new ConfigurationException(TRANSISTOR_SAME_SOURCE_DRAIN_EXCEPTION_MESSAGE);
+				}
+				else
+				{
+					// System.out.println("Transistor detected"); // TODO
+					final Transistor transistor = new Transistor(type, nodeSource, nodeDrain, nodeGate);
+					transistors.add(transistor);
+				}
 			}
 		}
 
@@ -265,16 +371,22 @@ public final class ExtractorUtil
 	}
 
 	/**
-	 * Updates all LayerRectangles with ID = oldId to have ID = newId
+	 * Updates all LayerRectangles with "ID = oldId" to "ID = newId"
 	 *
-	 * @param editorController
+	 * @param canvasController
 	 * @param oldId
 	 * @param newId
 	 */
-	private static void updateIds(final EditorController editorController, final String oldId, final String newId)
+	private static void updateIds(final CanvasController canvasController, String oldId, String newId)
 	{
-		final List<ArrayList<LayerRectangle>> allLayerRects = editorController.getCanvasController()
-				.getAllLayerRectangles();
+		final List<ArrayList<LayerRectangle>> allLayerRects = canvasController.getAllLayerRectangles();
+
+		// Keep Gnd as ID = 0
+		if (oldId.equals(GND_ID))
+		{
+			oldId = newId;
+			newId = GND_ID;
+		}
 
 		for (final List<LayerRectangle> layerRects : allLayerRects)
 		{

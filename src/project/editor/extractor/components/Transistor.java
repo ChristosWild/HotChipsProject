@@ -7,9 +7,6 @@ public class Transistor implements CircuitComponent
 		NMOS, PMOS;
 	}
 
-	public static final String NAME_SOURCE = "Source";
-	public static final String NAME_DRAIN = "Drain";
-
 	private final TransistorType type;
 	private final String nodeSource;
 	private final String nodeDrain;
@@ -21,5 +18,25 @@ public class Transistor implements CircuitComponent
 		this.nodeSource = nodeSource;
 		this.nodeDrain = nodeDrain;
 		this.nodeGate = nodeGate;
+	}
+
+	public TransistorType getType()
+	{
+		return type;
+	}
+
+	public String getNodeSource()
+	{
+		return nodeSource;
+	}
+
+	public String getNodeDrain()
+	{
+		return nodeDrain;
+	}
+
+	public String getNodeGate()
+	{
+		return nodeGate;
 	}
 }

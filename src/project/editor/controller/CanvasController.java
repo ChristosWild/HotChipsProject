@@ -19,7 +19,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import project.editor.control.CanvasControl;
 import project.editor.control.SelectorControl;
-import project.editor.extractor.components.Transistor;
+import project.editor.extractor.util.SpiceUtil;
 import project.editor.util.EditorConstants;
 import project.editor.util.EditorUtil;
 import project.editor.util.EditorUtil.Delta;
@@ -82,7 +82,7 @@ public class CanvasController
 		setPinName = new MenuItem("Set pin name");
 
 		menuVia = new ContextMenu(setSource, setDrain);
-		menuPin = new ContextMenu(setPinName);
+		menuPin = new ContextMenu(setPinName);// TODO name as vdd and ground
 
 		pinNameDialog = new TextInputDialog();
 		pinNameDialog.setTitle("Pin");
@@ -98,11 +98,11 @@ public class CanvasController
 	{
 		setSource.setOnAction(e -> {
 			final LayerRectangle via = (LayerRectangle) ((MenuItem) e.getSource()).getParentPopup().getOwnerNode();
-			via.setName(Transistor.NAME_SOURCE);
+			via.setName(SpiceUtil.TRANSISTOR_NAME_SOURCE);
 		});
 		setDrain.setOnAction(e -> {
 			final LayerRectangle via = (LayerRectangle) ((MenuItem) e.getSource()).getParentPopup().getOwnerNode();
-			via.setName(Transistor.NAME_DRAIN);
+			via.setName(SpiceUtil.TRANSISTOR_NAME_DRAIN);
 		});
 		setPinName.setOnAction(e -> {
 			final LayerRectangle pin = (LayerRectangle) ((MenuItem) e.getSource()).getParentPopup().getOwnerNode();

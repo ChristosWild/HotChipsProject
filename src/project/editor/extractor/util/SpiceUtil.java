@@ -1,15 +1,35 @@
 package project.editor.extractor.util;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import project.editor.controller.EditorController;
 import project.editor.extractor.components.Capacitor;
 import project.editor.extractor.components.CircuitComponent;
+import project.editor.extractor.components.PowerSupply;
+import project.editor.extractor.components.Transistor;
 import project.editor.extractor.components.spice.SpiceCapacitor;
 import project.editor.extractor.components.spice.SpiceComponent;
+import project.editor.extractor.components.spice.SpicePowerSupply;
+import project.editor.extractor.components.spice.SpiceTransistor;
+import project.editor.util.FileUtil;
 
 public final class SpiceUtil // TODO util classes all final with private constructors
 {
+	public static final String TRANSISTOR_NAME_SOURCE = "Source";
+	public static final String TRANSISTOR_NAME_DRAIN = "Drain";
+
+	public static final String PIN_NAME_VDD = "Vdd";
+	public static final String PIN_NAME_GND = "Gnd";
+
+	private static final String FILE_EXTENSION = ".cir"; // TODO SPICE EXTENSION
+	private static final String FILE_END = ".END";
+
 	private SpiceUtil() {}
 
 	public static List<SpiceComponent> componentsToSpice(final List<CircuitComponent> components)
@@ -25,8 +45,48 @@ public final class SpiceUtil // TODO util classes all final with private constru
 						cap.getCapacitance());
 				spiceComponents.add(sCap);
 			}
+			else if (component instanceof Transistor)
+			{
+				final Transistor tran = (Transistor) component;
+				final SpiceTransistor sTran = new SpiceTransistor(tran.getType(), tran.getNodeSource(),
+						tran.getNodeDrain(), tran.getNodeGate());
+				spiceComponents.add(sTran);
+			}
+			else if (component instanceof PowerSupply)
+			{
+				final PowerSupply power = (PowerSupply) component;
+				final SpicePowerSupply sPower = new SpicePowerSupply(power.getPosNodeId(), power.getNegNodeId());
+				spiceComponents.add(sPower);
+			}
 		}
 
 		return spiceComponents;
+	}
+
+	public static void writeToFile(final EditorController editorController, final List<SpiceComponent> components)
+			throws IOException
+	{
+		try
+		{
+			final List<String> data = new ArrayList<String>();
+			final String filePath = editorController.getFilePath();
+			final String fileName = FileUtil.getFileNameFromPath(filePath);
+			final String fileNameTitle = FileUtil.removeFileExtension(fileName);
+
+			data.add(fileNameTitle); // Spice file title
+
+			for (final SpiceComponent component : components)
+			{
+				data.add(component.getSpiceString()); // Components
+			}
+
+			data.add(FILE_END); // File end marker
+
+			final Path file = Paths.get(FileUtil.getDirFromPath(filePath) + fileNameTitle + FILE_EXTENSION);
+			Files.write(file, data, Charset.forName("UTF-8"));
+		} catch (IOException e)
+		{
+			throw new IOException("Writing to file failed.\n" + e.getMessage(), e);
+		}
 	}
 }

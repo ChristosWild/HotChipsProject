@@ -47,9 +47,10 @@ public final class FileUtil
 	private static final String XML_ELEMENT_HEIGHT = "height";
 	private static final String XML_ELEMENT_OFFSET_X = "offsetX";
 	private static final String XML_ELEMENT_OFFSET_Y = "offsetY";
+	private static final String XML_ELEMENT_RECTANGLE_NAME = "rectangleName";
 
-	private static final String XML_ATTRIBUTE_NAME = "name";
-	
+	private static final String XML_ATTRIBUTE_NAME = "layerName";
+
 	private FileUtil() {};
 
 	public static void openFile(final Window window)
@@ -140,6 +141,8 @@ public final class FileUtil
 							rectangleElement.getElementsByTagName(XML_ELEMENT_OFFSET_X).item(0).getTextContent());
 					final double offsetY = Double.parseDouble(
 							rectangleElement.getElementsByTagName(XML_ELEMENT_OFFSET_Y).item(0).getTextContent());
+					final String rectangleName = rectangleElement.getElementsByTagName(XML_ELEMENT_RECTANGLE_NAME)
+							.item(0).getTextContent();
 
 					LayerRectangle layerRect;
 
@@ -167,6 +170,7 @@ public final class FileUtil
 					layerRect.setOffset(offsetX, offsetY);
 					layerRect.setTranslateX(offsetX);
 					layerRect.setTranslateY(offsetY);
+					layerRect.setName(rectangleName);
 
 					editorController.getCanvasController().addNewRectangle(layerRect);
 				}
@@ -209,6 +213,7 @@ public final class FileUtil
 					final Element height = doc.createElement(XML_ELEMENT_HEIGHT);
 					final Element offsetX = doc.createElement(XML_ELEMENT_OFFSET_X);
 					final Element offsetY = doc.createElement(XML_ELEMENT_OFFSET_Y);
+					final Element rectangleName = doc.createElement(XML_ELEMENT_RECTANGLE_NAME);
 
 					x.appendChild(doc.createTextNode(rect.getX() + ""));
 					y.appendChild(doc.createTextNode(rect.getY() + ""));
@@ -216,6 +221,7 @@ public final class FileUtil
 					height.appendChild(doc.createTextNode(rect.getHeight() + ""));
 					offsetX.appendChild(doc.createTextNode(rect.getOffset().x + ""));
 					offsetY.appendChild(doc.createTextNode(rect.getOffset().y + ""));
+					rectangleName.appendChild(doc.createTextNode(rect.getName()));
 
 					rectangle.appendChild(x);
 					rectangle.appendChild(y);
@@ -223,6 +229,7 @@ public final class FileUtil
 					rectangle.appendChild(height);
 					rectangle.appendChild(offsetX);
 					rectangle.appendChild(offsetY);
+					rectangle.appendChild(rectangleName);
 					layer.appendChild(rectangle);
 				}
 			}
@@ -241,5 +248,42 @@ public final class FileUtil
 		{
 			ex.printStackTrace();
 		}
+	}
+
+	public static String getFileNameFromPath(final String absolutePath)
+	{
+		String[] splitPath = absolutePath.split("/");
+		splitPath = splitPath[splitPath.length - 1].split("\\\\");
+		final String fileName = splitPath[splitPath.length - 1];
+
+		return fileName;
+	}
+
+	public static String removeFileExtension(final String abstractPath)
+	{
+		final String[] splitPath = abstractPath.split("\\.");
+		final String fileName = splitPath[0];
+
+		return fileName;
+	}
+
+	public static String getDirFromPath(final String absolutePath)
+	{
+		final StringBuilder sb = new StringBuilder();
+
+		String[] splitPath = absolutePath.split("/");
+
+		if (splitPath.length == 1)
+		{
+			splitPath = splitPath[0].split("\\\\");
+		}
+
+		for (int index = 0; index < splitPath.length - 1; index++)
+		{
+			sb.append(splitPath[index]);
+			sb.append("/");
+		}
+
+		return sb.toString();
 	}
 }

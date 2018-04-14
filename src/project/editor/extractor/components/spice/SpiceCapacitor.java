@@ -1,6 +1,6 @@
 package project.editor.extractor.components.spice;
 
-public class SpiceCapacitor implements SpiceComponent
+public class SpiceCapacitor extends SpiceComponent
 {
 	private String name;
 	private String node1;
@@ -18,18 +18,18 @@ public class SpiceCapacitor implements SpiceComponent
 	@Override
 	public String getSpiceString()
 	{
-		final StringBuilder sb = new StringBuilder();
+		sb = new StringBuilder();
 
 		if (name.charAt(0) != 'C')
 		{
 			sb.append("C");
 		}
 		sb.append(name);
-		sb.append(" "); // TODO better way of spacing
+		addSpacer(sb);
 		sb.append(node1);
-		sb.append(" ");
+		addSpacer(sb);
 		sb.append(node2);
-		sb.append(" ");
+		addSpacer(sb);
 		sb.append(capacitance);
 
 		return sb.toString();

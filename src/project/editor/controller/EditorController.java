@@ -265,6 +265,11 @@ public class EditorController
 		this.filePath = filePath;
 	}
 
+	public String getEditorTitle()
+	{
+		return stage.getTitle();
+	}
+
 	public void setEditorTitle(final String title)
 	{
 		stage.setTitle(title);
