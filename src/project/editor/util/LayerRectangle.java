@@ -60,6 +60,7 @@ public class LayerRectangle extends Rectangle
 		newLayerRect.offset = new Delta(this.offset.x, this.offset.y);
 		newLayerRect.setTranslateX(newLayerRect.offset.x);
 		newLayerRect.setTranslateY(newLayerRect.offset.y);
+		newLayerRect.setName(this.getName());
 
 		return newLayerRect;
 	}

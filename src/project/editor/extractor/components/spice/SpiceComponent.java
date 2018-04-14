@@ -1,6 +1,6 @@
 package project.editor.extractor.components.spice;
 
-public abstract class SpiceComponent // TODO abstract so can implement addSpacer(StringBuilder)
+public abstract class SpiceComponent
 {
 	protected StringBuilder sb;
 

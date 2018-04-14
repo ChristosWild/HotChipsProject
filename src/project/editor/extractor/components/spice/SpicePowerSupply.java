@@ -4,13 +4,15 @@ import project.editor.extractor.util.SpiceUtil;
 
 public class SpicePowerSupply extends SpiceComponent
 {
-	private final String posNodeId;
-	private final String negNodeId;
+	private final int instanceId;
+	private final String nodePositive;
+	private final String nodeNegative;
 
-	public SpicePowerSupply(final String posNodeId, final String negNodeId)
+	public SpicePowerSupply(final String nodePositive, final String nodeNegative, final int instanceId)
 	{
-		this.posNodeId = posNodeId;
-		this.negNodeId = negNodeId;
+		this.nodePositive = nodePositive;
+		this.nodeNegative = nodeNegative;
+		this.instanceId = instanceId;
 	}
 
 	@Override
@@ -18,12 +20,16 @@ public class SpicePowerSupply extends SpiceComponent
 	{
 		sb = new StringBuilder();
 		sb.append(SpiceUtil.PIN_NAME_VDD);
+		if (instanceId != 0)
+		{
+			sb.append(instanceId);
+		}
 		addSpacer(sb);
-		sb.append(posNodeId);
+		sb.append(nodePositive);
 		addSpacer(sb);
-		sb.append(negNodeId);
+		sb.append(nodeNegative);
 		addSpacer(sb);
-		sb.append("DC"); // TODO get friom tech file
+		sb.append("DC"); // TODO get from tech file
 		addSpacer(sb);
 		sb.append(5);
 

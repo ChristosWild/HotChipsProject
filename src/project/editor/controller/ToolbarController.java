@@ -66,7 +66,8 @@ public class ToolbarController
 		toolbarControl.getMenuItemTechnologyFile().setOnAction(event -> TechnologyControl.getInstance().show());
 
 		// Extract
-		toolbarControl.getMenuItemExtractSpice().setOnAction(event -> ExtractorUtil.extractSpice(editorController));
+		toolbarControl.getMenuItemExtractSpice().setOnAction(
+				event -> ExtractorUtil.extractSpice(editorController, toolbarControl.getRoot().getScene().getWindow()));
 
 		// HELP
 

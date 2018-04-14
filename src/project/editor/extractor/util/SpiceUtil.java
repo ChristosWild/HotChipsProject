@@ -19,10 +19,12 @@ import project.editor.extractor.components.spice.SpicePowerSupply;
 import project.editor.extractor.components.spice.SpiceTransistor;
 import project.editor.util.FileUtil;
 
-public final class SpiceUtil // TODO util classes all final with private constructors
+public final class SpiceUtil
 {
 	public static final String TRANSISTOR_NAME_SOURCE = "Source";
 	public static final String TRANSISTOR_NAME_DRAIN = "Drain";
+	private static final String TRANSISTOR_MODEL_NMOS = ".MODEL NMOSMODEL NMOS LEVEL=1";
+	private static final String TRANSISTOR_MODEL_PMOS = ".MODEL PMOSMODEL PMOS LEVEL=1";
 
 	public static final String PIN_NAME_VDD = "Vdd";
 	public static final String PIN_NAME_GND = "Gnd";
@@ -49,13 +51,14 @@ public final class SpiceUtil // TODO util classes all final with private constru
 			{
 				final Transistor tran = (Transistor) component;
 				final SpiceTransistor sTran = new SpiceTransistor(tran.getType(), tran.getNodeSource(),
-						tran.getNodeDrain(), tran.getNodeGate());
+						tran.getNodeDrain(), tran.getNodeGate(), tran.getInstanceId());
 				spiceComponents.add(sTran);
 			}
 			else if (component instanceof PowerSupply)
 			{
 				final PowerSupply power = (PowerSupply) component;
-				final SpicePowerSupply sPower = new SpicePowerSupply(power.getPosNodeId(), power.getNegNodeId());
+				final SpicePowerSupply sPower = new SpicePowerSupply(power.getPosNodeId(), power.getNegNodeId(),
+						power.getInstanceId());
 				spiceComponents.add(sPower);
 			}
 		}
@@ -63,7 +66,7 @@ public final class SpiceUtil // TODO util classes all final with private constru
 		return spiceComponents;
 	}
 
-	public static void writeToFile(final EditorController editorController, final List<SpiceComponent> components)
+	public static Path writeToFile(final EditorController editorController, final List<SpiceComponent> components)
 			throws IOException
 	{
 		try
@@ -80,10 +83,13 @@ public final class SpiceUtil // TODO util classes all final with private constru
 				data.add(component.getSpiceString()); // Components
 			}
 
+			data.add(TRANSISTOR_MODEL_NMOS); // Transistor models
+			data.add(TRANSISTOR_MODEL_PMOS);
+
 			data.add(FILE_END); // File end marker
 
 			final Path file = Paths.get(FileUtil.getDirFromPath(filePath) + fileNameTitle + FILE_EXTENSION);
-			Files.write(file, data, Charset.forName("UTF-8"));
+			return Files.write(file, data, Charset.forName("UTF-8"));
 		} catch (IOException e)
 		{
 			throw new IOException("Writing to file failed.\n" + e.getMessage(), e);

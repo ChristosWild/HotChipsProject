@@ -63,6 +63,8 @@ public interface EditorConstants
 	public static final String PATH_IMG_PIN_16 = "pin_16.png";
 	public static final String PATH_IMG_GRID = "grid.png";
 
+	public static final String PATH_IMG_MOUSE = "mouse.png";
+	public static final String PATH_IMG_PENCIL = "pencil.png";
 	public static final String PATH_IMG_CLOSE = "close.png";
 
 	public static final String PATH_CSS_MAIN = "project/application/Main.css";

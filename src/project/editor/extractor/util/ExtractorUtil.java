@@ -1,14 +1,19 @@
 package project.editor.extractor.util;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.naming.ConfigurationException;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Window;
 import project.editor.controller.CanvasController;
 import project.editor.controller.EditorController;
 import project.editor.extractor.components.Capacitor;
@@ -17,6 +22,7 @@ import project.editor.extractor.components.PowerSupply;
 import project.editor.extractor.components.Transistor;
 import project.editor.extractor.components.Transistor.TransistorType;
 import project.editor.extractor.components.spice.SpiceComponent;
+import project.editor.util.FileUtil;
 import project.editor.util.Layer;
 import project.editor.util.LayerRectangle;
 
@@ -28,7 +34,8 @@ public final class ExtractorUtil
 			+ " connecting transistors are labelled as either a source or drain.";
 	private static final String TRANSISTOR_SAME_SOURCE_DRAIN_EXCEPTION_MESSAGE = "Extraction failed.\nTransistor has 2"
 			+ " sources, or 2 drains.";
-	private static final String EXTRACTION_SUCCESSFUL_MESSAGE = "Circuit extraction successful.";
+	private static final String SAVE_BEFORE_EXTRACTION_MESSAGE = "Circuit must be saved before extraction.";
+	private static final String EXTRACTION_SUCCESSFUL_MESSAGE = "Circuit extraction successful.\n";
 
 	private ExtractorUtil() {};
 
@@ -37,48 +44,71 @@ public final class ExtractorUtil
 	 *
 	 * @param editorController
 	 */
-	public static void extractSpice(final EditorController editorController)
+	public static void extractSpice(final EditorController editorController, final Window window)
 	{
-		// TODO Must save file first ; alert.confirmation
+		boolean isSaved = saveBeforeExtraction(editorController, window);
 
-		final Alert exceptionAlert = new Alert(AlertType.INFORMATION);
-		exceptionAlert.setHeaderText(null);
-		exceptionAlert.setGraphic(null);
+		final Alert infoAlert = new Alert(AlertType.INFORMATION);
+		infoAlert.setHeaderText(null);
+		infoAlert.setGraphic(null);
 
-		try
+		if (isSaved)
 		{
-			final CanvasController canvasController = editorController.getCanvasController();
+			try
+			{
+				final CanvasController canvasController = editorController.getCanvasController();
 
-			MAX_ID = setInitialIds(canvasController);
-			connectAdjacentRects(canvasController);
+				MAX_ID = setInitialIds(canvasController);
+				connectAdjacentRects(canvasController);
 
-			final List<CircuitComponent> components = extractComponents(canvasController);
-			final List<SpiceComponent> spiceComponents = SpiceUtil.componentsToSpice(components);
+				final List<CircuitComponent> components = extractComponents(canvasController);
 
-			// canvasController.getAllLayerRectangles().forEach(layer -> {
-			// layer.forEach(rect -> {
-			// System.out.println(rect.getLayer() + " : " + rect.getId());
-			// });
-			// });
+				final List<SpiceComponent> spiceComponents = SpiceUtil.componentsToSpice(components);
 
-			//////////
-			// System.out.println("\nSPICE:\n");
-			// spiceComponents.forEach(e -> System.out.println(e.getSpiceString()));
-			//////////
+				final Path filePath = SpiceUtil.writeToFile(editorController, spiceComponents);
 
-			SpiceUtil.writeToFile(editorController, spiceComponents);
-			exceptionAlert.setContentText(EXTRACTION_SUCCESSFUL_MESSAGE);
-			exceptionAlert.showAndWait();
+				infoAlert.setContentText(EXTRACTION_SUCCESSFUL_MESSAGE + filePath.toString());
+				infoAlert.show();
 
-		} catch (ConfigurationException | IOException e)
-		{
-			// TODO log properly
-			System.out.println(e.getMessage());
-			e.printStackTrace();
+			} catch (ConfigurationException | IOException e)
+			{
+				// TODO log properly
+				System.out.println(e.getMessage());
+				e.printStackTrace();
 
-			exceptionAlert.setContentText(e.getMessage());
-			exceptionAlert.showAndWait();
+				infoAlert.setContentText(e.getMessage());
+				infoAlert.show();
+			}
 		}
+	}
+
+	private static boolean saveBeforeExtraction(final EditorController editorController, final Window window)
+	{
+		boolean isSaved = false;
+
+		final Alert saveAlert = new Alert(AlertType.CONFIRMATION);
+		saveAlert.setContentText(SAVE_BEFORE_EXTRACTION_MESSAGE);
+		saveAlert.setHeaderText(null);
+		saveAlert.setGraphic(null);
+
+		final ButtonType save = new ButtonType("Save", ButtonData.OK_DONE);
+		final ButtonType saveAs = new ButtonType("Save As", ButtonData.OK_DONE);
+		saveAlert.getButtonTypes().remove(0);
+		saveAlert.getButtonTypes().addAll(save, saveAs);
+
+		final Optional<ButtonType> result = saveAlert.showAndWait();
+		if (result.get().equals(save))
+		{
+			FileUtil.saveFile(editorController, window);
+			isSaved = true;
+		}
+		else if (result.get().equals(saveAs))
+		{
+			FileUtil.saveFileAs(editorController, window);
+			isSaved = true;
+		}
+
+		return isSaved;
 	}
 
 	private static int setInitialIds(final CanvasController canvasController)
@@ -143,7 +173,7 @@ public final class ExtractorUtil
 		components.addAll(extractMetalViasAndCapacitors(canvasController)); // TODO Check if capacitor when layer 1 and layer 5 overlap etc
 		components.addAll(extractTransistors(canvasController, TransistorType.NMOS));
 		components.addAll(extractTransistors(canvasController, TransistorType.PMOS));
-		components.add(extractVdd(canvasController));
+		components.addAll(extractVdd(canvasController));
 
 		return components;
 	}
@@ -169,9 +199,9 @@ public final class ExtractorUtil
 		}
 	}
 
-	private static PowerSupply extractVdd(final CanvasController canvasController)
+	private static List<PowerSupply> extractVdd(final CanvasController canvasController)
 	{
-		PowerSupply vdd = null;
+		final List<PowerSupply> vdd = new ArrayList<PowerSupply>();
 
 		for (final LayerRectangle pin : canvasController.getLayerRectangles(Layer.PIN))
 		{
@@ -185,7 +215,7 @@ public final class ExtractorUtil
 					}
 					else if (pin.isContainedBy(layerRect) && pin.getName().equals(SpiceUtil.PIN_NAME_VDD))
 					{
-						vdd = new PowerSupply(layerRect.getId(), GND_ID);
+						vdd.add(new PowerSupply(layerRect.getId(), GND_ID, vdd.size()));
 					}
 				}
 			}
@@ -360,8 +390,8 @@ public final class ExtractorUtil
 				}
 				else
 				{
-					// System.out.println("Transistor detected"); // TODO
-					final Transistor transistor = new Transistor(type, nodeSource, nodeDrain, nodeGate);
+					final Transistor transistor = new Transistor(type, nodeSource, nodeDrain, nodeGate,
+							transistors.size());
 					transistors.add(transistor);
 				}
 			}

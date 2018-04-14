@@ -49,6 +49,8 @@ public class CanvasController
 	private ContextMenu menuPin;
 	private MenuItem setSource;
 	private MenuItem setDrain;
+	private MenuItem setVdd;
+	private MenuItem setGnd;
 	private MenuItem setPinName;
 	private TextInputDialog pinNameDialog;
 
@@ -79,10 +81,12 @@ public class CanvasController
 
 		setSource = new MenuItem("Set as transistor source");
 		setDrain = new MenuItem("Set as transistor drain");
+		setVdd = new MenuItem("Set pin as Vdd");
+		setGnd = new MenuItem("Set pin as Gnd");
 		setPinName = new MenuItem("Set pin name");
 
 		menuVia = new ContextMenu(setSource, setDrain);
-		menuPin = new ContextMenu(setPinName);// TODO name as vdd and ground
+		menuPin = new ContextMenu(setVdd, setGnd, setPinName);
 
 		pinNameDialog = new TextInputDialog();
 		pinNameDialog.setTitle("Pin");
@@ -104,10 +108,17 @@ public class CanvasController
 			final LayerRectangle via = (LayerRectangle) ((MenuItem) e.getSource()).getParentPopup().getOwnerNode();
 			via.setName(SpiceUtil.TRANSISTOR_NAME_DRAIN);
 		});
+		setVdd.setOnAction(e -> {
+			final LayerRectangle pin = (LayerRectangle) ((MenuItem) e.getSource()).getParentPopup().getOwnerNode();
+			pin.setName(SpiceUtil.PIN_NAME_VDD);
+		});
+		setGnd.setOnAction(e -> {
+			final LayerRectangle pin = (LayerRectangle) ((MenuItem) e.getSource()).getParentPopup().getOwnerNode();
+			pin.setName(SpiceUtil.PIN_NAME_GND);
+		});
 		setPinName.setOnAction(e -> {
 			final LayerRectangle pin = (LayerRectangle) ((MenuItem) e.getSource()).getParentPopup().getOwnerNode();
 			pinNameDialog.getEditor().setText(pin.getName());
-			pinNameDialog.getEditor().selectAll();
 			pinNameDialog.showAndWait().ifPresent(name -> pin.setName(name));
 		});
 

@@ -13,6 +13,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import project.editor.util.EditorConstants;
 
 public class ToolbarControl
 {
@@ -52,6 +53,9 @@ public class ToolbarControl
 	private static final String LBL_MENU_HELP = "Help";
 	private static final String LBL_SUBMENU_ABOUT = "About";
 	private static final String LBL_SUBMENU_HELP = "Help";
+
+	private static final String LBL_BUTTON_DELETE = "Delete";
+	private static final String LBL_BUTTON_CLEAR = "Clear";
 
 	private static final String TOOLTIP_BUTTON_SELECT = "(S)";
 	private static final String TOOLTIP_BUTTON_DRAW = "(D)";
@@ -150,10 +154,12 @@ public class ToolbarControl
 		// BUTTONS
 
 		toggleGroup = new ToggleGroup();
-		btnSelect = new ToggleButton(null, new ImageView(new Image("file:data/mouse.png"))); // TODO constants
-		btnDraw = new ToggleButton(null, new ImageView(new Image("file:data/pencil.png")));
-		btnDelete = new Button("Delete");
-		btnClearAll = new Button("Clear");
+		btnSelect = new ToggleButton(null,
+				new ImageView(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_MOUSE)));
+		btnDraw = new ToggleButton(null,
+				new ImageView(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_PENCIL)));
+		btnDelete = new Button(LBL_BUTTON_DELETE);
+		btnClearAll = new Button(LBL_BUTTON_CLEAR);
 
 		btnSelect.setToggleGroup(toggleGroup);
 		btnDraw.setToggleGroup(toggleGroup);
