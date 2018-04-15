@@ -29,7 +29,7 @@ public class SpicePowerSupply extends SpiceComponent
 		addSpacer(sb);
 		sb.append(nodeNegative);
 		addSpacer(sb);
-		sb.append("DC"); // TODO get from tech file
+		sb.append("DC"); // FIXME get from tech file
 		addSpacer(sb);
 		sb.append(5);
 

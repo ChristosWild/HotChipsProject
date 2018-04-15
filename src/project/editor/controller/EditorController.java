@@ -13,6 +13,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import project.editor.control.SelectorControl;
+import project.editor.control.TechnologyControl;
 import project.editor.util.EditorConstants;
 import project.editor.util.FileUtil;
 
@@ -26,6 +27,7 @@ public class EditorController
 
 	private ToolbarController toolbarController;
 	private CanvasController canvasController;
+	private TechnologyControl technologyControl;
 
 	private String filePath;
 
@@ -185,7 +187,8 @@ public class EditorController
 		editorInstances.add(this);
 
 		toolbarController = new ToolbarController(this);
-		canvasController = new CanvasController(this); // TODO technology file for each editorcontroller
+		canvasController = new CanvasController(this);
+		technologyControl = new TechnologyControl(this);
 
 		stage.focusedProperty().addListener((ov, oldVal, newVal) -> {
 			// Forces selector control to hide when window loses focus
@@ -253,6 +256,11 @@ public class EditorController
 	public ToolbarController getToolbarController()
 	{
 		return toolbarController;
+	}
+
+	public TechnologyControl getTechnologyControl()
+	{
+		return technologyControl;
 	}
 
 	public String getFilePath()

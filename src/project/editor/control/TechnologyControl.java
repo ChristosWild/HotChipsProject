@@ -4,42 +4,43 @@ import java.util.Optional;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import project.editor.controller.EditorController;
 
-/**
- * Singleton class that controls the technology file editor popup
- *
- * @author Christos
- *
- */
-public class TechnologyControl // TODO not singleton any more
+public class TechnologyControl
 {
 	private static final String TITLE_DIALOG = "Edit Technology File";
 
-	private static TechnologyControl instance;
+	private final EditorController editorController;
 
 	private boolean isUICreated = false;
 	private Dialog<ButtonType> dialog;
 
-	// Singleton class - Prevents external instantiation
-	private TechnologyControl()
+	private double lambdaUm;
+	private String metal;
+	private double thresholdVoltage;
+	private double oxideThicknessNm; // Silicon dioxide // FIXME confirm 400nm thickness. 600? 300? 500?
+
+	public TechnologyControl(final EditorController editorController)
 	{
+		this(editorController, 2.5, "Aluminium", 1.5, 400);
 	}
 
-	public static TechnologyControl getInstance()
+	public TechnologyControl(final EditorController editorController, final double lambdaUm, final String metal,
+			final double thresholdVoltage, final double oxideThicknessNm)
 	{
-		if (instance == null)
-		{
-			instance = new TechnologyControl();
-		}
-		return instance;
+		this.editorController = editorController;
+		this.lambdaUm = lambdaUm;
+		this.metal = metal;
+		this.thresholdVoltage = thresholdVoltage;
+		this.oxideThicknessNm = oxideThicknessNm;
 	}
 
-	private void initialiseUI() // TODO technology file - default material = aluminium, silicon dioxide
+
+	private void initialiseUI()
 	{
 		dialog = new Dialog<ButtonType>();
 		dialog.setTitle(TITLE_DIALOG);
@@ -50,21 +51,36 @@ public class TechnologyControl // TODO not singleton any more
 		grid.setVgap(10);
 		grid.setPadding(new Insets(20, 20, 20, 20));
 
-		final TextField lambda = new TextField();
-		lambda.setPromptText("Lambda");
-		final TextField next = new TextField();
-		next.setPromptText("NEXT");
+		final TextField fieldLambda = new TextField();
+		fieldLambda.setPromptText("Lambda");
+		fieldLambda.setText(lambdaUm + "");
 
-		final ColorPicker cp = new ColorPicker();
+		final TextField fieldMetal = new TextField();
+		fieldMetal.setPromptText("Metal");
+		fieldMetal.setText(metal);
+
+		final TextField fieldThreshold = new TextField();
+		fieldThreshold.setPromptText("Threshold");
+		fieldThreshold.setText(thresholdVoltage + "");
+
+		final TextField fieldThickness = new TextField();
+		fieldThickness.setPromptText("Thickness");
+		fieldThickness.setText(oxideThicknessNm + "");
 
 		grid.add(new Label("Lambda:"), 0, 0);
-		grid.add(lambda, 1, 0);
-		grid.add(new Label("microns"), 2, 0);
-		grid.add(new Label("next:"), 0, 1);
-		grid.add(next, 1, 1);
-		grid.add(new Label("units"), 2, 1);
-		grid.add(new Label("col"), 0, 2);
-		grid.add(cp, 1, 2);
+		grid.add(fieldLambda, 1, 0);
+		grid.add(new Label("um"), 2, 0);
+
+		grid.add(new Label("Metal:"), 0, 1);
+		grid.add(fieldMetal, 1, 1);
+
+		grid.add(new Label("Transistor threshold:"), 0, 2);
+		grid.add(fieldThreshold, 1, 2);
+		grid.add(new Label("V"), 2, 2);
+
+		grid.add(new Label("Silicon thickness:"), 0, 3);
+		grid.add(fieldThickness, 1, 3);
+		grid.add(new Label("nm"), 2, 3);
 
 		dialog.getDialogPane().setContent(grid);
 	}
@@ -82,7 +98,47 @@ public class TechnologyControl // TODO not singleton any more
 
 		if (result.get() == ButtonType.APPLY)
 		{
-			// TODO write to file
+			// TODO save technology file in with xml
 		}
+	}
+
+	public double getLambda()
+	{
+		return lambdaUm;
+	}
+
+	public void setLambda(final double lambda)
+	{
+		this.lambdaUm = lambda;
+	}
+
+	public String getMetal()
+	{
+		return metal;
+	}
+
+	public void setMetal(final String metal)
+	{
+		this.metal = metal;
+	}
+
+	public double getThresholdVoltage()
+	{
+		return thresholdVoltage;
+	}
+
+	public void setThresholdVoltage(final double thresholdVoltage)
+	{
+		this.thresholdVoltage = thresholdVoltage;
+	}
+
+	public double getOxideThicknessNm()
+	{
+		return oxideThicknessNm;
+	}
+
+	public void setOxideThicknessNm(final double oxideThickness)
+	{
+		this.oxideThicknessNm = oxideThickness;
 	}
 }

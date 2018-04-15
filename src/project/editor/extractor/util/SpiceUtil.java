@@ -21,16 +21,20 @@ import project.editor.util.FileUtil;
 
 public final class SpiceUtil
 {
-	public static final String TRANSISTOR_NAME_SOURCE = "Source";
-	public static final String TRANSISTOR_NAME_DRAIN = "Drain";
-	private static final String TRANSISTOR_MODEL_NMOS = ".MODEL NMOSMODEL NMOS LEVEL=1";
-	private static final String TRANSISTOR_MODEL_PMOS = ".MODEL PMOSMODEL PMOS LEVEL=1";
-
 	public static final String PIN_NAME_VDD = "Vdd";
 	public static final String PIN_NAME_GND = "Gnd";
 
-	private static final String FILE_EXTENSION = ".cir"; // TODO SPICE EXTENSION
+	public static final String TRANSISTOR_NAME_SOURCE = "Source";
+	public static final String TRANSISTOR_NAME_DRAIN = "Drain";
+	private static final String TRANSISTOR_MODEL_NMOS = ".MODEL NMOSMODEL NMOS LEVEL=1"; // FIXME VTO=threshold,
+																							// TOX=oxide thickness,
+																							// LAMBDA=lambda
+	private static final String TRANSISTOR_MODEL_PMOS = ".MODEL PMOSMODEL PMOS LEVEL=1";
+
+	private static final String OP = ".OP";
 	private static final String FILE_END = ".END";
+
+	private static final String FILE_EXTENSION = ".cir";
 
 	private SpiceUtil() {}
 
@@ -85,6 +89,9 @@ public final class SpiceUtil
 
 			data.add(TRANSISTOR_MODEL_NMOS); // Transistor models
 			data.add(TRANSISTOR_MODEL_PMOS);
+
+			// FIXME .OPTIONS LIST NODE POST?
+			data.add(OP);
 
 			data.add(FILE_END); // File end marker
 

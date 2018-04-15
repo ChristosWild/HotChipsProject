@@ -44,7 +44,7 @@ public final class ExtractorUtil
 	 *
 	 * @param editorController
 	 */
-	public static void extractSpice(final EditorController editorController, final Window window)
+	public static void extractSpiceNetlist(final EditorController editorController, final Window window)
 	{
 		boolean isSaved = saveBeforeExtraction(editorController, window);
 
@@ -60,11 +60,8 @@ public final class ExtractorUtil
 
 				MAX_ID = setInitialIds(canvasController);
 				connectAdjacentRects(canvasController);
-
-				final List<CircuitComponent> components = extractComponents(canvasController);
-
+				final List<CircuitComponent> components = extractComponents(editorController);
 				final List<SpiceComponent> spiceComponents = SpiceUtil.componentsToSpice(components);
-
 				final Path filePath = SpiceUtil.writeToFile(editorController, spiceComponents);
 
 				infoAlert.setContentText(EXTRACTION_SUCCESSFUL_MESSAGE + filePath.toString());
@@ -99,13 +96,11 @@ public final class ExtractorUtil
 		final Optional<ButtonType> result = saveAlert.showAndWait();
 		if (result.get().equals(save))
 		{
-			FileUtil.saveFile(editorController, window);
-			isSaved = true;
+			isSaved = FileUtil.saveFile(editorController, window);
 		}
 		else if (result.get().equals(saveAs))
 		{
-			FileUtil.saveFileAs(editorController, window);
-			isSaved = true;
+			isSaved = FileUtil.saveFileAs(editorController, window);
 		}
 
 		return isSaved;
@@ -163,14 +158,16 @@ public final class ExtractorUtil
 		}
 	}
 
-	private static List<CircuitComponent> extractComponents(final CanvasController canvasController)
+	private static List<CircuitComponent> extractComponents(final EditorController editorController)
 			throws ConfigurationException
 	{
 		final List<CircuitComponent> components = new ArrayList<CircuitComponent>();
+		final CanvasController canvasController = editorController.getCanvasController();
 
 		extractGnd(canvasController);
 		extractPolysiliconVias(canvasController);
-		components.addAll(extractMetalViasAndCapacitors(canvasController)); // TODO Check if capacitor when layer 1 and layer 5 overlap etc
+		components.addAll(extractMetalViasAndCapacitors(editorController)); // TODO Check if capacitor when layer 1 and
+																			// layer 5 overlap etc
 		components.addAll(extractTransistors(canvasController, TransistorType.NMOS));
 		components.addAll(extractTransistors(canvasController, TransistorType.PMOS));
 		components.addAll(extractVdd(canvasController));
@@ -255,9 +252,10 @@ public final class ExtractorUtil
 	 * @param canvasController
 	 * @return List of capacitors detected between adjacent metal layers
 	 */
-	private static List<Capacitor> extractMetalViasAndCapacitors(final CanvasController canvasController)
+	private static List<Capacitor> extractMetalViasAndCapacitors(final EditorController editorController)
 	{
 		final List<Capacitor> capList = new ArrayList<Capacitor>();
+		final CanvasController canvasController = editorController.getCanvasController();
 
 		for (int layerIndex = 0; layerIndex < Layer.getMetalLayers().size() - 1; layerIndex++)
 		{
@@ -303,8 +301,8 @@ public final class ExtractorUtil
 						}
 						else
 						{
-							final Capacitor capacitor = new Capacitor(layerOneRect.getId(), layerTwoRect.getId(),
-									intersection);
+							final Capacitor capacitor = new Capacitor(editorController, layerOneRect.getId(),
+									layerTwoRect.getId(), intersection);
 							if (!capList.contains(capacitor) && !layerOneRect.getId().equals(layerTwoRect.getId()))
 							{
 								capList.add(capacitor);

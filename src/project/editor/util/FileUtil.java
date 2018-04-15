@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.ConfigurationException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,6 +21,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.stage.FileChooser;
@@ -51,6 +54,9 @@ public final class FileUtil
 
 	private static final String XML_ATTRIBUTE_NAME = "layerName";
 
+	private static final String SAVE_FAILED_MESSAGE = "Could not save file.\n";
+	private static final String OPEN_FAILED_MESSAGE = "Could not open file.\n";
+
 	private FileUtil() {};
 
 	public static void openFile(final Window window)
@@ -72,22 +78,28 @@ public final class FileUtil
 		}
 	}
 
-	public static void saveFile(final EditorController editorController, final Window window)
+	public static boolean saveFile(final EditorController editorController, final Window window)
 	{
+		boolean isSaved = false;
+
 		// If not previously saved, Save As
 		final String currentFilePath = editorController.getFilePath();
 		if (currentFilePath == null)
 		{
-			saveFileAs(editorController, window);
+			isSaved = saveFileAs(editorController, window);
 		}
 		else
 		{
-			save(editorController, currentFilePath);
+			isSaved = save(editorController, currentFilePath, window);
 		}
+
+		return isSaved;
 	}
 
-	public static void saveFileAs(final EditorController editorController, final Window window)
+	public static boolean saveFileAs(final EditorController editorController, final Window window)
 	{
+		boolean isSaved = false;
+
 		final FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(TITLE_SAVE_FILE_AS);
 		fileChooser.getExtensionFilters().addAll(new ExtensionFilter(FILE_NAME_VLSI, FILE_EXTENSION_VLSI),
@@ -98,8 +110,10 @@ public final class FileUtil
 		{
 			editorController.setFilePath(selectedFile.getAbsolutePath());
 			editorController.setEditorTitle(selectedFile.getName());
-			save(editorController, selectedFile.getAbsolutePath());
+			isSaved = save(editorController, selectedFile.getAbsolutePath(), window);
 		}
+
+		return isSaved;
 	}
 
 	private static void open(final EditorController editorController, final File file)
@@ -120,8 +134,7 @@ public final class FileUtil
 
 				if (layer == Layer.INVALID_LAYER)
 				{
-					System.out.println("Syntax error in file: " + layerName);
-					break;
+					throw new ConfigurationException("Invalid layer name: " + layerName);
 				}
 
 				final NodeList rectangleList = layerElement.getElementsByTagName(XML_ELEMENT_RECTANGLE);
@@ -175,13 +188,19 @@ public final class FileUtil
 					editorController.getCanvasController().addNewRectangle(layerRect);
 				}
 			}
-		} catch (ParserConfigurationException | SAXException | IOException ex)
+		} catch (ParserConfigurationException | SAXException | IOException | ConfigurationException ex)
 		{
 			ex.printStackTrace();
+
+			final Alert exceptionAlert = new Alert(AlertType.INFORMATION);
+			exceptionAlert.setContentText(OPEN_FAILED_MESSAGE + ex.getMessage());
+			exceptionAlert.setHeaderText(null);
+			exceptionAlert.setGraphic(null);
+			exceptionAlert.show();
 		}
 	}
 
-	private static void save(final EditorController editorController, final String filePath)
+	private static boolean save(final EditorController editorController, final String filePath, final Window window)
 	{
 		try
 		{
@@ -244,9 +263,19 @@ public final class FileUtil
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 			transformer.transform(source, result);
 
+			return true;
+
 		} catch (ParserConfigurationException | TransformerException ex)
 		{
 			ex.printStackTrace();
+
+			final Alert exceptionAlert = new Alert(AlertType.INFORMATION);
+			exceptionAlert.setContentText(SAVE_FAILED_MESSAGE + ex.getMessage());
+			exceptionAlert.setHeaderText(null);
+			exceptionAlert.setGraphic(null);
+			exceptionAlert.show();
+
+			return false;
 		}
 	}
 

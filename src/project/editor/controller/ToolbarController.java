@@ -4,7 +4,6 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import project.editor.control.SelectorControl;
-import project.editor.control.TechnologyControl;
 import project.editor.control.ToolbarControl;
 import project.editor.controller.CanvasController.CanvasMode;
 import project.editor.extractor.util.ExtractorUtil;
@@ -63,11 +62,11 @@ public class ToolbarController
 		toolbarControl.getMenuItemCut().setOnAction(event -> editorController.getCanvasController().cut());
 		toolbarControl.getMenuItemCopy().setOnAction(event -> editorController.getCanvasController().copy());
 		toolbarControl.getMenuItemPaste().setOnAction(event -> editorController.getCanvasController().paste());
-		toolbarControl.getMenuItemTechnologyFile().setOnAction(event -> TechnologyControl.getInstance().show());
+		toolbarControl.getMenuItemTechnologyFile().setOnAction(event -> editorController.getTechnologyControl().show());
 
 		// Extract
 		toolbarControl.getMenuItemExtractSpice().setOnAction(
-				event -> ExtractorUtil.extractSpice(editorController, toolbarControl.getRoot().getScene().getWindow()));
+				event -> ExtractorUtil.extractSpiceNetlist(editorController, toolbarControl.getRoot().getScene().getWindow()));
 
 		// HELP
 

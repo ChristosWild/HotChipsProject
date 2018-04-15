@@ -1,20 +1,23 @@
 package project.editor.extractor.components;
 
 import javafx.scene.shape.Rectangle;
+import project.editor.controller.EditorController;
 import project.editor.util.EditorConstants;
 
 public class Capacitor implements CircuitComponent
 {
 	private static final double E0 = 8.854 * Math.pow(10, -12);
-	private static final double DIELECTRIC_CONSTANT_SILICON_DIOXIDE = 3.8; // TODO confirm 3.7 - 3.9?
-	private static final double LAYER_SEPARATION_METRES = 400 * Math.pow(10, -9); // TODO confirm 400nm thickness. 600? 300? 500?
+	private static final double DIELECTRIC_CONSTANT_SILICON_DIOXIDE = 3.8; // FIXME confirm 3.7 - 3.9?
 
+	private final EditorController editorController;
 	private final String node1;
 	private final String node2;
 	private final Rectangle bounds;
 
-	public Capacitor(final String node1, final String node2, final Rectangle bounds)
+	public Capacitor(final EditorController editorController, final String node1, final String node2,
+			final Rectangle bounds)
 	{
+		this.editorController = editorController;
 		this.node1 = node1;
 		this.node2 = node2;
 		this.bounds = bounds;
@@ -46,11 +49,15 @@ public class Capacitor implements CircuitComponent
 	public double getCapacitance()
 	{
 		// C = k*E0*A / d
-		final double widthMetres = (bounds.getWidth() / EditorConstants.CANVAS_GRID_SIZE) * 2.5 * Math.pow(10, -6); // TODO * techFileLambda val not * 2.5;
-		final double heightMetres = (bounds.getHeight() / EditorConstants.CANVAS_GRID_SIZE) * 2.5 * Math.pow(10, -6);
+		final double lambdaUm = editorController.getTechnologyControl().getLambda();
+		final double layerSeparationMetres = editorController.getTechnologyControl().getOxideThicknessNm()
+				* Math.pow(10, -9);
+
+		final double widthMetres = (bounds.getWidth() / EditorConstants.CANVAS_GRID_SIZE) * lambdaUm * Math.pow(10, -6);
+		final double heightMetres = (bounds.getHeight() / EditorConstants.CANVAS_GRID_SIZE) * lambdaUm * Math.pow(10, -6);
 		final double areaMetres = widthMetres * heightMetres;
 
-		return (areaMetres * E0 * DIELECTRIC_CONSTANT_SILICON_DIOXIDE) / LAYER_SEPARATION_METRES;
+		return (areaMetres * E0 * DIELECTRIC_CONSTANT_SILICON_DIOXIDE) / layerSeparationMetres;
 	}
 
 	public String getName()
