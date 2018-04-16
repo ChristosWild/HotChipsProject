@@ -27,8 +27,8 @@ public final class SpiceUtil
 	public static final String TRANSISTOR_NAME_SOURCE = "Source";
 	public static final String TRANSISTOR_NAME_DRAIN = "Drain";
 	private static final String TRANSISTOR_MODEL_NMOS = ".MODEL NMOSMODEL NMOS LEVEL=1"; // FIXME VTO=threshold,
-																							// TOX=oxide thickness,
-																							// LAMBDA=lambda
+	// TOX=oxide thickness,
+	// LAMBDA=lambda
 	private static final String TRANSISTOR_MODEL_PMOS = ".MODEL PMOSMODEL PMOS LEVEL=1";
 
 	private static final String OP = ".OP";
@@ -38,7 +38,8 @@ public final class SpiceUtil
 
 	private SpiceUtil() {}
 
-	public static List<SpiceComponent> componentsToSpice(final List<CircuitComponent> components)
+	public static List<SpiceComponent> componentsToSpice(final EditorController editorController,
+			final List<CircuitComponent> components)
 	{
 		final List<SpiceComponent> spiceComponents = new ArrayList<SpiceComponent>();
 
@@ -61,8 +62,8 @@ public final class SpiceUtil
 			else if (component instanceof PowerSupply)
 			{
 				final PowerSupply power = (PowerSupply) component;
-				final SpicePowerSupply sPower = new SpicePowerSupply(power.getPosNodeId(), power.getNegNodeId(),
-						power.getInstanceId());
+				final SpicePowerSupply sPower = new SpicePowerSupply(editorController, power.getPosNodeId(),
+						power.getNegNodeId(), power.getInstanceId());
 				spiceComponents.add(sPower);
 			}
 		}

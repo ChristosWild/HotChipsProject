@@ -1,15 +1,21 @@
 package project.editor.extractor.components.spice;
 
+import project.editor.controller.EditorController;
 import project.editor.extractor.util.SpiceUtil;
 
 public class SpicePowerSupply extends SpiceComponent
 {
+	private static final String POWER_DC = "DC";
+
+	private final EditorController editorController;
 	private final int instanceId;
 	private final String nodePositive;
 	private final String nodeNegative;
 
-	public SpicePowerSupply(final String nodePositive, final String nodeNegative, final int instanceId)
+	public SpicePowerSupply(final EditorController editorController, final String nodePositive,
+			final String nodeNegative, final int instanceId)
 	{
+		this.editorController = editorController;
 		this.nodePositive = nodePositive;
 		this.nodeNegative = nodeNegative;
 		this.instanceId = instanceId;
@@ -29,9 +35,9 @@ public class SpicePowerSupply extends SpiceComponent
 		addSpacer(sb);
 		sb.append(nodeNegative);
 		addSpacer(sb);
-		sb.append("DC"); // FIXME get from tech file
+		sb.append(POWER_DC);
 		addSpacer(sb);
-		sb.append(5);
+		sb.append(editorController.getTechnologyControl().getVddVoltage());
 
 		return sb.toString();
 	}

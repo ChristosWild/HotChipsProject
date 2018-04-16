@@ -198,6 +198,7 @@ public class EditorController
 			} else if (newVal)
 			{
 				SelectorControl.getInstance().updateOwner(stage, true);
+				stage.requestFocus();
 			}
 		});
 

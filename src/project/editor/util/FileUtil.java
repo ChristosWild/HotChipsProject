@@ -196,7 +196,7 @@ public final class FileUtil
 			exceptionAlert.setContentText(OPEN_FAILED_MESSAGE + ex.getMessage());
 			exceptionAlert.setHeaderText(null);
 			exceptionAlert.setGraphic(null);
-			exceptionAlert.show();
+			exceptionAlert.showAndWait();
 		}
 	}
 
@@ -273,7 +273,7 @@ public final class FileUtil
 			exceptionAlert.setContentText(SAVE_FAILED_MESSAGE + ex.getMessage());
 			exceptionAlert.setHeaderText(null);
 			exceptionAlert.setGraphic(null);
-			exceptionAlert.show();
+			exceptionAlert.showAndWait();
 
 			return false;
 		}

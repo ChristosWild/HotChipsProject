@@ -7,7 +7,7 @@ import project.editor.util.EditorConstants;
 public class Capacitor implements CircuitComponent
 {
 	private static final double E0 = 8.854 * Math.pow(10, -12);
-	private static final double DIELECTRIC_CONSTANT_SILICON_DIOXIDE = 3.8; // FIXME confirm 3.7 - 3.9?
+	private static final double DIELECTRIC_CONSTANT_SILICON_DIOXIDE = 3.8; // FIXME Confirm val: seen 3.4 - 4.2 and 3.7 - 3.9?
 
 	private final EditorController editorController;
 	private final String node1;

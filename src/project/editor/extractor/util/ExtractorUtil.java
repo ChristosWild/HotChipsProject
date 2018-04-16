@@ -61,11 +61,11 @@ public final class ExtractorUtil
 				MAX_ID = setInitialIds(canvasController);
 				connectAdjacentRects(canvasController);
 				final List<CircuitComponent> components = extractComponents(editorController);
-				final List<SpiceComponent> spiceComponents = SpiceUtil.componentsToSpice(components);
+				final List<SpiceComponent> spiceComponents = SpiceUtil.componentsToSpice(editorController, components);
 				final Path filePath = SpiceUtil.writeToFile(editorController, spiceComponents);
 
 				infoAlert.setContentText(EXTRACTION_SUCCESSFUL_MESSAGE + filePath.toString());
-				infoAlert.show();
+				infoAlert.showAndWait();
 
 			} catch (ConfigurationException | IOException e)
 			{
@@ -74,7 +74,7 @@ public final class ExtractorUtil
 				e.printStackTrace();
 
 				infoAlert.setContentText(e.getMessage());
-				infoAlert.show();
+				infoAlert.showAndWait();
 			}
 		}
 	}
@@ -167,7 +167,7 @@ public final class ExtractorUtil
 		extractGnd(canvasController);
 		extractPolysiliconVias(canvasController);
 		components.addAll(extractMetalViasAndCapacitors(editorController)); // TODO Check if capacitor when layer 1 and
-																			// layer 5 overlap etc
+		// layer 5 overlap etc
 		components.addAll(extractTransistors(canvasController, TransistorType.NMOS));
 		components.addAll(extractTransistors(canvasController, TransistorType.PMOS));
 		components.addAll(extractVdd(canvasController));
