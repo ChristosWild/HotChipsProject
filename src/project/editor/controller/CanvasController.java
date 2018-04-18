@@ -50,6 +50,7 @@ public class CanvasController
 	private MenuItem setSource;
 	private MenuItem setDrain;
 	private MenuItem setVdd;
+	private MenuItem setVin;
 	private MenuItem setGnd;
 	private MenuItem setPinName;
 	private TextInputDialog pinNameDialog;
@@ -82,11 +83,12 @@ public class CanvasController
 		setSource = new MenuItem("Set as transistor source");
 		setDrain = new MenuItem("Set as transistor drain");
 		setVdd = new MenuItem("Set pin as Vdd");
+		setVin = new MenuItem("Set pin as Vin");
 		setGnd = new MenuItem("Set pin as Gnd");
 		setPinName = new MenuItem("Set pin name");
 
 		menuVia = new ContextMenu(setSource, setDrain);
-		menuPin = new ContextMenu(setVdd, setGnd, setPinName);
+		menuPin = new ContextMenu(setVdd, setVin, setGnd, setPinName);
 
 		pinNameDialog = new TextInputDialog();
 		pinNameDialog.setTitle("Pin");
@@ -111,6 +113,10 @@ public class CanvasController
 		setVdd.setOnAction(e -> {
 			final LayerRectangle pin = (LayerRectangle) ((MenuItem) e.getSource()).getParentPopup().getOwnerNode();
 			pin.setName(SpiceUtil.PIN_NAME_VDD);
+		});
+		setVin.setOnAction(e -> {
+			final LayerRectangle pin = (LayerRectangle) ((MenuItem) e.getSource()).getParentPopup().getOwnerNode();
+			pin.setName(SpiceUtil.PIN_NAME_VIN);
 		});
 		setGnd.setOnAction(e -> {
 			final LayerRectangle pin = (LayerRectangle) ((MenuItem) e.getSource()).getParentPopup().getOwnerNode();

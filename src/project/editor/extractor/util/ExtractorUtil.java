@@ -18,7 +18,9 @@ import project.editor.controller.CanvasController;
 import project.editor.controller.EditorController;
 import project.editor.extractor.components.Capacitor;
 import project.editor.extractor.components.CircuitComponent;
+import project.editor.extractor.components.DCPowerSupply;
 import project.editor.extractor.components.PowerSupply;
+import project.editor.extractor.components.PulsePowerSupply;
 import project.editor.extractor.components.Transistor;
 import project.editor.extractor.components.Transistor.TransistorType;
 import project.editor.extractor.components.spice.SpiceComponent;
@@ -210,9 +212,16 @@ public final class ExtractorUtil
 					{
 						break LAYER;
 					}
-					else if (pin.isContainedBy(layerRect) && pin.getName().equals(SpiceUtil.PIN_NAME_VDD))
+					else if (pin.isContainedBy(layerRect))
 					{
-						vdd.add(new PowerSupply(layerRect.getId(), GND_ID, vdd.size()));
+						if (pin.getName().equals(SpiceUtil.PIN_NAME_VDD))
+						{
+							vdd.add(new DCPowerSupply(layerRect.getId(), GND_ID, vdd.size()));
+						}
+						else if (pin.getName().equals(SpiceUtil.PIN_NAME_VIN))
+						{
+							vdd.add(new PulsePowerSupply(layerRect.getId(), GND_ID, vdd.size()));
+						}
 					}
 				}
 			}

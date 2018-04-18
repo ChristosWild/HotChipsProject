@@ -3,7 +3,7 @@ package project.editor.extractor.components.spice;
 import project.editor.controller.EditorController;
 import project.editor.extractor.util.SpiceUtil;
 
-public class SpicePowerSupply extends SpiceComponent
+public class SpiceDCPowerSupply extends SpiceComponent
 {
 	private static final String POWER_DC = "DC";
 
@@ -12,7 +12,7 @@ public class SpicePowerSupply extends SpiceComponent
 	private final String nodePositive;
 	private final String nodeNegative;
 
-	public SpicePowerSupply(final EditorController editorController, final String nodePositive,
+	public SpiceDCPowerSupply(final EditorController editorController, final String nodePositive,
 			final String nodeNegative, final int instanceId)
 	{
 		this.editorController = editorController;

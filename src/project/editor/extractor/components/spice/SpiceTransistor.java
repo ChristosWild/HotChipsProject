@@ -26,10 +26,13 @@ public class SpiceTransistor extends SpiceComponent
 		sb = new StringBuilder();
 		sb.append("M");
 		sb.append(instanceId);
+		sb.append(type.toString().toLowerCase());
 		addSpacer(sb);
 		sb.append(nodeDrain);
 		addSpacer(sb);
 		sb.append(nodeGate);
+		addSpacer(sb);
+		sb.append(nodeSource);
 		addSpacer(sb);
 		sb.append(nodeSource);
 		addSpacer(sb);

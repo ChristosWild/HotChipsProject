@@ -50,7 +50,7 @@ public class Capacitor implements CircuitComponent
 	{
 		// C = k*E0*A / d
 		final double lambdaUm = editorController.getTechnologyControl().getLambda();
-		final double layerSeparationMetres = editorController.getTechnologyControl().getOxideThicknessNm()
+		final double layerSeparationMetres = editorController.getTechnologyControl().getOxideThickness()
 				* Math.pow(10, -9);
 
 		final double widthMetres = (bounds.getWidth() / EditorConstants.CANVAS_GRID_SIZE) * lambdaUm * Math.pow(10, -6);

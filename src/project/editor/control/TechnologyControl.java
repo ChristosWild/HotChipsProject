@@ -19,30 +19,37 @@ public class TechnologyControl
 	private boolean isUICreated = false;
 	private Dialog<ButtonType> dialog;
 
-	private double lambdaUm;
 	private String metal;
+	private double lambdaUm;
 	private double vddVoltage;
+	private double vinVoltage;
+	private double period;
 	private double thresholdVoltage; // FIXME default threshold
 	private double oxideThicknessNm; // Silicon dioxide // FIXME confirm 400nm thickness. 600? 300? 500?
 
-	private TextField fieldLambda;
 	private TextField fieldMetal;
+	private TextField fieldLambda;
 	private TextField fieldVdd;
+	private TextField fieldVin;
+	private TextField fieldPeriod;
 	private TextField fieldThreshold;
 	private TextField fieldThickness;
 
 	public TechnologyControl(final EditorController editorController)
 	{
-		this(editorController, 2.5, "Aluminium", 5, 1.5, 400);
+		this(editorController, "Aluminium", 2.5, 5, 5, 500, 1.5, 400);
 	}
 
-	public TechnologyControl(final EditorController editorController, final double lambdaUm, final String metal,
-			final double vddVoltage, final double thresholdVoltage, final double oxideThicknessNm)
+	public TechnologyControl(final EditorController editorController, final String metal, final double lambdaUm,
+			final double vddVoltage, final double vinVoltage, final double period, final double thresholdVoltage,
+			final double oxideThicknessNm)
 	{
 		this.editorController = editorController;
-		this.lambdaUm = lambdaUm;
 		this.metal = metal;
+		this.lambdaUm = lambdaUm;
 		this.vddVoltage = vddVoltage;
+		this.vinVoltage = vinVoltage;
+		this.period = period;
 		this.thresholdVoltage = thresholdVoltage;
 		this.oxideThicknessNm = oxideThicknessNm;
 	}
@@ -59,17 +66,25 @@ public class TechnologyControl
 		grid.setVgap(10);
 		grid.setPadding(new Insets(20, 20, 20, 20));
 
-		fieldLambda = new TextField();
-		fieldLambda.setPromptText("Lambda");
-		fieldLambda.setText(lambdaUm + "");
-
 		fieldMetal = new TextField();
 		fieldMetal.setPromptText("Metal");
 		fieldMetal.setText(metal);
 
+		fieldLambda = new TextField();
+		fieldLambda.setPromptText("Lambda");
+		fieldLambda.setText(lambdaUm + "");
+
 		fieldVdd = new TextField();
 		fieldVdd.setPromptText("Vdd Voltage");
 		fieldVdd.setText(vddVoltage + "");
+
+		fieldVin = new TextField();
+		fieldVin.setPromptText("Vin Voltage");
+		fieldVin.setText(vinVoltage + "");
+
+		fieldPeriod = new TextField();
+		fieldPeriod.setPromptText("Vin Clock Period");
+		fieldPeriod.setText(period + "");
 
 		fieldThreshold = new TextField();
 		fieldThreshold.setPromptText("Threshold");
@@ -79,24 +94,32 @@ public class TechnologyControl
 		fieldThickness.setPromptText("Thickness");
 		fieldThickness.setText(oxideThicknessNm + "");
 
-		grid.add(new Label("Lambda:"), 0, 0);
-		grid.add(fieldLambda, 1, 0);
-		grid.add(new Label("um"), 2, 0);
+		grid.add(new Label("Metal:"), 0, 0);
+		grid.add(fieldMetal, 1, 0);
 
-		grid.add(new Label("Metal:"), 0, 1);
-		grid.add(fieldMetal, 1, 1);
+		grid.add(new Label("Lambda:"), 0, 1);
+		grid.add(fieldLambda, 1, 1);
+		grid.add(new Label("um"), 2, 1);
 
 		grid.add(new Label("Vdd Voltage:"), 0, 2);
 		grid.add(fieldVdd, 1, 2);
 		grid.add(new Label("V"), 2, 2);
 
-		grid.add(new Label("Transistor Threshold:"), 0, 3);
-		grid.add(fieldThreshold, 1, 3);
+		grid.add(new Label("Vin Voltage:"), 0, 3);
+		grid.add(fieldVin, 1, 3);
 		grid.add(new Label("V"), 2, 3);
 
-		grid.add(new Label("Silicon Thickness:"), 0, 4);
-		grid.add(fieldThickness, 1, 4);
-		grid.add(new Label("nm"), 2, 4);
+		grid.add(new Label("Vin Clock Period:"), 0, 4);
+		grid.add(fieldPeriod, 1, 4);
+		grid.add(new Label("ms"), 2, 4);
+
+		grid.add(new Label("Transistor Threshold:"), 0, 5);
+		grid.add(fieldThreshold, 1, 5);
+		grid.add(new Label("V"), 2, 5);
+
+		grid.add(new Label("Silicon Thickness:"), 0, 6);
+		grid.add(fieldThickness, 1, 6);
+		grid.add(new Label("nm"), 2, 6);
 
 		dialog.getDialogPane().setContent(grid);
 	}
@@ -115,9 +138,11 @@ public class TechnologyControl
 		if (result.get() == ButtonType.APPLY)
 		{
 			// TODO save technology file in with xml
-			lambdaUm = Double.parseDouble(fieldLambda.getText());
 			metal = fieldMetal.getText();
+			lambdaUm = Double.parseDouble(fieldLambda.getText());
 			vddVoltage = Double.parseDouble(fieldVdd.getText());
+			vinVoltage = Double.parseDouble(fieldVin.getText());
+			period = Double.parseDouble(fieldPeriod.getText());
 			thresholdVoltage = Double.parseDouble(fieldThreshold.getText());
 			oxideThicknessNm = Double.parseDouble(fieldThickness.getText());
 		}
@@ -125,12 +150,7 @@ public class TechnologyControl
 
 	public double getLambda()
 	{
-		return lambdaUm;
-	}
-
-	public void setLambda(final double lambda)
-	{
-		this.lambdaUm = lambda;
+		return lambdaUm * Math.pow(10, -6);
 	}
 
 	public String getMetal()
@@ -138,19 +158,19 @@ public class TechnologyControl
 		return metal;
 	}
 
-	public void setMetal(final String metal)
-	{
-		this.metal = metal;
-	}
-
 	public double getVddVoltage()
 	{
 		return vddVoltage;
 	}
 
-	public void setVddVoltage(final double vddVoltage)
+	public double getVinVoltage()
 	{
-		this.vddVoltage = vddVoltage;
+		return vinVoltage;
+	}
+
+	public double getPeriod()
+	{
+		return period * Math.pow(10, -3);
 	}
 
 	public double getThresholdVoltage()
@@ -158,18 +178,8 @@ public class TechnologyControl
 		return thresholdVoltage;
 	}
 
-	public void setThresholdVoltage(final double thresholdVoltage)
+	public double getOxideThickness()
 	{
-		this.thresholdVoltage = thresholdVoltage;
-	}
-
-	public double getOxideThicknessNm()
-	{
-		return oxideThicknessNm;
-	}
-
-	public void setOxideThicknessNm(final double oxideThickness)
-	{
-		this.oxideThicknessNm = oxideThickness;
+		return oxideThicknessNm * Math.pow(10, -9);
 	}
 }
