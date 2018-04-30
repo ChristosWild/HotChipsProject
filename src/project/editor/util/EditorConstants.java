@@ -4,17 +4,6 @@ import javafx.scene.paint.Color;
 
 public interface EditorConstants
 {
-	// _Metal_One
-	// _Metal_Two
-	// _Metal_Three
-	// _Metal_Four
-	// _Metal_Five
-	// _Diffusion_N
-	// _Diffusion_P
-	// _Polysilicon
-	// _Via
-	// _Pin
-
 	public static final String EDITOR_TITLE = "VLSI Editor";
 
 	public static final double EDITOR_SCREEN_WIDTH_PERCENT = 0.65;
@@ -68,4 +57,8 @@ public interface EditorConstants
 	public static final String PATH_IMG_CLOSE = "close.png";
 
 	public static final String PATH_CSS_MAIN = "project/application/Main.css";
+
+	public static final String LAMBDA = "\u03BB";
+	public static final String UNIT_MICRO = "\u00B5";
+	public static final String UNIT_VOLT = "V";
 }

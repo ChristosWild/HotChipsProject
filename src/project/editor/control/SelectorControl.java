@@ -108,7 +108,7 @@ public class SelectorControl
 		final GridPane topBar = new GridPane();
 		initialiseTopBar(topBar);
 
-		final Rectangle spacer = new Rectangle(148, 2, Color.BLACK);
+		final Rectangle spacer = new Rectangle(148, 1.5, Color.DARKGRAY);
 
 		layerList = new ListView<>();
 		initialiseLayerList(layerList);

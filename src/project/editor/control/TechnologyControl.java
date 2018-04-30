@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import project.editor.controller.EditorController;
+import project.editor.util.EditorConstants;
 
 public class TechnologyControl
 {
@@ -94,17 +95,17 @@ public class TechnologyControl
 		grid.add(new Label("Metal:"), 0, 0);
 		grid.add(fieldMetal, 1, 0);
 
-		grid.add(new Label("Lambda:"), 0, 1);
+		grid.add(new Label("Lambda (" + EditorConstants.LAMBDA + "):"), 0, 1);
 		grid.add(fieldLambda, 1, 1);
-		grid.add(new Label("um"), 2, 1); // FIXME micrometre u symbol
+		grid.add(new Label(EditorConstants.UNIT_MICRO + "m"), 2, 1);
 
 		grid.add(new Label("Vdd Voltage:"), 0, 2);
 		grid.add(fieldVdd, 1, 2);
-		grid.add(new Label("V"), 2, 2);
+		grid.add(new Label(EditorConstants.UNIT_VOLT), 2, 2);
 
 		grid.add(new Label("Vin Voltage:"), 0, 3);
 		grid.add(fieldVin, 1, 3);
-		grid.add(new Label("V"), 2, 3);
+		grid.add(new Label(EditorConstants.UNIT_VOLT), 2, 3);
 
 		grid.add(new Label("Vin Clock Period:"), 0, 4);
 		grid.add(fieldPeriod, 1, 4);
@@ -112,7 +113,7 @@ public class TechnologyControl
 
 		grid.add(new Label("Transistor Threshold:"), 0, 5);
 		grid.add(fieldThreshold, 1, 5);
-		grid.add(new Label("V"), 2, 5);
+		grid.add(new Label(EditorConstants.UNIT_VOLT), 2, 5);
 
 		grid.add(new Label("Silicon Thickness:"), 0, 6);
 		grid.add(fieldThickness, 1, 6);

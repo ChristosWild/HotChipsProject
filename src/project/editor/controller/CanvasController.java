@@ -34,7 +34,6 @@ public class CanvasController
 	}
 
 	private static final double ZOOM_INCREMENT = 1.2;
-	private static final String LAMBDA = "\u03BB";
 
 	private EditorController editorController;
 	private CanvasControl canvasControl;
@@ -259,8 +258,9 @@ public class CanvasController
 						final Scene scene = rectangle.getScene();
 						final Point2D point = rectangle.localToScene(0, 0);
 
-						tooltip.setText((int) (Math.abs(deltaX) / EditorConstants.CANVAS_GRID_SIZE) + LAMBDA + " x "
-								+ (int) (Math.abs(deltaY) / EditorConstants.CANVAS_GRID_SIZE) + LAMBDA); // TODO fix tooltip for backwards rects
+						tooltip.setText((int) (Math.abs(deltaX) / EditorConstants.CANVAS_GRID_SIZE)
+								+ EditorConstants.LAMBDA + " x "
+								+ (int) (Math.abs(deltaY) / EditorConstants.CANVAS_GRID_SIZE) + EditorConstants.LAMBDA); // TODO fix tooltip for backwards rects
 						tooltip.setX(scene.getWindow().getX() + scene.getX() + point.getX() + dragPos.x);
 						tooltip.setY(scene.getWindow().getY() + scene.getY() + point.getY() + dragPos.y);
 						tooltip.show(rectangle.getScene().getWindow());
