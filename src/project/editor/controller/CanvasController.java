@@ -469,6 +469,13 @@ public class CanvasController
 			for (final LayerRectangle layerRect : rectsToPaste)
 			{
 				final LayerRectangle clonedRect = layerRect.clone();
+				final Delta offset = clonedRect.getOffset();
+
+				offset.x += EditorConstants.CANVAS_GRID_SIZE;
+				offset.y += EditorConstants.CANVAS_GRID_SIZE;
+				clonedRect.setTranslateX(offset.x);
+				clonedRect.setTranslateY(offset.y);
+
 				canvasControl.addLayerRectangle(clonedRect);
 				canvasControl.addSelectedObject(clonedRect);
 			}
