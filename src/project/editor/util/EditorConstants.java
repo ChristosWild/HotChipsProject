@@ -19,8 +19,8 @@ public interface EditorConstants
 	public static final String STRING_METAL_THREE = "Metal 3";
 	public static final String STRING_METAL_FOUR = "Metal 4";
 	public static final String STRING_METAL_FIVE = "Metal 5";
-	public static final String STRING_DIFFUSION_N = "N Diffusion";
-	public static final String STRING_DIFFUSION_P = "P Diffusion";
+	public static final String STRING_DIFFUSION_N = "N-Diffusion";
+	public static final String STRING_DIFFUSION_P = "P-Diffusion";
 	public static final String STRING_POLYSILICON = "Polysilicon";
 	public static final String STRING_VIA = "Via";
 	public static final String STRING_PIN = "Pin";

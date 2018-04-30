@@ -8,8 +8,6 @@ import project.editor.util.LayerRectangle;
 /**
  * Singleton class that controls the clipboard for cut / copy / paste
  *
- * @author Christos
- *
  */
 public class ClipboardController
 {

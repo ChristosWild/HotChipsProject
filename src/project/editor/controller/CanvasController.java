@@ -172,7 +172,7 @@ public class CanvasController
 				{
 					layer = Layer.INVALID_LAYER;
 					selectedPane = canvasControl.getSelectionPane();
-					fill = Color.web(Color.GREY.toString(), 0.4); // TODO pick selection box colour
+					fill = Color.web(Color.GREY.toString(), 0.5);
 
 					isSelected = canvasControl.getSelectedObjects().size() > 0;
 					isMoving = isSelected && selectedContainsMouse(event);

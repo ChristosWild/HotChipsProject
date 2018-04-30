@@ -32,11 +32,11 @@ public class ToolbarControl
 	private static final String LBL_SUBMENU_CLOSE = "Close" + TAB + ALT + "F4";
 
 	private static final String LBL_MENU_VIEW = "View";
-	private static final String LBL_SUBMENU_SHOW_TOOLBAR = "Show Toolbar" + TAB + CTRL_PLUS + "T";
-	private static final String LBL_SUBMENU_ZOOM_IN = "Zoom In" + TAB_2 + CTRL + "+";
-	private static final String LBL_SUBMENU_ZOOM_OUT = "Zoom Out" + TAB + CTRL + "-";
-	private static final String LBL_SUBMENU_ZOOM_FIT = "Zoom To Fit";
-	private static final String LBL_SUBMENU_ZOOM_RESET = "Zoom Reset" + TAB + CTRL_PLUS + "R";
+	private static final String LBL_SUBMENU_SHOW_TOOLBAR = "Show Layer Menu" + TAB + CTRL_PLUS + "M";
+	private static final String LBL_SUBMENU_ZOOM_IN = "Zoom In" + TAB_3 + CTRL + "+";
+	private static final String LBL_SUBMENU_ZOOM_OUT = "Zoom Out" + TAB_2 + CTRL + "-";
+	private static final String LBL_SUBMENU_ZOOM_FIT = "Zoom to Fit";
+	private static final String LBL_SUBMENU_ZOOM_RESET = "Zoom Reset" + TAB_2 + CTRL_PLUS + "R";
 
 	private static final String LBL_MENU_EDIT = "Edit";
 	private static final String LBL_SUBMENU_UNDO = "Undo";
@@ -57,8 +57,8 @@ public class ToolbarControl
 	private static final String LBL_BUTTON_DELETE = "Delete";
 	private static final String LBL_BUTTON_CLEAR = "Clear";
 
-	private static final String TOOLTIP_BUTTON_SELECT = "(S)";
-	private static final String TOOLTIP_BUTTON_DRAW = "(D)";
+	private static final String TOOLTIP_BUTTON_SELECT = "Select (S)";
+	private static final String TOOLTIP_BUTTON_DRAW = "Draw (D)";
 	private static final String TOOLTIP_BUTTON_DELETE = "(Del)";
 
 	private BorderPane root;

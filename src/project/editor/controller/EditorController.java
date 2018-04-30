@@ -57,7 +57,7 @@ public class EditorController
 						break;
 
 						// VIEW
-					case T:
+					case M:
 						SelectorControl.getInstance().setMeantToBeVisible(true);
 						SelectorControl.getInstance().updateOwner(stage, true);
 						break;
@@ -237,6 +237,11 @@ public class EditorController
 		stage.show();
 
 		SelectorControl.getInstance().show();
+	}
+
+	public void close()
+	{
+		stage.close();
 	}
 
 	public static EditorController getEditorControllerFromStage(final Stage stage)

@@ -196,6 +196,12 @@ public final class FileUtil
 			exceptionAlert.setContentText(OPEN_FAILED_MESSAGE + ex.getMessage());
 			exceptionAlert.setHeaderText(null);
 			exceptionAlert.setGraphic(null);
+
+			final Stage stage = (Stage) exceptionAlert.getDialogPane().getScene().getWindow();
+			stage.setAlwaysOnTop(true);
+
+			editorController.close();
+
 			exceptionAlert.showAndWait();
 		}
 	}

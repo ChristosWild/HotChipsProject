@@ -67,7 +67,7 @@ public final class ExtractorUtil
 				final List<SpiceComponent> spiceComponents = SpiceUtil.componentsToSpice(editorController, components);
 				final Path filePath = SpiceUtil.writeToFile(editorController, spiceComponents);
 
-				Stage stage = (Stage) infoAlert.getDialogPane().getScene().getWindow();
+				final Stage stage = (Stage) infoAlert.getDialogPane().getScene().getWindow();
 				stage.setAlwaysOnTop(true);
 
 				infoAlert.setContentText(EXTRACTION_SUCCESSFUL_MESSAGE + filePath.toString());
@@ -173,7 +173,7 @@ public final class ExtractorUtil
 		extractGnd(canvasController);
 		extractPolysiliconVias(canvasController);
 		components.addAll(extractMetalViasAndCapacitors(editorController)); // TODO Check if capacitor when layer 1 and
-		// layer 5 overlap etc
+																			// layer 5 overlap etc
 		components.addAll(extractTransistors(canvasController, TransistorType.NMOS));
 		components.addAll(extractTransistors(canvasController, TransistorType.PMOS));
 		components.addAll(extractVdd(canvasController));

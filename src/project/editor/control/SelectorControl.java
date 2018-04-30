@@ -28,8 +28,6 @@ import project.editor.util.Layer;
 /**
  * Singleton class that controls the layer selection popup menu
  *
- * @author Christos
- *
  */
 public class SelectorControl
 {
