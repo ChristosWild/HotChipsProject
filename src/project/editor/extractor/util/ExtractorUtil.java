@@ -176,7 +176,7 @@ public final class ExtractorUtil
 																			// layer 5 overlap etc
 		components.addAll(extractTransistors(canvasController, TransistorType.NMOS));
 		components.addAll(extractTransistors(canvasController, TransistorType.PMOS));
-		components.addAll(extractVdd(canvasController));
+		components.addAll(extractVoltagePins(canvasController));
 
 		return components;
 	}
@@ -202,7 +202,7 @@ public final class ExtractorUtil
 		}
 	}
 
-	private static List<PowerSupply> extractVdd(final CanvasController canvasController)
+	private static List<PowerSupply> extractVoltagePins(final CanvasController canvasController)
 	{
 		final List<PowerSupply> vdd = new ArrayList<PowerSupply>();
 
