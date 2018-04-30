@@ -30,7 +30,7 @@ public final class SpiceUtil
 
 	public static final String TRANSISTOR_NAME_SOURCE = "Source";
 	public static final String TRANSISTOR_NAME_DRAIN = "Drain";
-	private static final String TRANSISTOR_MODEL_NMOS = ".MODEL NMOSMODEL NMOS (LEVEL=1 VTO=%S TOX=%S LAMBDA=%S)"; // FIXME VTO=threshold, TOX=oxide thickness, LAMBDA=lambda
+	private static final String TRANSISTOR_MODEL_NMOS = ".MODEL NMOSMODEL NMOS (LEVEL=1 VTO=%S TOX=%S LAMBDA=%S)";
 	private static final String TRANSISTOR_MODEL_PMOS = ".MODEL PMOSMODEL PMOS (LEVEL=1 VTO=%S TOX=%S LAMBDA=%S)";
 
 	private static final String TRAN = ".TRAN %S %S";

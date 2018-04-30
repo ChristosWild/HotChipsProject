@@ -14,8 +14,6 @@ public class TechnologyControl
 {
 	private static final String TITLE_DIALOG = "Edit Technology File";
 
-	private final EditorController editorController;
-
 	private boolean isUICreated = false;
 	private Dialog<ButtonType> dialog;
 
@@ -37,14 +35,13 @@ public class TechnologyControl
 
 	public TechnologyControl(final EditorController editorController)
 	{
-		this(editorController, "Aluminium", 2.5, 5, 5, 500, 1.5, 400);
+		this("Aluminium", 2.5, 5, 5, 5, 1.5, 400);
 	}
 
-	public TechnologyControl(final EditorController editorController, final String metal, final double lambdaUm,
+	public TechnologyControl(final String metal, final double lambdaUm,
 			final double vddVoltage, final double vinVoltage, final double period, final double thresholdVoltage,
 			final double oxideThicknessNm)
 	{
-		this.editorController = editorController;
 		this.metal = metal;
 		this.lambdaUm = lambdaUm;
 		this.vddVoltage = vddVoltage;
@@ -99,7 +96,7 @@ public class TechnologyControl
 
 		grid.add(new Label("Lambda:"), 0, 1);
 		grid.add(fieldLambda, 1, 1);
-		grid.add(new Label("um"), 2, 1);
+		grid.add(new Label("um"), 2, 1); // FIXME micrometre u symbol
 
 		grid.add(new Label("Vdd Voltage:"), 0, 2);
 		grid.add(fieldVdd, 1, 2);
@@ -111,7 +108,7 @@ public class TechnologyControl
 
 		grid.add(new Label("Vin Clock Period:"), 0, 4);
 		grid.add(fieldPeriod, 1, 4);
-		grid.add(new Label("ms"), 2, 4);
+		grid.add(new Label("s"), 2, 4);
 
 		grid.add(new Label("Transistor Threshold:"), 0, 5);
 		grid.add(fieldThreshold, 1, 5);
@@ -170,7 +167,7 @@ public class TechnologyControl
 
 	public double getPeriod()
 	{
-		return period * Math.pow(10, -3);
+		return period;
 	}
 
 	public double getThresholdVoltage()

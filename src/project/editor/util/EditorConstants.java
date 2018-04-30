@@ -37,17 +37,17 @@ public interface EditorConstants
 	public static final String STRING_PIN = "Pin";
 	public static final String STRING_INVALID = "Invalid Layer";
 
-	public static final double COLOR_OPACITY = 0.6;
-	public static final double COLOR_OPACITY_SELECTED = 0.8;
+	public static final double COLOR_OPACITY = 0.5;
+	public static final double COLOR_OPACITY_SELECTED = 0.85;
 
-	public static final Color COLOR_METAL_ONE = Color.RED;
-	public static final Color COLOR_METAL_TWO = Color.ORANGE;
-	public static final Color COLOR_METAL_THREE = Color.YELLOW;
-	public static final Color COLOR_METAL_FOUR = Color.CHARTREUSE;
+	public static final Color COLOR_METAL_ONE = Color.DODGERBLUE;
+	public static final Color COLOR_METAL_TWO = Color.MAGENTA;
+	public static final Color COLOR_METAL_THREE = Color.ORANGE;
+	public static final Color COLOR_METAL_FOUR = Color.AQUA;
 	public static final Color COLOR_METAL_FIVE = Color.GREEN;
-	public static final Color COLOR_DIFFUSION_N = Color.AQUA;
-	public static final Color COLOR_DIFFUSION_P = Color.BLUE;
-	public static final Color COLOR_POLYSILICON = Color.INDIGO;
+	public static final Color COLOR_DIFFUSION_N = Color.LAWNGREEN;
+	public static final Color COLOR_DIFFUSION_P = Color.YELLOW;
+	public static final Color COLOR_POLYSILICON = Color.RED;
 	public static final Color COLOR_VIA = Color.TRANSPARENT; // Uses image instead
 	public static final Color COLOR_PIN = Color.TRANSPARENT; // Uses image instead
 	public static final Color COLOR_INVALID = Color.TRANSPARENT;

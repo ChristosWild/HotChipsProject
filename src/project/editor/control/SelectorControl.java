@@ -154,14 +154,14 @@ public class SelectorControl
 	private void initialiseLayerList(final ListView<String> layerList)
 	{
 		layerList.setItems(FXCollections.observableArrayList(
+				Layer.DIFFUSION_N.getDisplayName(),
+				Layer.DIFFUSION_P.getDisplayName(),
+				Layer.POLYSILICON.getDisplayName(),
 				Layer.METAL_ONE.getDisplayName(),
 				Layer.METAL_TWO.getDisplayName(),
 				Layer.METAL_THREE.getDisplayName(),
 				Layer.METAL_FOUR.getDisplayName(),
 				Layer.METAL_FIVE.getDisplayName(),
-				Layer.DIFFUSION_N.getDisplayName(),
-				Layer.DIFFUSION_P.getDisplayName(),
-				Layer.POLYSILICON.getDisplayName(),
 				Layer.VIA.getDisplayName(),
 				Layer.PIN.getDisplayName()));
 

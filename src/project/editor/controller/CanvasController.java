@@ -441,6 +441,11 @@ public class CanvasController
 		canvasControl.deleteSelected();
 	}
 
+	public void selectAll()
+	{
+		canvasControl.selectAll();
+	}
+
 	public void cut()
 	{
 		copy();

@@ -22,14 +22,14 @@ import project.editor.util.LayerRectangle;
 
 public class CanvasControl
 {
+	private Pane canvasDiffusionN;
+	private Pane canvasDiffusionP;
+	private Pane canvasPolysilicon;
 	private Pane canvasMetalOne;
 	private Pane canvasMetalTwo;
 	private Pane canvasMetalThree;
 	private Pane canvasMetalFour;
 	private Pane canvasMetalFive;
-	private Pane canvasDiffusionN;
-	private Pane canvasDiffusionP;
-	private Pane canvasPolysilicon;
 	private Pane canvasVia;
 	private Pane canvasPin;
 	private Pane[] canvasArray;
@@ -49,18 +49,18 @@ public class CanvasControl
 				BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)));
 		gridLayer.setPrefSize(EditorConstants.CANVAS_WIDTH, EditorConstants.CANVAS_HEIGHT);
 
+		canvasDiffusionN = new Pane();
+		canvasDiffusionP = new Pane();
+		canvasPolysilicon = new Pane();
 		canvasMetalOne = new Pane();
 		canvasMetalTwo = new Pane();
 		canvasMetalThree = new Pane();
 		canvasMetalFour = new Pane();
 		canvasMetalFive = new Pane();
-		canvasDiffusionN = new Pane();
-		canvasDiffusionP = new Pane();
-		canvasPolysilicon = new Pane();
 		canvasVia = new Pane();
 		canvasPin = new Pane();
-		canvasArray = new Pane[] { canvasMetalOne, canvasMetalTwo, canvasMetalThree, canvasMetalFour,
-				canvasMetalFive, canvasDiffusionN, canvasDiffusionP, canvasPolysilicon, canvasVia, canvasPin };
+		canvasArray = new Pane[] { canvasDiffusionN, canvasDiffusionP, canvasPolysilicon, canvasMetalOne,
+				canvasMetalTwo, canvasMetalThree, canvasMetalFour, canvasMetalFive, canvasVia, canvasPin };
 
 		for (final Pane pane : canvasArray)
 		{
@@ -105,7 +105,7 @@ public class CanvasControl
 		}
 	}
 
-	public void deleteSelected() // TODO iterate through selected list?
+	public void deleteSelected() // TODO iterate through list of selected?
 	{
 		final List<LayerRectangle> toDelete = new ArrayList<LayerRectangle>();
 		for (final Pane pane : canvasArray)
@@ -131,6 +131,18 @@ public class CanvasControl
 			layerRect.setSelected(false);
 		}
 		selectedObjects.clear();
+	}
+
+	public void selectAll()
+	{
+		for (final ArrayList<LayerRectangle> layerRects : getAllLayerRectangles())
+		{
+			for (final LayerRectangle layerRect : layerRects)
+			{
+				layerRect.setSelected(true);
+				selectedObjects.add(layerRect);
+			}
+		}
 	}
 
 	public void selectSingle(final double x, final double y)

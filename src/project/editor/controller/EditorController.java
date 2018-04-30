@@ -90,6 +90,10 @@ public class EditorController
 						canvasController.paste();
 						break;
 
+					case A:
+						canvasController.selectAll();
+						break;
+
 					default:
 						break;
 				}

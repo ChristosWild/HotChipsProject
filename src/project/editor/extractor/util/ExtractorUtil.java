@@ -13,6 +13,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import project.editor.controller.CanvasController;
 import project.editor.controller.EditorController;
@@ -66,8 +67,11 @@ public final class ExtractorUtil
 				final List<SpiceComponent> spiceComponents = SpiceUtil.componentsToSpice(editorController, components);
 				final Path filePath = SpiceUtil.writeToFile(editorController, spiceComponents);
 
+				Stage stage = (Stage) infoAlert.getDialogPane().getScene().getWindow();
+				stage.setAlwaysOnTop(true);
+
 				infoAlert.setContentText(EXTRACTION_SUCCESSFUL_MESSAGE + filePath.toString());
-				infoAlert.showAndWait();
+				infoAlert.show();
 
 			} catch (ConfigurationException | IOException e)
 			{

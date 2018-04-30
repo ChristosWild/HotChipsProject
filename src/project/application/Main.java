@@ -6,7 +6,7 @@ import project.editor.controller.EditorController;
 
 /**
  * Main class to launch application
- * 
+ *
  * @author Christos
  *
  */
