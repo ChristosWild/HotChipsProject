@@ -154,22 +154,17 @@ public class CanvasController
 
 					if (SelectorControl.getInstance().getSelectedLayer() == Layer.VIA)
 					{
-						fill = new ImagePattern(new Image(this.getClass()
-								.getResourceAsStream(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_VIA))); // TODO
-																														// creates
-																														// new
-																														// images
-																														// every
-																														// time
-						fillSelected = new ImagePattern(new Image(this.getClass().getResourceAsStream(
-								EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_VIA_SELECTED)));
+						fill = new ImagePattern(
+								new Image(CanvasController.class.getResource(EditorConstants.PATH_IMG_VIA).toString())); // TODO creates new images every time
+						fillSelected = new ImagePattern(
+								new Image(CanvasController.class.getResource(EditorConstants.PATH_IMG_VIA_SELECTED).toString()));
 					}
 					else if (SelectorControl.getInstance().getSelectedLayer() == Layer.PIN)
 					{
-						fill = new ImagePattern(new Image(this.getClass()
-								.getResourceAsStream(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_PIN)));
-						fillSelected = new ImagePattern(new Image(this.getClass().getResourceAsStream(
-								EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_PIN_SELECTED)));
+						fill = new ImagePattern(
+								new Image(CanvasController.class.getResource(EditorConstants.PATH_IMG_PIN).toString()));
+						fillSelected = new ImagePattern(
+								new Image(CanvasController.class.getResource(EditorConstants.PATH_IMG_PIN_SELECTED).toString()));
 					}
 					else
 					{

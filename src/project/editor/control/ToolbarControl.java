@@ -155,11 +155,9 @@ public class ToolbarControl
 
 		toggleGroup = new ToggleGroup();
 		btnSelect = new ToggleButton(null,
-				new ImageView(new Image(this.getClass()
-						.getResourceAsStream(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_MOUSE))));
+				new ImageView(new Image(ToolbarControl.class.getResource(EditorConstants.PATH_IMG_MOUSE).toString())));
 		btnDraw = new ToggleButton(null,
-				new ImageView(new Image(this.getClass()
-						.getResourceAsStream(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_PENCIL))));
+				new ImageView(new Image(ToolbarControl.class.getResource(EditorConstants.PATH_IMG_PENCIL).toString())));
 		btnDelete = new Button(LBL_BUTTON_DELETE);
 		btnClearAll = new Button(LBL_BUTTON_CLEAR);
 

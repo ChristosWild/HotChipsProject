@@ -114,7 +114,7 @@ public class SelectorControl
 		content.getChildren().addAll(topBar, spacer, layerList);
 		content.setPrefSize(POPUP_WIDTH, -1);
 
-		content.getStylesheets().add(EditorConstants.PATH_FILE_SRC + EditorConstants.PATH_CSS_MAIN);
+		content.getStylesheets().add(SelectorControl.class.getResource(EditorConstants.PATH_CSS_MAIN).toString());
 		content.getStyleClass().add("selector-popup");
 
 		popup.getContent().add(content);
@@ -130,7 +130,7 @@ public class SelectorControl
 	{
 		final Label lblTitle = new Label(LBL_SELECT_LAYER);
 		final Button btnClose = new Button(null,
-				new ImageView(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_CLOSE)));
+				new ImageView(new Image(SelectorControl.class.getResource(EditorConstants.PATH_IMG_CLOSE).toString())));
 
 		btnClose.setOnAction(event -> {
 			hide();
@@ -182,11 +182,13 @@ public class SelectorControl
 
 					if (layer == Layer.VIA)
 					{
-						graphic = new ImageView(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_VIA_16));
+						graphic = new ImageView(new Image(
+								SelectorControl.class.getResource(EditorConstants.PATH_IMG_VIA_16).toString()));
 					}
 					else if (layer == Layer.PIN)
 					{
-						graphic = new ImageView(new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_PIN_16));
+						graphic = new ImageView(new Image(
+								SelectorControl.class.getResource(EditorConstants.PATH_IMG_PIN_16).toString()));
 					}
 					else
 					{

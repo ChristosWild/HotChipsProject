@@ -162,21 +162,19 @@ public final class FileUtil
 					if (layer == Layer.VIA) // TODO creates new image every time
 					{
 						final ImagePattern fill = new ImagePattern(
-								new Image(editorController.getClass().getResourceAsStream(
-										EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_VIA)));
+								new Image(FileUtil.class.getResource(EditorConstants.PATH_IMG_VIA).toString()));
 						final ImagePattern fillSelected = new ImagePattern(
-								new Image(editorController.getClass().getResourceAsStream(
-										EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_VIA_SELECTED)));
+								new Image(
+										FileUtil.class.getResource(EditorConstants.PATH_IMG_VIA_SELECTED).toString()));
 						layerRect = new LayerRectangle(x, y, width, height, fill, fillSelected, layer);
 					}
 					else if (layer == Layer.PIN)
 					{
 						final ImagePattern fill = new ImagePattern(
-								new Image(editorController.getClass().getResourceAsStream(
-										EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_PIN)));
+								new Image(FileUtil.class.getResource(EditorConstants.PATH_IMG_PIN).toString()));
 						final ImagePattern fillSelected = new ImagePattern(
-								new Image(editorController.getClass().getResourceAsStream(
-										EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_PIN_SELECTED)));
+								new Image(
+										FileUtil.class.getResource(EditorConstants.PATH_IMG_PIN_SELECTED).toString()));
 						layerRect = new LayerRectangle(x, y, width, height, fill, fillSelected, layer);
 					}
 					else

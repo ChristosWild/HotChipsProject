@@ -45,8 +45,8 @@ public class CanvasControl
 
 		gridLayer = new Pane();
 		gridLayer.setBackground(new Background(new BackgroundImage(
-				new Image(EditorConstants.PATH_FILE_DATA + EditorConstants.PATH_IMG_GRID), BackgroundRepeat.REPEAT,
-				BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)));
+				new Image(CanvasControl.class.getResource(EditorConstants.PATH_IMG_GRID).toString()),
+				BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)));
 		gridLayer.setPrefSize(EditorConstants.CANVAS_WIDTH, EditorConstants.CANVAS_HEIGHT);
 
 		canvasDiffusionN = new Pane();

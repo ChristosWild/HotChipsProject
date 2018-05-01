@@ -41,22 +41,19 @@ public interface EditorConstants
 	public static final Color COLOR_PIN = Color.TRANSPARENT; // Uses image instead
 	public static final Color COLOR_INVALID = Color.TRANSPARENT;
 
-	public static final String PATH_FILE_DATA = "file:data/";
-	public static final String PATH_FILE_SRC = "file:src/";
+	public static final String PATH_IMG_VIA = "/via.png";
+	public static final String PATH_IMG_VIA_SELECTED = "/via_selected.png";
+	public static final String PATH_IMG_VIA_16 = "/via_16.png";
+	public static final String PATH_IMG_PIN = "/pin.png";
+	public static final String PATH_IMG_PIN_SELECTED = "/pin_selected.png";
+	public static final String PATH_IMG_PIN_16 = "/pin_16.png";
+	public static final String PATH_IMG_GRID = "/grid.png";
 
-	public static final String PATH_IMG_VIA = "via.png";
-	public static final String PATH_IMG_VIA_SELECTED = "via_selected.png";
-	public static final String PATH_IMG_VIA_16 = "via_16.png";
-	public static final String PATH_IMG_PIN = "pin.png";
-	public static final String PATH_IMG_PIN_SELECTED = "pin_selected.png";
-	public static final String PATH_IMG_PIN_16 = "pin_16.png";
-	public static final String PATH_IMG_GRID = "grid.png";
+	public static final String PATH_IMG_MOUSE = "/mouse.png";
+	public static final String PATH_IMG_PENCIL = "/pencil.png";
+	public static final String PATH_IMG_CLOSE = "/close.png";
 
-	public static final String PATH_IMG_MOUSE = "mouse.png";
-	public static final String PATH_IMG_PENCIL = "pencil.png";
-	public static final String PATH_IMG_CLOSE = "close.png";
-
-	public static final String PATH_CSS_MAIN = "project/application/Main.css";
+	public static final String PATH_CSS_MAIN = "/project/application/Main.css";
 
 	public static final String LAMBDA = "\u03BB";
 	public static final String UNIT_MICRO = "\u00B5";
